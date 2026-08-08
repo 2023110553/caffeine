@@ -16,7 +16,7 @@ export const TEAM = [
     department: "컴퓨터AI학과 22학번",
     meta: "03년생",
     email: "space541@naver.com",
-    photo: "/team/hyunwoo.webp",
+    photo: "/team/hyunwoo.jpg",
     intro: "",
   },
   {
@@ -30,6 +30,16 @@ export const TEAM = [
     intro: "",
   },
   {
+    id: "hyun",
+    name: "허현",
+    role: "FE",
+    department: "",
+    meta: "",
+    email: "",
+    photo: "/team/hyun.webp",
+    intro: "",
+  },
+  {
     id: "sooah",
     name: "조수아",
     role: "BE",
@@ -37,16 +47,6 @@ export const TEAM = [
     meta: "05년생 · 22세",
     email: "josuah5160@gmail.com",
     photo: "/team/sooah.webp",
-    intro: "",
-  },
-  {
-    id: "hyun",
-    name: "허현",
-    role: "",
-    department: "",
-    meta: "",
-    email: "",
-    photo: "/team/hyun.webp",
     intro: "",
   },
   {

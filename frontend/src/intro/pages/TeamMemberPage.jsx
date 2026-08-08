@@ -24,7 +24,9 @@ function TeamMemberPage() {
       <Receipt>
         <Eyebrow>Staff Detail</Eyebrow>
 
-        {photo && <Photo src={photo} alt={`${name} 프로필 사진`} />}
+        <Photo>
+          <img src={photo} alt={`${name} 프로필 사진`} /> 
+        </Photo>
 
         <Name>{name}</Name>
         {role && <Role>{role}</Role>}
@@ -60,13 +62,22 @@ function TeamMemberPage() {
 
 export default TeamMemberPage;
 
-const Photo = styled.img`
+const Photo = styled.div`
   width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
+  aspect-ratio: 3 / 4;
+  background: ${({ theme }) => theme.colors.line};
   border-radius: ${({ theme }) => theme.radius.small};
-  filter: grayscale(0.15) contrast(1.05);
-  animation: ${fadeUp} 500ms ease 700ms both;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: grayscale(0.15) contrast(1.05);
+  }
 `;
 
 const Name = styled.h1`
