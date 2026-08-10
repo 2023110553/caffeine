@@ -10,7 +10,12 @@ export const theme = {
     line: "#D8CFB8",
     error: "#E03131",
     bg_gray: "#EDE8E2",
+    bg_brown: "#3D251E",
+    bg_beige: "#C9A882",
+    bg_green: "#3A6B4A",
     txt_beige: "#9B6E62",
+    txt_white: "#FDF9F3",
+    txt_brown: "#3D251E",
   },
   radius: {
     small: "4px",

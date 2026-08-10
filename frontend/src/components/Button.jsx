@@ -1,40 +1,60 @@
 import styled, { css } from "styled-components";
 
 const VARIANT_STYLES = {
-  primary: css`
+  unchecked_button: css`
     background-color: ${({ theme }) => theme.colors.bg_gray};
     color: ${({ theme }) => theme.colors.txt_beige};
   `,
-  secondary: css`
-    background-color: transparent;
-    color: ${({ theme }) => theme.colors.ink};
-    border: 1px solid ${({ theme }) => theme.colors.line};
+  checked_button_brown: css`
+    background-color: ${({ theme }) => theme.colors.bg_brown};
+    color: ${({ theme }) => theme.colors.txt_white};
   `,
-  danger: css`
-    background-color: ${({ theme }) => theme.colors.error};
-    color: ${({ theme }) => theme.colors.paper};
+  checked_button_beige: css`
+    background-color: ${({ theme }) => theme.colors.bg_beige};
+    color: ${({ theme }) => theme.colors.txt_brown};
+  `,
+  button_large_brown: css`
+    background-color: ${({ theme }) => theme.colors.bg_brown};
+    color: ${({ theme }) => theme.colors.txt_white};
+  `,
+  button_large_green: css`
+    background-color: ${({ theme }) => theme.colors.bg_green};
+    color: ${({ theme }) => theme.colors.txt_white};
   `,
 };
 
-function Button({ variant = "primary", children, ...props }) {
+const SIZE_STYLES = {
+  small: css`
+    width: 127.6px;
+    padding: 10px 0;
+    font-size: 14px; /* TODO: design token화 */
+  `,
+  large: css`
+    width: 239.2px; 
+    padding: 14px 0; /* TODO: design token화 */
+    font-size: 16px; /* TODO: design token화 */
+  `,
+};
+
+function Button({ variant = "unchecked_button", size = "small", children, ...props }) {
   return (
-    <StyledButton $variant={variant} {...props}>
+    <StyledButton $variant={variant} $size={size} {...props}>
       {children}
     </StyledButton>
   );
 }
 
 const StyledButton = styled.button`
-  padding: 10px 0; /* TODO: design token화 */
-  border: 12px;
+  border: none;
   border-radius: ${({ theme }) => theme.radius.medium_large};
-  width: 156px;
   font-weight: 600;
   cursor: pointer;
-  ${({ $variant }) => VARIANT_STYLES[$variant]}
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  ${({ $variant }) => VARIANT_STYLES[$variant]}
+  ${({ $size }) => SIZE_STYLES[$size]}
 
   &:disabled {
     opacity: 0.5;
