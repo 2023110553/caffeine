@@ -6,7 +6,7 @@ export function BusinessProvider({ children }) {
   // TODO: 실제로는 앱 진입 시 API로 조회해서 초기값 채워야 함 (지금은 뼈대만)
   const [business, setBusiness] = useState({
     businessId: null,
-    isSetupComplete: false,
+    isSetupComplete: true, // TODO: 온보딩 API 연동되면 실제 값으로 교체, 임시 mock
     isCodefAuthenticated: false,
   });
 
