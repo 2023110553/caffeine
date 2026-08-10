@@ -15,9 +15,12 @@ function ComponentPreviewPage() {
       <Section>
         <h3>Button</h3>
         <Row>
-          <Button variant="primary">☕ 사업 지출</Button>
-          <Button variant="secondary">✓ 사업 지출</Button>
-          <Button variant="danger">Danger</Button>
+          <Button variant="unchecked_button">☕ 사업 지출</Button>
+          <Button variant="unchecked_button">👤 개인 지출</Button>
+          <Button variant="checked_button_brown">✓ 사업 지출</Button>
+          <Button variant="checked_button_beige">✓ 개인 지출</Button>
+          <Button variant="button_large_brown" size="large">분류 완료 및 부가세 예측하기</Button>
+          <Button variant="button_large_green" size="large">✓ 저장 완료!</Button>
           <Button variant="primary" disabled>
             Disabled
           </Button>
