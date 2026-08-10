@@ -9,10 +9,13 @@ export const theme = {
     ledger: "#4FCB82",
     line: "#D8CFB8",
     error: "#E03131",
+    bg_gray: "#EDE8E2",
+    txt_beige: "#9B6E62",
   },
   radius: {
     small: "4px",
     medium: "8px",
+    medium_large: "12px",
     large: "16px",
   },
 };

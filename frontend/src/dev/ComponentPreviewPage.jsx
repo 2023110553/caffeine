@@ -1,0 +1,75 @@
+// src/dev/ComponentPreviewPage.jsx
+// ⚠️ 커밋 전 삭제 예정 — 공통 컴포넌트 육안 확인용 임시 페이지
+import { useState } from "react";
+import styled from "styled-components";
+import Button from "../components/Button";
+import Input from "../components/Input";
+import Modal from "../components/Modal";
+import Loading from "../components/Loading";
+
+function ComponentPreviewPage() {
+  const [modalOpen, setModalOpen] = useState(false);
+
+  return (
+    <Wrapper>
+      <Section>
+        <h3>Button</h3>
+        <Row>
+          <Button variant="primary">☕ 사업 지출</Button>
+          <Button variant="secondary">✓ 사업 지출</Button>
+          <Button variant="danger">Danger</Button>
+          <Button variant="primary" disabled>
+            Disabled
+          </Button>
+        </Row>
+      </Section>
+
+      <Section>
+        <h3>Input</h3>
+        <Row>
+          <Input label="사업자번호" placeholder="000-00-00000" />
+          <Input label="이메일" error="올바른 이메일이 아니에요" />
+        </Row>
+      </Section>
+
+      <Section>
+        <h3>Loading</h3>
+        <Loading />
+      </Section>
+
+      <Section>
+        <h3>Modal</h3>
+        <Button onClick={() => setModalOpen(true)}>모달 열기</Button>
+        <Modal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          title="테스트 모달"
+        >
+          <p>모달 내용이 여기 들어가요.</p>
+          <Button onClick={() => setModalOpen(false)}>닫기</Button>
+        </Modal>
+      </Section>
+    </Wrapper>
+  );
+}
+
+const Wrapper = styled.div`
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+`;
+
+const Section = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const Row = styled.div`
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+`;
+
+export default ComponentPreviewPage;
