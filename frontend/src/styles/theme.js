@@ -9,6 +9,7 @@ export const theme = {
     ledger: "#4FCB82",
     line: "#D8CFB8",
     error: "#E03131",
+    bg_white:"#FDF9F3",
     bg_gray: "#EDE8E2",
     bg_brown: "#3D251E",
     bg_beige: "#C9A882",
@@ -16,6 +17,7 @@ export const theme = {
     txt_beige: "#9B6E62",
     txt_white: "#FDF9F3",
     txt_brown: "#3D251E",
+    card_white:"#FFFCF8",
   },
   radius: {
     small: "4px",
