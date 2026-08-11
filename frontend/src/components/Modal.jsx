@@ -24,15 +24,18 @@ const Overlay = styled.div`
 `;
 
 const Content = styled.div`
-  background-color: ${({ theme }) => theme.colors.paper};
-  border-radius: ${({ theme }) => theme.radius.medium};
+  background-color: ${({ theme }) => theme.colors.bg_white};
+  border-radius: ${({ theme }) => theme.radius.medium_large};
   padding: 24px; /* TODO: design token화 */
   min-width: 320px; /* TODO: design token화 */
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
 `;
 
 const Title = styled.h2`
   margin-bottom: 16px; /* TODO: design token화 */
-  color: ${({ theme }) => theme.colors.ink};
+  color: ${({ theme }) => theme.colors.txt_brown};
 `;
 
 export default Modal;

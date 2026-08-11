@@ -1,10 +1,13 @@
 import styled from "styled-components";
 
-function Input({ label, error, ...props }) {
+function Input({ label, error, unit, ...props }) {
   return (
     <Wrapper>
       {label && <Label>{label}</Label>}
-      <StyledInput $hasError={!!error} {...props} />
+      <InputRow>
+        <StyledInput $hasError={!!error} {...props} />
+        {unit && <Unit>{unit}</Unit>}
+      </InputRow>
       {error && <ErrorText>{error}</ErrorText>}
     </Wrapper>
   );
@@ -18,16 +21,30 @@ const Wrapper = styled.div`
 
 const Label = styled.label`
   font-size: 14px; /* TODO: design token화 */
-  color: ${({ theme }) => theme.colors.muted};
+  color: ${({ theme }) => theme.colors.txt_beige};
+`;
+
+const InputRow = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
 `;
 
 const StyledInput = styled.input`
+  width: 100%;
   padding: 8px 12px; /* TODO: design token화 */
   border-radius: ${({ theme }) => theme.radius.small};
   border: 1px solid
-    ${({ theme, $hasError }) => ($hasError ? theme.colors.error : theme.colors.line)};
-  background-color: ${({ theme }) => theme.colors.paper};
-  color: ${({ theme }) => theme.colors.ink};
+    ${({ theme, $hasError }) => ($hasError ? theme.colors.error : theme.colors.bg_gray)};
+  background-color: ${({ theme }) => theme.colors.bg_white};
+  color: ${({ theme }) => theme.colors.txt_brown};
+`;
+
+const Unit = styled.span`
+  position: absolute;
+  right: 12px; /* TODO: design token화 */
+  color: ${({ theme }) => theme.colors.txt_beige};
+  font-size: 14px; /* TODO: design token화 */
 `;
 
 const ErrorText = styled.span`
