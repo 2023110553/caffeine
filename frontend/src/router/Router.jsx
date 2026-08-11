@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import AppLayout from "../layouts/AppLayout";
 import TransactionReviewPage from "../app/transactions/TransactionReviewPage";
+import ChatPage from "../app/chat/ChatPage";
 import ComponentPreviewPage from "../dev/ComponentPreviewPage"; // ⚠️ 임시 — 커밋 전 삭제
 
 function Router() {
@@ -15,7 +16,7 @@ function Router() {
         {/* <Route path="dashboard" element={<DashboardPage />} /> */}
         <Route path="transactions/review" element={<TransactionReviewPage />} />
         {/* <Route path="closing/:month" element={<ClosingPage />} /> */}
-        {/* <Route path="chat" element={<ChatPage />} /> */}
+        <Route path="chat" element={<ChatPage />} />
       </Route>
 
       {/* ⚠️⚠️⚠️ 임시 라우트 — 컴포넌트 확인 끝나면 이 Route랑 위 import 삭제할 것 ⚠️⚠️⚠️ */}

@@ -6,7 +6,8 @@ import { ROUTES } from "../router/paths";
 const MENU_ROUTE_MAP = {
   "홈": ROUTES.DASHBOARD,
   "지출 내역 분류": ROUTES.TRANSACTIONS_REVIEW,
-  // "인건비 관리", "AI 세무 비서 챗봇", "설정"은 아직 라우트 없음 → 매핑 안 함
+  "AI 세무 챗봇": ROUTES.CHAT,
+  // "인건비 관리", "설정"은 아직 라우트 없음 → 매핑 안 함
 };
 
 const SideBarContainer = styled.div`
@@ -187,7 +188,7 @@ const SideBar = () => {
     ["🏠", "홈"],
     ["📋", "지출 내역 분류"],
     ["👥", "인건비 관리"],
-    ["🤖", "AI 세무 비서 챗봇"],
+    ["🤖", "AI 세무 챗봇"],
     ["⚙️", "설정"],
   ];
 
