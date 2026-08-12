@@ -4,6 +4,7 @@ import { sendChatMessage } from "../../api/chat";
 import ChatHeader from "./components/ChatHeader";
 import ChatMessageList from "./components/ChatMessageList";
 import ChatInputBar from "./components/ChatInputBar";
+import { useBusiness } from "../../contexts/BusinessContext";
 
 const WELCOME_MESSAGE = {
   id: "welcome",
@@ -12,6 +13,7 @@ const WELCOME_MESSAGE = {
 };
 
 function ChatPage() {
+  const { business } = useBusiness();
   const [messages, setMessages] = useState([WELCOME_MESSAGE]);
   const [isSending, setIsSending] = useState(false);
 
@@ -23,12 +25,12 @@ function ChatPage() {
     setIsSending(true);
 
     try {
-      const res = await sendChatMessage({ message: text });
+      const res = await sendChatMessage({ business_id: business.businessId, message: text });;
       const botMessage = {
         id: Date.now() + 1,
         sender: "bot",
         // TODO: 실제 응답 필드명 백엔드와 확인 필요 (임시로 res.data.answer 가정)
-        text: res.data.answer,
+        text: res.data.data.answer,
       };
       setMessages((prev) => [...prev, botMessage]);
     } catch (err) {
