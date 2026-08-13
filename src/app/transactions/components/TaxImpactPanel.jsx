@@ -1,13 +1,18 @@
 import styled from "styled-components";
 import Button from "../../../components/Button";
-
+import CheckIcon from "../../../assets/checkIcon.png";
 const BAR_COLOR = {
   business: "bg_brown",
   personal: "bg_beige",
   unclassified: "bg_gray",
 };
 
+
 function TaxImpactPanel({ summary, estimatedVat }) {
+
+  // 중복 계산 줄이기
+  const isCompleted = summary.unclassified.count === 0;
+
   const totalAmount =
     summary.business.total + summary.personal.total + summary.unclassified.total;
 
@@ -15,178 +20,513 @@ function TaxImpactPanel({ summary, estimatedVat }) {
     <Wrapper>
       <PanelTitle>실시간 세금 영향</PanelTitle>
 
-      <VatBox>
+      <VatBox $completed={isCompleted}>
         <Label>현재 반영된 예상 부가세</Label>
         <VatAmount>{estimatedVat.toLocaleString()}원</VatAmount>
         <SubLabel>사업 지출의 10% 매입세액 공제</SubLabel>
+        {/*로직 추가 미분류에따른*/}
+        {isCompleted && (
+          <StatGrid>
+            <div>
+              <StatLabel>사업 지출 합계</StatLabel>
+              <StatValue>
+                {summary.business.total.toLocaleString()}원
+              </StatValue>
+            </div>
 
-        <StatGrid>
-          <div>
-            <StatLabel>사업 지출 합계</StatLabel>
-            <StatValue>{summary.business.total.toLocaleString()}원</StatValue>
-          </div>
-          <div>
-            <StatLabel>분류 건수</StatLabel>
-            <StatValue>{summary.business.count}건</StatValue>
-          </div>
-        </StatGrid>
+            <div>
+              <StatLabel>분류 건수</StatLabel>
+              <StatValue>{summary.business.count}건</StatValue>
+            </div>
+          </StatGrid>
+        )}
       </VatBox>
 
       <BreakdownTitle>분류 현황</BreakdownTitle>
 
+      <BreakdownList>
+        <BreakdownRow>
+          <RowLabel>
+            <Dot $color="bg_brown" />
+            사업 지출
+          </RowLabel>
+
+          <RowValue>
+            <Count>{summary.business.count}건</Count>
+            <Amount>{summary.business.total.toLocaleString()}원</Amount>
+          </RowValue>
+        </BreakdownRow>
+
+        <BreakdownRow>
+          <RowLabel>
+            <Dot $color="bg_beige" />
+            개인 지출
+          </RowLabel>
+
+          <RowValue>
+            <Count>{summary.personal.count}건</Count>
+            <Amount>{summary.personal.total.toLocaleString()}원</Amount>
+          </RowValue>
+        </BreakdownRow>
+
+        <BreakdownRow>
+          <RowLabel>
+            <Dot $color="bg_gray" />
+            미분류
+          </RowLabel>
+
+          <RowValue>
+            <Count>{summary.unclassified.count}건</Count>
+            <Amount>{summary.unclassified.total.toLocaleString()}원</Amount>
+          </RowValue>
+        </BreakdownRow>
+      </BreakdownList>
       <SegmentBar>
         {["business", "personal", "unclassified"].map((key) => {
-          const ratio = totalAmount === 0 ? 0 : (summary[key].total / totalAmount) * 100;
+          const ratio =
+            totalAmount === 0
+              ? 0
+              : (summary[key].total / totalAmount) * 100;
+
           if (ratio === 0) return null;
-          return <Segment key={key} $color={BAR_COLOR[key]} style={{ width: `${ratio}%` }} />;
+
+          return (
+            <Segment
+              key={key}
+              $color={BAR_COLOR[key]}
+              style={{ width: `${ratio}%` }}
+            />
+          );
         })}
       </SegmentBar>
 
-      <BreakdownList>
-        <BreakdownRow>
-          <RowLabel><Dot $color="bg_brown" />사업 지출</RowLabel>
-          <RowValue>{summary.business.count}건 {summary.business.total.toLocaleString()}원</RowValue>
-        </BreakdownRow>
-        <BreakdownRow>
-          <RowLabel><Dot $color="bg_beige" />개인 지출</RowLabel>
-          <RowValue>{summary.personal.count}건 {summary.personal.total.toLocaleString()}원</RowValue>
-        </BreakdownRow>
-        <BreakdownRow>
-          <RowLabel><Dot $color="bg_gray" />미분류</RowLabel>
-          <RowValue>{summary.unclassified.count}건 {summary.unclassified.total.toLocaleString()}원</RowValue>
-        </BreakdownRow>
-      </BreakdownList>
+      {/*로직 수정*/}
+      <Notice $completed={isCompleted}>
+        <Icon>
+          {isCompleted ? <img src={CheckIcon} alt="" /> : "💡"}
+        </Icon>
 
-      {summary.unclassified.count === 0 && (
-        <Notice>✓ 모든 지출이 분류되었습니다! 부가세 공제를 최대로 받을 수 있어요.</Notice>
-      )}
+        <span>
+          {isCompleted ? (
+            <>모든 지출이 분류되었습니다! 부가세 공제를 최대로 받을 수 있어요.</>
+          ) : (
+            <>
+              아직 <strong>{summary.unclassified.count}건</strong>이 미분류입니다.
+              <br />
+              모두 분류하면 공제 혜택을 최대로 받을 수 있어요.
+            </>
+          )}
+        </span>
+      </Notice>
 
       <Button variant="button_large_brown" size="large">
-        분류 완료 및 부가세 예측 반영하기
+        {isCompleted
+          ? "분류 완료 및 부가세 예측 반영하기"
+          : "분류 완료 및 부가세 예측하기"}
       </Button>
-      <SavingText>절감 예상: {estimatedVat.toLocaleString()}원</SavingText>
+      {/*절감예상 표시유무 */}
+      {isCompleted && (
+        <SavingText>
+          절감 예상: <strong>{estimatedVat.toLocaleString()}원</strong>
+        </SavingText>
+      )}
     </Wrapper>
   );
 }
 
 const Wrapper = styled.aside`
-  width: 280px; /* TODO: design token화 */
-  flex-shrink: 0;
+  box-sizing: border-box;
+  width: 24.005vw;
   height: 100%;
-  overflow-y: auto; /* 안전장치: 내용 넘칠 경우에만 자체 스크롤 */
+  flex: 0 0 24.005vw;
+
   display: flex;
   flex-direction: column;
-  gap: 16px; /* TODO: design token화 */
-  padding: 24px 20px; /* TODO: design token화 */
+
+  padding: 3.529vh 1.783vw 3.529vh 1.715vw;
+
+  overflow-y: hidden;
+
+  background-color: #fdf9f3;
+  border-left: 0.069vw solid rgba(61, 37, 30, 0.08);
+
+  font-family: "Outfit", sans-serif;
+
+  > button {
+    box-sizing: border-box;
+    width: 100%;
+    height: 7.059vh;
+    min-height: 7.059vh;
+
+    margin-top: 2.353vh;
+    padding: 2.059vh 0;
+
+    color: #fdf9f3;
+    background-color: #3d251e;
+
+    border: none;
+    border-radius: 1.372vw;
+
+    box-shadow:
+      0 0.588vh 0.686vw
+      rgba(61, 37, 30, 0.25);
+
+    font-family: "Outfit", sans-serif;
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1.225rem;
+
+    text-align: center;
+    white-space: nowrap;
+  }
 `;
 
 const PanelTitle = styled.p`
-  color: ${({ theme }) => theme.colors.txt_brown};
-  font-weight: 700;
+
+  box-sizing: border-box;
+  width: 100%;
+  height: 4.706vh;
+
+  margin: 0;
+  padding-bottom: 2.353vh;
+
+  color: #9b6e62;
+
+  font-family: "Outfit", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1rem;
+  letter-spacing: 0.075rem;
 `;
 
 const VatBox = styled.div`
+
+  box-sizing: border-box;
+  width: 100%;
+  height: ${({ $completed }) =>
+    $completed ? "27.175vh" : "16.765vh"};
+  min-height: ${({ $completed }) =>
+    $completed ? "27.175vh" : "16.765vh"};
+
   display: flex;
   flex-direction: column;
-  gap: 4px; /* TODO: design token화 */
-  background-color: ${({ theme }) => theme.colors.bg_beige};
-  border-radius: ${({ theme }) => theme.radius.medium_large};
-  padding: 16px; /* TODO: design token화 */
+
+  margin-bottom: 2.353vh;
+  padding: 2.941vh 1.715vw;
+
+  border-radius: 1.372vw;
+
+  background: ${({ $completed }) =>
+    $completed
+      ? `linear-gradient(
+          164deg,
+          #3d251e 8.5%,
+          #5c3327 91.5%
+        )`
+      : `linear-gradient(
+          170deg,
+          #3d251e 8.5%,
+          #5c3327 91.5%
+        )`};
 `;
 
 const Label = styled.p`
-  color: ${({ theme }) => theme.colors.txt_beige};
-  font-size: 13px; /* TODO: design token화 */
+  margin: 0;
+
+  color: #c9a882;
+
+  font-family: "Outfit", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1rem;
 `;
 
 const VatAmount = styled.p`
-  color: ${({ theme }) => theme.colors.txt_brown};
-  font-size: 22px; /* TODO: design token화 */
+  height: 5.882vh;
+
+  margin: 0;
+  padding-top: 0.588vh;
+
+  color: #fdf9f3;
+
+  font-family: "Fraunces", serif;
+  font-size: 1.875rem;
   font-weight: 700;
+  line-height: 2.25rem;
+
+  white-space: nowrap;
 `;
 
 const SubLabel = styled.p`
-  color: ${({ theme }) => theme.colors.txt_beige};
-  font-size: 12px; /* TODO: design token화 */
+  height: 2.647vh;
+
+  margin: 0;
+  padding-top: 0.294vh;
+
+  color: rgba(201, 168, 130, 0.7);
+
+  font-family: "Outfit", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1rem;
 `;
 
 const StatGrid = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-top: 8px; /* TODO: design token화 */
+  box-sizing: border-box;
+  width: 100%;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 1.029vw;
+
+  margin-top: 2.353vh;
+  padding-top: 2.353vh;
+
+  border-top: 0.069vw solid rgba(255, 255, 255, 0.1);
 `;
 
 const StatLabel = styled.p`
-  color: ${({ theme }) => theme.colors.txt_beige};
-  font-size: 12px; /* TODO: design token화 */
+  margin: 0;
+
+  color: rgba(201, 168, 130, 0.7);
+
+  font-family: "Outfit", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1rem;
+
+  white-space: nowrap;
 `;
 
 const StatValue = styled.p`
-  color: ${({ theme }) => theme.colors.txt_brown};
-  font-weight: 600;
-  font-size: 14px; /* TODO: design token화 */
+  height: 3.235vh;
+
+  margin: 0;
+  padding-top: 0.294vh;
+
+  color: #fdf9f3;
+
+  font-family: "Outfit", sans-serif;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.25rem;
+
+  white-space: nowrap;
 `;
 
 const BreakdownTitle = styled.p`
-  color: ${({ theme }) => theme.colors.txt_brown};
-  font-weight: 600;
-`;
 
-const SegmentBar = styled.div`
-  display: flex;
+  box-sizing: border-box;
   width: 100%;
-  height: 8px; /* TODO: design token화 */
-  border-radius: ${({ theme }) => theme.radius.small};
-  overflow: hidden;
-  background-color: ${({ theme }) => theme.colors.bg_gray};
-`;
+  height: 4.824vh;
 
-const Segment = styled.div`
-  height: 100%;
-  background-color: ${({ theme, $color }) => theme.colors[$color]};
+  margin: 0;
+  padding: 2.471vh 1.441vw 0;
+
+  color: #3d251e;
+  background-color: #fffcf8;
+
+  border-top: 0.069vw solid rgba(61, 37, 30, 0.07);
+  border-right: 0.069vw solid rgba(61, 37, 30, 0.07);
+  border-left: 0.069vw solid rgba(61, 37, 30, 0.07);
+
+  border-radius: 1.372vw 1.372vw 0 0;
+
+  font-family: "Outfit", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1rem;
 `;
 
 const BreakdownList = styled.div`
+
+  box-sizing: border-box;
+  width: 100%;
+  height: 15.294vh;
+
   display: flex;
   flex-direction: column;
-  gap: 8px; /* TODO: design token화 */
+  gap: 1.471vh;
+
+  padding: 1.765vh 1.441vw 0;
+
+  background-color: #fffcf8;
+
+  border-right: 0.069vw solid rgba(61, 37, 30, 0.07);
+  border-left: 0.069vw solid rgba(61, 37, 30, 0.07);
 `;
 
 const BreakdownRow = styled.div`
+  box-sizing: border-box;
+  width: 100%;
+  height: 3.529vh;
+  min-height: 3.529vh;
+
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  font-size: 13px; /* TODO: design token화 */
-  color: ${({ theme }) => theme.colors.txt_brown};
+
+  font-family: "Outfit", sans-serif;
+  font-size: 0.75rem;
+  line-height: 1rem;
 `;
 
 const RowLabel = styled.span`
   display: flex;
   align-items: center;
-  gap: 6px; /* TODO: design token화 */
+  gap: 0.686vw;
+
+  color: #9b6e62;
+  font-weight: 400;
+
+  white-space: nowrap;
 `;
 
 const RowValue = styled.span`
-  color: ${({ theme }) => theme.colors.txt_beige};
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  font-family: "Outfit", sans-serif;
+  font-size: 0.75rem;
+  line-height: 1rem;
+
+  white-space: nowrap;
+`;
+
+const Count = styled.span`
+  color: #3d251e;
+  font-weight: 600;
+`;
+
+const Amount = styled.span`
+  color: #9b6e62;
+  font-weight: 400;
 `;
 
 const Dot = styled.span`
-  width: 8px; /* TODO: design token화 */
-  height: 8px;
-  border-radius: 50%;
-  background-color: ${({ theme, $color }) => theme.colors[$color]};
+  width: 0.625rem;
+  height: 0.625rem;
+  flex-shrink: 0;
+
+  border-radius: 0.25rem;
+
+  background-color: ${({ theme, $color }) =>
+    theme.colors[$color]};
 `;
 
-const Notice = styled.p`
-  color: ${({ theme }) => theme.colors.txt_brown};
-  font-size: 13px; /* TODO: design token화 */
+const SegmentBar = styled.div`
+  box-sizing: border-box;
+  width: 100%;
+  height: 5.412vh;
+
+  display: flex;
+  align-items: flex-start;
+
+  margin-bottom: 2.353vh;
+  padding: 1.765vh 1.441vw 2.353vh;
+
+  overflow: hidden;
+
+  background-color: #fffcf8;
+
+  border-right: 0.069vw solid rgba(61, 37, 30, 0.07);
+  border-bottom: 0.069vw solid rgba(61, 37, 30, 0.07);
+  border-left: 0.069vw solid rgba(61, 37, 30, 0.07);
+
+  border-radius: 0 0 1.372vw 1.372vw;
+
+  background-image: linear-gradient(#ede8e2, #ede8e2);
+  background-repeat: no-repeat;
+  background-position: center 1.765vh;
+  background-size: calc(100% - 2.882vw) 1.176vh;
+`;
+
+const Segment = styled.div`
+
+  height: 1.176vh;
+  flex-shrink: 0;
+
+  background-color: ${({ theme, $color }) =>
+    theme.colors[$color]};
+
+  &:first-child {
+    border-radius: 0.686vw 0 0 0.686vw;
+  }
+
+  &:last-child {
+    border-radius: 0 0.686vw 0.686vw 0;
+  }
+
+  &:only-child {
+    border-radius: 0.686vw;
+  }
+`;
+
+const Notice = styled.div`
+  box-sizing: border-box;
+  width: 100%;
+
+  height: ${({ $completed }) =>
+    $completed ? "9.265vh" : "12.132vh"};
+
+  display: flex;
+  align-items: flex-start;
+  gap: 0.858vw;
+
+  padding: 1.765vh 1.372vw;
+  margin: 0;
+
+  color: ${({ $completed }) =>
+    $completed ? "#2e6b47" : "#5c3327"};
+
+  background-color: ${({ $completed }) =>
+    $completed ? "#e8f2ec" : "#f2ebe4"};
+
+  border-radius: 1.029vw;
+
+  font-size: 0.75rem;
+  line-height: 1.21875rem;
+
+  strong {
+    font-weight: 700;
+  }
+`;
+
+const Icon = styled.div`
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
 `;
 
 const SavingText = styled.p`
-  text-align: center;
-  color: ${({ theme }) => theme.colors.txt_brown};
-  font-size: 13px; /* TODO: design token화 */
-`;
+  box-sizing: border-box;
+  width: 100%;
+  height: 3.527vh;
 
+  margin: 0;
+  padding-top: 1.176vh;
+
+  color: #9b6e62;
+
+  text-align: center;
+
+  font-family: "Outfit", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1rem;
+
+  strong {
+    color: #5c3327;
+    font-weight: 600;
+  }
+`;
 
 
 export default TaxImpactPanel;
