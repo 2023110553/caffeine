@@ -1,35 +1,81 @@
 import styled from "styled-components";
 import Button from "../../../components/Button";
 
-function ExpenseListItem({ transaction, onCategoryChange }) {
-  const { id, icon, merchant, memo, date, amount, category } = transaction;
-  const badgeLabel = category === "business" ? "사업" : category === "personal" ? "개인" : null;
+function ExpenseListItem({
+  transaction,
+  onCategoryChange,
+}) {
+  const {
+    id,
+    icon,
+    merchant,
+    memo,
+    date,
+    amount,
+    category,
+  } = transaction;
+
+  const badgeLabel =
+    category === "business"
+      ? "사업"
+      : category === "personal"
+        ? "의제매입"
+        : null;
 
   return (
     <Card>
       <CardTop>
-        <IconCircle>{icon}</IconCircle>
-        {badgeLabel && <CategoryBadge $variant={category}>{badgeLabel}</CategoryBadge>}
+        <TransactionInfo>
+          <IconBox>{icon}</IconBox>
+
+          <TextGroup>
+            <Merchant>{merchant}</Merchant>
+            <Memo>
+              {memo} · {date}
+            </Memo>
+          </TextGroup>
+        </TransactionInfo>
+
+        {badgeLabel && (
+          <CategoryBadge $variant={category}>
+            {badgeLabel}
+          </CategoryBadge>
+        )}
       </CardTop>
 
-      <Merchant>{merchant}</Merchant>
-      <Memo>{memo} · {date}</Memo>
       <Amount>{amount.toLocaleString()}원</Amount>
 
       <ButtonRow>
         <Button
-          variant={category === "business" ? "checked_button_brown" : "unchecked_button"}
+          variant={
+            category === "business"
+              ? "checked_button_brown"
+              : "unchecked_button"
+          }
           size="small"
-          onClick={() => onCategoryChange(id, "business")}
+          onClick={() =>
+            onCategoryChange(id, "business")
+          }
         >
-          {category === "business" ? "✓ 사업 지출" : "☕ 사업 지출"}
+          {category === "business"
+            ? "✓ 사업 지출"
+            : "☕ 사업 지출"}
         </Button>
+
         <Button
-          variant={category === "personal" ? "checked_button_beige" : "unchecked_button"}
+          variant={
+            category === "personal"
+              ? "checked_button_beige"
+              : "unchecked_button"
+          }
           size="small"
-          onClick={() => onCategoryChange(id, "personal")}
+          onClick={() =>
+            onCategoryChange(id, "personal")
+          }
         >
-          {category === "personal" ? "✓ 개인 지출" : "👤 개인 지출"}
+          {category === "personal"
+            ? "✓ 개인 지출"
+            : "👤 개인 지출"}
         </Button>
       </ButtonRow>
     </Card>
@@ -37,70 +83,174 @@ function ExpenseListItem({ transaction, onCategoryChange }) {
 }
 
 const Card = styled.div`
+  width: 100%;
+  min-width: 295.2px;
+  height: auto;
+  flex-shrink: 0;
+  align-self: start;
+
   display: flex;
   flex-direction: column;
-  gap: 6px; /* TODO: design token화 */
-  border: 1px solid ${({ theme }) => theme.colors.bg_gray};
-  border-radius: ${({ theme }) => theme.radius.large};
-  padding: 16px; /* TODO: design token화 */
-  background-color: ${({ theme }) => theme.colors.card_white};
+
+  padding: 16px;
+
+  background-color: ${({ theme }) =>
+    theme.colors.card_white};
+
+  border: 1px solid rgba(61, 37, 30, 0.07);
+  border-radius: 16px;
+
+  box-shadow:
+    0 1px 2px rgba(61, 37, 30, 0.07),
+    0 0 0 rgba(61, 37, 30, 0.05);
 `;
 
 const CardTop = styled.div`
+  width: 100%;
+  height: 40px;
+  flex-shrink: 0;
+
   display: flex;
+  align-items: flex-start;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4px; /* TODO: design token화 */
 `;
 
-const IconCircle = styled.div`
-  width: 32px; /* TODO: design token화 */
-  height: 32px;
+const TransactionInfo = styled.div`
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
+const IconBox = styled.div`
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  background-color: ${({ theme }) => theme.colors.bg_gray};
+
+  color: #3d251e;
+  background-color: #f2ebe4;
+
+  border-radius: 12px;
+
+  font-family: "Outfit", sans-serif;
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 1.75rem;
 `;
 
-// category별 배지 색이 필요해서 $variant로 분기 (TaxImpactPanel의 BREAKDOWN_COLOR 패턴과 동일)
-const BADGE_COLOR = {
-  business: { bg: "bg_brown", text: "txt_white" },
-  personal: { bg: "bg_beige", text: "txt_brown" },
-};
+const TextGroup = styled.div`
+  min-width: 0;
 
-const CategoryBadge = styled.span`
-  font-size: 11px; /* TODO: design token화 */
-  font-weight: 600;
-  padding: 2px 8px; /* TODO: design token화 */
-  border-radius: ${({ theme }) => theme.radius.large};
-  background-color: ${({ theme, $variant }) => theme.colors[BADGE_COLOR[$variant].bg]};
-  color: ${({ theme, $variant }) => theme.colors[BADGE_COLOR[$variant].text]};
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 `;
 
 const Merchant = styled.p`
-  color: ${({ theme }) => theme.colors.txt_brown};
+  max-width: 150px;
+  overflow: hidden;
+
+  color: ${({ theme }) =>
+    theme.colors.txt_brown};
+
+  font-family: "Outfit", sans-serif;
+  font-size: 0.875rem;
   font-weight: 600;
-  font-size: 14px; /* TODO: design token화 */
+  line-height: 1.09375rem;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const Memo = styled.p`
-  color: ${({ theme }) => theme.colors.txt_beige};
-  font-size: 12px; /* TODO: design token화 */
+  max-width: 150px;
+  padding-top: 2px;
+  overflow: hidden;
+
+  color: ${({ theme }) =>
+    theme.colors.txt_beige};
+
+  font-family: "Outfit", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1rem;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const BADGE_COLOR = {
+  business: {
+    bg: "bg_brown",
+    text: "txt_white",
+  },
+  personal: {
+    bg: "bg_beige",
+    text: "txt_brown",
+  },
+};
+
+const CategoryBadge = styled.span`
+  flex-shrink: 0;
+  padding: 2px 8px;
+
+  color: ${({ theme, $variant }) =>
+    theme.colors[BADGE_COLOR[$variant].text]};
+
+  background-color: ${({ theme, $variant }) =>
+    theme.colors[BADGE_COLOR[$variant].bg]};
+
+  border-radius: 16px;
+
+  font-family: "Outfit", sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1rem;
+
+  white-space: nowrap;
 `;
 
 const Amount = styled.p`
-  color: ${({ theme }) => theme.colors.txt_brown};
+  flex-shrink: 0;
+  padding-top: 12px;
+
+  color: ${({ theme }) =>
+    theme.colors.txt_brown};
+
+  font-family: "Outfit", sans-serif;
+  font-size: 1rem;
   font-weight: 700;
-  font-size: 16px; /* TODO: design token화 */
-  margin: 4px 0; /* TODO: design token화 */
+  line-height: 1.5rem;
+
+  white-space: nowrap;
 `;
 
 const ButtonRow = styled.div`
+  width: 100%;
+  height: 44px;
+  flex-shrink: 0;
+
   display: flex;
-  justify-content: space-between;
-  gap: 6px; /* TODO: design token화 */
-  /* ⚠️ Button.jsx가 width 고정값(small: 127.6px)이라 카드 폭에 꽉 안 참 — Button에 full-width 옵션 필요 */
+  align-items: flex-end;
+  gap: 8px;
+
+  margin-top: auto;
+  padding-top: 12px;
+
+  > button {
+    width: auto;
+    min-width: 0;
+    height: 32px;
+    flex: 1;
+
+    padding: 8px 0;
+    border-radius: 12px;
+  }
 `;
 
 export default ExpenseListItem;

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import Button from "../../../components/Button";
-import CheckIcon from "../../../assets/checkIcon.png";
+import CheckIcon from "../../../assets/CheckIcon.png";
 const BAR_COLOR = {
   business: "bg_brown",
   personal: "bg_beige",

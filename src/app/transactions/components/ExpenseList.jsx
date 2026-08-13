@@ -10,7 +10,9 @@ const LEGEND = [
 function ExpenseList({ transactions, summary, onCategoryChange }) {
   const totalCount = transactions.length;
   const classifiedCount = totalCount - summary.unclassified.count;
-  const progressPercent = totalCount === 0 ? 0 : (classifiedCount / totalCount) * 100;
+
+  const progressPercent =
+    totalCount === 0 ? 0 : (classifiedCount / totalCount) * 100;
 
   return (
     <Wrapper>
@@ -18,8 +20,11 @@ function ExpenseList({ transactions, summary, onCategoryChange }) {
         <HeaderRow>
           <TitleGroup>
             <Title>전체 거래 내역</Title>
-            <Count>{classifiedCount}/{totalCount}건 분류됨</Count>
+            <Count>
+              {classifiedCount}/{totalCount}건 분류됨
+            </Count>
           </TitleGroup>
+
           <Legend>
             {LEGEND.map(({ key, label, color }) => (
               <LegendItem key={key}>
@@ -29,6 +34,7 @@ function ExpenseList({ transactions, summary, onCategoryChange }) {
             ))}
           </Legend>
         </HeaderRow>
+
         <ProgressTrack>
           <ProgressFill style={{ width: `${progressPercent}%` }} />
         </ProgressTrack>
@@ -51,8 +57,10 @@ const Wrapper = styled.div`
   flex: 1;
   min-width: 0;
   min-height: 0; /* 스크롤 체인 4단계 */
+
   display: flex;
   flex-direction: column;
+
   background-color: ${({ theme }) => theme.colors.txt_white};
   border-radius: ${({ theme }) => theme.radius.medium_large};
   padding: 20px; /* TODO: design token화 */
@@ -60,8 +68,10 @@ const Wrapper = styled.div`
 
 const ListHeader = styled.div`
   flex-shrink: 0; /* 고정 영역 */
+
   display: flex;
   flex-direction: column;
+
   gap: 8px; /* TODO: design token화 */
   margin-bottom: 12px; /* TODO: design token화 */
 `;
@@ -98,6 +108,7 @@ const LegendItem = styled.span`
   display: flex;
   align-items: center;
   gap: 6px; /* TODO: design token화 */
+
   color: ${({ theme }) => theme.colors.txt_beige};
   font-size: 12px; /* TODO: design token화 */
 `;
@@ -105,33 +116,41 @@ const LegendItem = styled.span`
 const Dot = styled.span`
   width: 8px; /* TODO: design token화 */
   height: 8px;
+
   border-radius: 50%;
   background-color: ${({ theme, $color }) => theme.colors[$color]};
 `;
 
 const CardGrid = styled.div`
   flex: 1;
-  min-height: 0; /* 스크롤 체인 5단계 (최종) */
-  overflow-y: auto;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px; /* TODO: design token화 */
-  align-content: start; /* 카드 적을 때 위쪽부터 채우기 */
-`;
+  min-width: 0;
+  min-height: 0;
 
+  overflow-x: auto;
+  overflow-y: auto;
+
+  display: grid;
+  grid-template-columns: repeat(2, minmax(295.2px, 1fr));
+  gap: 12px;
+
+  align-content: start;
+  align-items: start;
+`;
 
 const ProgressTrack = styled.div`
   width: 100%;
   height: 6px; /* TODO: design token화 */
-  border-radius: 999px; /* 완전히 둥근 pill 형태 — theme에 대응 토큰 없음 */
+
+  border-radius: 999px;
   background-color: ${({ theme }) => theme.colors.bg_gray};
   overflow: hidden;
+
   margin-top: 8px; /* TODO: design token화 */
 `;
 
 const ProgressFill = styled.div`
   height: 100%;
-  background-color: #5C3327; /* TODO: theme.js에 토큰 없음 — SideBar.jsx UserIcon과 동일 색상, 팀에 토큰화 제안 필요 */
+  background-color: #5c3327;
   transition: width 0.2s ease;
 `;
 
