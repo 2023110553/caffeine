@@ -16,26 +16,52 @@ function Modal({ open, onClose, title, children }) {
 const Overlay = styled.div`
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.4);
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  background-color: rgba(0, 0, 0, 0.45);
+
   z-index: 1000;
 `;
 
 const Content = styled.div`
+  box-sizing: border-box;
+
+  width: 640px;
+  height: 612px;
+
+  padding: 32px;
+
   background-color: ${({ theme }) => theme.colors.bg_white};
-  border-radius: ${({ theme }) => theme.radius.medium_large};
-  padding: 24px; /* TODO: design token화 */
-  min-width: 320px; /* TODO: design token화 */
-  max-width: 90vw;
-  max-height: 90vh;
+
+  border-radius: 20px;
+
+  box-shadow:
+    0 24px 64px rgba(61, 37, 30, 0.22),
+    0 4px 16px rgba(61, 37, 30, 0.1);
+
   overflow-y: auto;
+
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const Title = styled.h2`
-  margin-bottom: 16px; /* TODO: design token화 */
+  margin: 0;
+
   color: ${({ theme }) => theme.colors.txt_brown};
+
+  font-family: "Noto Sans KR", sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 33px;
+
+  letter-spacing: -0.88px;
 `;
 
 export default Modal;

@@ -129,6 +129,8 @@ const CardGrid = styled.div`
   overflow-x: auto;
   overflow-y: auto;
 
+  scrollbar-width: none;
+
   display: grid;
   grid-template-columns: repeat(2, minmax(295.2px, 1fr));
   gap: 12px;

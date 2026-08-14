@@ -61,7 +61,7 @@ function EmployeeRow({ employee, onUpdate }) {
 
       <GrossPayArea>
         <FieldLabel>세전 급여</FieldLabel>
-        <GrossPay>{grossPay.toLocaleString()}원</GrossPay>
+        <GrossPay>{grossPay.toLocaleString()}</GrossPay>
       </GrossPayArea>
 
       <DetailButtonArea>
@@ -82,54 +82,89 @@ function EmployeeRow({ employee, onUpdate }) {
 }
 
 const Card = styled.div`
+  box-sizing: border-box;
+
+  width: 100%;
+  min-height: 9.75625rem;
+
   display: grid;
-  grid-template-columns: 1.8fr 1.8fr 1fr 1fr 1.2fr;
+  grid-template-columns: 200fr 220fr 130fr 130fr 160fr;
   grid-template-areas:
     "name type hours wage gross"
     "detail . . . tax";
-  row-gap: 12px; /* TODO: design token화 */
-  column-gap: 12px; /* TODO: design token화 */
+
+  row-gap: 0.75rem;
+  column-gap: 0.75rem;
+
   align-items: center;
-  background-color: #FFFFFF; /* TODO: theme.js에 없는 값 */
-  border: 0.8px solid #E8D9C8; /* TODO: theme.js에 없는 값 */
-  border-radius: ${({ theme }) => theme.radius.large};
-  padding: 18px 24px; /* TODO: design token화 */
+
+  padding: 1.125rem 1.5rem;
+
+  background-color: #ffffff;
+
+  border: 0.05rem solid #e8d9c8;
+  border-radius: 1rem;
+
+  box-shadow: 0 0.0625rem 0.09375rem rgba(61, 37, 30, 0.04);
 `;
 
 const NameArea = styled.div`
   grid-area: name;
+
   display: flex;
   align-items: center;
-  gap: 12px; /* TODO: design token화 */
+
+  gap: 0.75rem;
 `;
 
 const Avatar = styled.div`
-  width: 38px; /* TODO: design token화 */
-  height: 38px;
+  width: 2.375rem;
+  height: 2.375rem;
+
   flex-shrink: 0;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   border-radius: 50%;
-  background-color: #C4956A; /* TODO: theme.js에 없는 값 - bg_beige와 유사하지만 다름 */
+
+  background-color: #c4956a;
   color: ${({ theme }) => theme.colors.bg_white};
+
+  font-size: 0.875rem;
   font-weight: 700;
+  line-height: 1.3125rem;
+
+  letter-spacing: -0.0175rem;
 `;
 
 const NameGroup = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
 `;
 
 const Name = styled.p`
+  margin: 0;
+
   color: ${({ theme }) => theme.colors.txt_brown};
-  font-weight: 600;
-  font-size: 15px; /* TODO: design token화 */
+
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.40625rem;
+
+  letter-spacing: -0.01875rem;
 `;
 
 const EmployeeNumber = styled.p`
-  color: #8C6B5A; /* TODO: theme.js에 없는 값 */
-  font-size: 11px; /* TODO: design token화 */
+  margin: 0.0625rem 0 0;
+
+  color: #8c6b5a;
+
+  font-size: 0.6875rem;
+  font-weight: 400;
+  line-height: 1.03125rem;
 `;
 
 const TypeArea = styled.div`
@@ -137,75 +172,156 @@ const TypeArea = styled.div`
 `;
 
 const TypeSelect = styled.select`
+  box-sizing: border-box;
+
   width: 100%;
-  padding: 8px 10px; /* TODO: design token화 */
-  border-radius: ${({ theme }) => theme.radius.medium};
-  border: 0.8px solid #E8D9C8; /* TODO: theme.js에 없는 값 */
+  height: 2.125rem;
+
+  padding: 0 2rem 0 0.625rem;
+
+  border: 0.05rem solid #e8d9c8;
+  border-radius: 0.5rem;
+
   background-color: ${({ theme }) => theme.colors.bg_white};
+
   color: ${({ theme }) => theme.colors.txt_brown};
-  font-size: 12px; /* TODO: design token화 */
+
+  font-family: "Noto Sans KR", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.125rem;
+
+  cursor: pointer;
 `;
 
 const HoursArea = styled.div`
   grid-area: hours;
+
+  > div {
+    width: 100%;
+  }
+
+  input {
+    height: 2.1875rem;
+    padding: 0.4375rem 0.625rem;
+
+    border-radius: 0.5rem;
+
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.21875rem;
+  }
 `;
 
 const WageArea = styled.div`
   grid-area: wage;
+
+  > div {
+    width: 100%;
+  }
+
+  input {
+    height: 2.1875rem;
+    padding: 0.4375rem 0.625rem;
+
+    border-radius: 0.5rem;
+
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.21875rem;
+  }
 `;
 
 const GrossPayArea = styled.div`
   grid-area: gross;
-  justify-self: end;
-  text-align: right;
+
+  justify-self: start;
+  align-self: center;
+
+  text-align: left;
 `;
 
 const FieldLabel = styled.p`
-  color: #8C6B5A; /* TODO: theme.js에 없는 값 */
-  font-size: 10px; /* TODO: design token화 */
+  margin: 0;
+
+  color: #8c6b5a;
+
+  font-size: 0.625rem;
+  font-weight: 500;
+  line-height: 0.9375rem;
 `;
 
 const GrossPay = styled.p`
+  margin: 0.1875rem 0 0;
+
   color: ${({ theme }) => theme.colors.txt_brown};
-  font-size: 15px; /* TODO: design token화 */
+
+  font-size: 0.9375rem;
   font-weight: 700;
-  margin-top: 3px; /* TODO: design token화 */
+  line-height: 1.40625rem;
+
+  letter-spacing: -0.01875rem;
 `;
 
 const DetailButtonArea = styled.div`
   grid-area: detail;
+
+  justify-self: start;
+  align-self: center;
 `;
 
 const DetailButton = styled.button`
+  box-sizing: border-box;
+
+  height: 2.125rem;
+
   display: inline-flex;
   align-items: center;
-  gap: 5px; /* TODO: design token화 */
-  border: 0.8px solid #C4956A; /* TODO: theme.js에 없는 값 - Avatar와 동일 */
-  border-radius: ${({ theme }) => theme.radius.medium};
-  background-color: #F5EDE0; /* TODO: theme.js에 없는 값 */
-  color: #6B3F30; /* TODO: theme.js에 없는 값 */
-  padding: 7px 12px; /* TODO: design token화 */
-  font-size: 12px; /* TODO: design token화 */
+
+  gap: 0.3125rem;
+
+  padding: 0.4375rem 0.75rem;
+
+  border: 0.05rem solid #c4956a;
+  border-radius: 0.5rem;
+
+  background-color: #f5ede0;
+  color: #6b3f30;
+
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.125rem;
+
   cursor: pointer;
 `;
 
 const TaxArea = styled.div`
   grid-area: tax;
-  justify-self: end;
-  text-align: right;
+
+  justify-self: start;
+  align-self: center;
+
+  text-align: left;
 `;
 
 const TaxValue = styled.p`
-  font-size: 14px; /* TODO: design token화 */
+  margin: 0.1875rem 0 0;
+
+  color: ${({ $hasTaxOwed }) =>
+    $hasTaxOwed ? "#6d4c9e" : "#3a7d5c"};
+
+  font-size: 0.875rem;
   font-weight: 700;
-  margin-top: 3px; /* TODO: design token화 */
-  color: ${({ $hasTaxOwed }) => ($hasTaxOwed ? "#6D4C9E" : "#3A7D5C")}; /* TODO: theme.js에 없는 값 - 세금 발생 여부에 따라 초록/보라 분기 */
+  line-height: 1.3125rem;
 `;
 
 const TaxNote = styled.span`
-  color: #8C6B5A; /* TODO: theme.js에 없는 값 */
-  font-size: 10px; /* TODO: design token화 */
-  font-weight: 400;
-`;
+  margin-left: 0.1875rem;
 
+  color: #8c6b5a;
+
+  font-size: 0.625rem;
+  font-weight: 500;
+  line-height: 0.9375rem;
+`;
 export default EmployeeRow;
