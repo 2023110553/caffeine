@@ -25,8 +25,8 @@ const AvatarCircle = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  background-color: ${({ theme }) => theme.colors.bg_brown};
+  border-radius: ${({ theme }) => theme.radius.medium_large};
+  background-color: ${({ theme }) => theme.colors.txt_brown};
 `;
 
 const Bubble = styled.p`
