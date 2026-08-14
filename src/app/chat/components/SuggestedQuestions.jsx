@@ -22,7 +22,7 @@ const Wrapper = styled.div`
 
 const Chip = styled.button`
   border: none;
-  border-radius: ${({ theme }) => theme.radius.medium_large};
+  border-radius: 26843500px;
   background-color: ${({ theme }) => theme.colors.bg_gray};
   color: ${({ theme }) => theme.colors.txt_brown};
   padding: 10px 14px; /* TODO: design token화 */

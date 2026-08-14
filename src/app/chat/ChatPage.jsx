@@ -48,8 +48,10 @@ function ChatPage() {
   return (
     <Wrapper>
       <ChatHeader />
-      <ChatMessageList messages={messages} isSending={isSending} />
-      <ChatInputBar onSend={handleSend} disabled={isSending} />
+      <ChatCard>
+        <ChatMessageList messages={messages} isSending={isSending} />
+        <ChatInputBar onSend={handleSend} disabled={isSending} />
+      </ChatCard>
     </Wrapper>
   );
 }
@@ -59,6 +61,18 @@ const Wrapper = styled.div`
   min-height: 0;
   display: flex;
   flex-direction: column;
+  padding: 24px; /* TODO: design token화 */
+  gap: 16px; /* TODO: design token화 */
+`;
+
+const ChatCard = styled.div`
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: #FFFCF8; /* TODO: theme.js에 없는 값 - 인건비 관리 카드와 동일 색 */
+  border: 0.8px solid ${({ theme }) => theme.colors.bg_gray};
+  border-radius: ${({ theme }) => theme.radius.large};
 `;
 
 export default ChatPage;
