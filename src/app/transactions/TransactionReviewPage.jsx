@@ -39,6 +39,7 @@ function TransactionReviewPage() {
     transactions.forEach((tx) => {
       const key = tx.category ?? "unclassified";
       if (!result[key]) return;
+
       result[key].count += 1;
       result[key].total += tx.amount;
     });
@@ -55,19 +56,25 @@ function TransactionReviewPage() {
   return (
     <Wrapper>
       <ExpenseHeader />
+
       <ContentGrid>
         <LeftColumn>
           <ExpenseSummaryBanner
             unclassifiedCount={summary.unclassified.count}
             estimatedDeduction={estimatedVat}
           />
+
           <ExpenseList
             transactions={transactions}
             summary={summary}
             onCategoryChange={handleCategoryChange}
           />
         </LeftColumn>
-        <TaxImpactPanel summary={summary} estimatedVat={estimatedVat} />
+
+        <TaxImpactPanel
+          summary={summary}
+          estimatedVat={estimatedVat}
+        />
       </ContentGrid>
     </Wrapper>
   );
@@ -78,23 +85,24 @@ const Wrapper = styled.div`
   min-height: 0; /* 스크롤 체인 2단계 */
   display: flex;
   flex-direction: column;
-  
 `;
 
 const ContentGrid = styled.div`
   flex: 1;
-  min-height: 0; /* 스크롤 체인 3단계 */
+  min-height: 0;
+
   display: flex;
   align-items: stretch;
-  gap: 24px; /* TODO: design token화 */
 `;
 
 const LeftColumn = styled.div`
   flex: 1;
-  min-width: 0;
-  min-height: 0; /* 스크롤 체인은 여기로도 이어져야 함 */
+  min-width: 70px;
+  min-height: 0;
+
   display: flex;
   flex-direction: column;
+
   padding: 24px 32px;
 `;
 

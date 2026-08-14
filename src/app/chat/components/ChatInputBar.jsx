@@ -70,7 +70,7 @@ const SendButton = styled.button`
   height: 40px;
   flex-shrink: 0;
   border: none;
-  border-radius: 50%;
+  border-radius: ${({ theme }) => theme.radius.medium_large};
   background-color: ${({ theme }) => theme.colors.bg_brown};
   color: ${({ theme }) => theme.colors.txt_white};
   cursor: pointer;
