@@ -6,7 +6,14 @@ function Modal({ open, onClose, title, children }) {
   return (
     <Overlay onClick={onClose}>
       <Content onClick={(e) => e.stopPropagation()}>
-        {title && <Title>{title}</Title>}
+        <Header>
+          {title && <Title>{title}</Title>}
+
+          <CloseButton type="button" onClick={onClose}>
+            ×
+          </CloseButton>
+        </Header>
+
         {children}
       </Content>
     </Overlay>
@@ -51,6 +58,12 @@ const Content = styled.div`
   }
 `;
 
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
 const Title = styled.h2`
   margin: 0;
 
@@ -63,5 +76,35 @@ const Title = styled.h2`
 
   letter-spacing: -0.88px;
 `;
+
+
+const CloseButton = styled.button`
+  width: 1.75rem;
+  height: 1.75rem;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 0;
+
+  border: 0.05rem solid #E8D9C8;
+  border-radius: 0.375rem;
+
+
+  background: #F5EDE0;
+  color: #6B3F30;
+
+  font-size: 1.25rem;
+  line-height: 1;
+
+  cursor: pointer;
+
+  &:hover {
+    background: #e8d9c8;
+    color: #3d251e;
+  }
+`;
+
 
 export default Modal;
