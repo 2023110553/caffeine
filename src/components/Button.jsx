@@ -4,16 +4,22 @@ const VARIANT_STYLES = {
   unchecked_button: css`
     background-color: ${({ theme }) => theme.colors.bg_gray};
     color: ${({ theme }) => theme.colors.txt_beige};
+    display:flex;
+    align-items: center;
   `,
+  
 
   checked_button_brown: css`
     background-color: ${({ theme }) => theme.colors.bg_brown};
     color: ${({ theme }) => theme.colors.txt_white};
+    display:flex;
+    align-items: center;
   `,
 
   checked_button_beige: css`
     background-color: ${({ theme }) => theme.colors.bg_beige};
     color: ${({ theme }) => theme.colors.txt_brown};
+    
   `,
 
   button_large_brown: css`
@@ -24,6 +30,12 @@ const VARIANT_STYLES = {
   button_large_green: css`
     background-color: ${({ theme }) => theme.colors.bg_green};
     color: ${({ theme }) => theme.colors.txt_white};
+  `,
+
+  button_large_gray: css`
+    background-color: ${({ theme }) => theme.colors.bg_dark_gray};
+    color: ${({ theme }) => theme.colors.txt_white};
+    
   `,
 };
 

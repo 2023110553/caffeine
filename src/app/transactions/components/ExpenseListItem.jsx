@@ -15,12 +15,6 @@ function ExpenseListItem({
     category,
   } = transaction;
 
-  const badgeLabel =
-    category === "business"
-      ? "사업"
-      : category === "personal"
-        ? "의제매입"
-        : null;
 
   return (
     <Card>
@@ -36,11 +30,9 @@ function ExpenseListItem({
           </TextGroup>
         </TransactionInfo>
 
-        {badgeLabel && (
-          <CategoryBadge $variant={category}>
-            {badgeLabel}
-          </CategoryBadge>
-        )}
+        {transaction.isDeemed && (
+  <DeemedBadge>의제매입</DeemedBadge>
+)}
       </CardTop>
 
       <Amount>{amount.toLocaleString()}원</Amount>
@@ -251,6 +243,22 @@ const ButtonRow = styled.div`
     padding: 8px 0;
     border-radius: 12px;
   }
+`;
+const DeemedBadge = styled.span`
+  flex-shrink: 0;
+  padding: 2px 8px;
+
+  color: #2E6B47;
+  background: #E8F2EC;
+
+  border-radius: 6px;
+
+  font-family: "Outfit";
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1rem;
+
+  white-space: nowrap;
 `;
 
 export default ExpenseListItem;
