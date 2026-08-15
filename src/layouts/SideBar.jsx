@@ -8,6 +8,7 @@ const MENU_ROUTE_MAP = {
   "지출 내역 분류": ROUTES.TRANSACTIONS_REVIEW,
   "AI 세무 챗봇": ROUTES.CHAT,
   "인건비 관리": ROUTES.PAYROLL,
+  "설정": ROUTES.SETUP_BUSINESS,
 };
 
 const MENUS = [

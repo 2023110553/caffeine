@@ -4,6 +4,7 @@ import TransactionReviewPage from "../app/transactions/TransactionReviewPage";
 import ChatPage from "../app/chat/ChatPage";
 import PayrollPage from "../app/payroll/PayrollPage";
 import DashboardPage from "../app/dashboard/DashboardPage";
+import SetupPage from "../app/setup/SetupPage";
 import ComponentPreviewPage from "../dev/ComponentPreviewPage"; // ⚠️ 임시 — 커밋 전 삭제
 
 function Router() {
@@ -13,7 +14,7 @@ function Router() {
       <Route path="/app" element={<AppLayout />}>
         {/* 아직 페이지 없음 — Phase 2~5에서 하나씩 채워질 자리 */}
         {/* <Route index element={<DashboardPage />} /> */}
-        {/* <Route path="setup/business" element={<BusinessSetupPage />} /> */}
+        <Route path="setup/business" element={<SetupPage />} />
         {/* <Route path="setup/auth" element={<AuthSetupPage />} /> */}
         <Route path="dashboard" element={<DashboardPage />} />
         <Route path="transactions/review" element={<TransactionReviewPage />} />
