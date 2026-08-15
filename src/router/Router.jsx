@@ -3,6 +3,7 @@ import AppLayout from "../layouts/AppLayout";
 import TransactionReviewPage from "../app/transactions/TransactionReviewPage";
 import ChatPage from "../app/chat/ChatPage";
 import PayrollPage from "../app/payroll/PayrollPage";
+import DashboardPage from "../app/dashboard/DashboardPage";
 import ComponentPreviewPage from "../dev/ComponentPreviewPage"; // ⚠️ 임시 — 커밋 전 삭제
 
 function Router() {
@@ -14,7 +15,7 @@ function Router() {
         {/* <Route index element={<DashboardPage />} /> */}
         {/* <Route path="setup/business" element={<BusinessSetupPage />} /> */}
         {/* <Route path="setup/auth" element={<AuthSetupPage />} /> */}
-        {/* <Route path="dashboard" element={<DashboardPage />} /> */}
+        <Route path="dashboard" element={<DashboardPage />} />
         <Route path="transactions/review" element={<TransactionReviewPage />} />
         {/* <Route path="closing/:month" element={<ClosingPage />} /> */}
         <Route path="chat" element={<ChatPage />} />
