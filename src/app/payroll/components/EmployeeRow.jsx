@@ -2,20 +2,19 @@ import styled from "styled-components";
 import Input from "../../../components/Input";
 
 const EMPLOYMENT_TYPE_LABEL = {
-  regular: "4대보험 정직원",
-  parttime: "단시간 근로자 (주 15시간 미만)",
-  freelancer: "3.3% 프리랜서",
+  REGULAR: "4대보험 정직원",
+  PART_TIME: "단시간 근로자 (주 15시간 미만)",
+  FREELANCER: "3.3% 프리랜서",
 };
 
 const DETAIL_BUTTON_LABEL = {
-  regular: "임금명세서 상세",
-  parttime: "임금명세서 상세",
-  freelancer: "지급내역서 상세",
+  REGULAR: "임금명세서 상세",
+  PART_TIME: "임금명세서 상세",
+  FREELANCER: "지급내역서 상세",
 };
 
 function EmployeeRow({ employee, onUpdate }) {
-  const { id, name, employeeNumber, employmentType, hourlyWage, monthlyHours, withholdingTax, withholdingNote } = employee;
-  const grossPay = hourlyWage * monthlyHours;
+  const { employee_id, name, employment_type, hourly_wage, monthly_contracted_hours, grossPay, withholdingTax, withholdingNote } = employee;
   const hasTaxOwed = withholdingTax > 0;
 
   return (
@@ -24,14 +23,14 @@ function EmployeeRow({ employee, onUpdate }) {
         <Avatar>{name[0]}</Avatar>
         <NameGroup>
           <Name>{name}</Name>
-          <EmployeeNumber>직원 #{employeeNumber}</EmployeeNumber>
+          <EmployeeNumber>직원 #{employee_id}</EmployeeNumber>
         </NameGroup>
       </NameArea>
 
       <TypeArea>
         <TypeSelect
-          value={employmentType}
-          onChange={(e) => onUpdate(id, "employmentType", e.target.value)}
+          value={employment_type}
+          onChange={(e) => onUpdate(employee_id, "employment_type", e.target.value)}
         >
           {Object.entries(EMPLOYMENT_TYPE_LABEL).map(([value, label]) => (
             <option key={value} value={value}>
@@ -45,8 +44,8 @@ function EmployeeRow({ employee, onUpdate }) {
         <Input
           type="number"
           unit="시간"
-          value={monthlyHours}
-          onChange={(e) => onUpdate(id, "monthlyHours", Number(e.target.value))}
+          value={monthly_contracted_hours}
+          onChange={(e) => onUpdate(employee_id, "monthly_contracted_hours", Number(e.target.value))}
         />
       </HoursArea>
 
@@ -54,8 +53,8 @@ function EmployeeRow({ employee, onUpdate }) {
         <Input
           type="number"
           unit="원"
-          value={hourlyWage}
-          onChange={(e) => onUpdate(id, "hourlyWage", Number(e.target.value))}
+          value={hourly_wage}
+          onChange={(e) => onUpdate(employee_id, "hourly_wage", Number(e.target.value))}
         />
       </WageArea>
 
@@ -66,7 +65,7 @@ function EmployeeRow({ employee, onUpdate }) {
 
       <DetailButtonArea>
         <DetailButton type="button">
-          📄 {DETAIL_BUTTON_LABEL[employmentType]} &gt;
+          📄 {DETAIL_BUTTON_LABEL[employment_type]} &gt;
         </DetailButton>
       </DetailButtonArea>
 

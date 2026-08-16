@@ -23,7 +23,7 @@ function EmployeeTable({ employees, onUpdateEmployee }) {
       <RowList>
         {employees.map((emp) => (
           <EmployeeRow
-            key={emp.id}
+            key={emp.employee_id}
             employee={emp}
             onUpdate={onUpdateEmployee}
           />
