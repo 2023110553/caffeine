@@ -6,12 +6,12 @@ function ExpenseListItem({
   onCategoryChange,
 }) {
   const {
-    id,
+    transaction_id,
     icon,
-    merchant,
+    merchant_name,
     memo,
     date,
-    amount,
+    total_amount,
     category,
   } = transaction;
 
@@ -23,19 +23,19 @@ function ExpenseListItem({
           <IconBox>{icon}</IconBox>
 
           <TextGroup>
-            <Merchant>{merchant}</Merchant>
+            <Merchant>{merchant_name}</Merchant>
             <Memo>
               {memo} · {date}
             </Memo>
           </TextGroup>
         </TransactionInfo>
 
-        {transaction.isDeemed && (
-  <DeemedBadge>의제매입</DeemedBadge>
-)}
+        {transaction.is_deemed && (
+          <DeemedBadge>의제매입</DeemedBadge>
+        )}
       </CardTop>
 
-      <Amount>{amount.toLocaleString()}원</Amount>
+      <Amount>{total_amount.toLocaleString()}원</Amount>
 
       <ButtonRow>
         <Button
@@ -46,7 +46,7 @@ function ExpenseListItem({
           }
           size="small"
           onClick={() =>
-            onCategoryChange(id, "business")
+            onCategoryChange(transaction_id, "business")
           }
         >
           {category === "business"
@@ -62,7 +62,7 @@ function ExpenseListItem({
           }
           size="small"
           onClick={() =>
-            onCategoryChange(id, "personal")
+            onCategoryChange(transaction_id, "personal")
           }
         >
           {category === "personal"
