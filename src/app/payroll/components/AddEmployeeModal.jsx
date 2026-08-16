@@ -6,17 +6,17 @@ import Button from "../../../components/Button";
 
 const EMPLOYMENT_TYPES = [
   {
-    value: "regular",
+    value: "REGULAR", // TODO: 백엔드 실제 enum 값 확인 필요
     label: "4대보험 정직원",
     desc: "국민연금·건강·고용·산재보험 가입",
   },
   {
-    value: "parttime",
+    value: "PART_TIME",
     label: "단시간 근로자 (주 15시간 미만)",
     desc: "4대보험 중 일부 적용 제외, 주휴수당 없음",
   },
   {
-    value: "freelancer",
+    value: "FREELANCER", // TODO: 백엔드 실제 enum 값 확인 필요
     label: "3.3% 프리랜서",
     desc: "사업소득세 3.3% 원천징수",
   },
@@ -24,11 +24,12 @@ const EMPLOYMENT_TYPES = [
 
 const INITIAL_FORM = {
   name: "",
-  employmentType: "regular",
-  hourlyWage: 10320,
-  monthlyHours: "",
-  residentIdFront: "",
-  employmentInsurance: false,
+  employment_type: "REGULAR",
+  hourly_wage: 10320,
+  monthly_contracted_hours: "",
+  work_started_at: "", // TODO: 폼에 입사일 입력 필드(date input) 추가 필요 - 현재 UI엔 없음
+  resident_id_front: "", // TODO: 실제 API 필드명 백엔드 확인 필요, 어느 엔드포인트에서 쓰이는지도 미확인
+  is_employment_insured: false, // TODO: 실제 API 필드명 백엔드 확인 필요
 };
 
 function AddEmployeeModal({ open, onClose, onSubmit }) {
@@ -41,23 +42,19 @@ function AddEmployeeModal({ open, onClose, onSubmit }) {
     }));
   };
 
-  const isValid = form.name.trim() && form.hourlyWage && form.monthlyHours;
+  const isValid = form.name.trim() && form.hourly_wage && form.monthly_contracted_hours;
 
   const handleSubmit = () => {
     if (!isValid) return;
 
-    const withholdingTax =
-      form.employmentType === "freelancer"
-        ? Math.round(form.hourlyWage * form.monthlyHours * 0.033)
-        : 0;
+    
 
     onSubmit({
       name: form.name,
-      employmentType: form.employmentType,
-      hourlyWage: form.hourlyWage,
-      monthlyHours: form.monthlyHours,
-      withholdingTax,
-      withholdingNote: form.employmentType === "freelancer" ? "3.3%" : null,
+      employment_type: form.employment_type,
+      hourly_wage: form.hourly_wage,
+      monthly_contracted_hours: form.monthly_contracted_hours,
+      work_started_at: form.work_started_at || new Date().toISOString().slice(0, 10),
     });
 
     setForm(INITIAL_FORM);
@@ -88,14 +85,14 @@ function AddEmployeeModal({ open, onClose, onSubmit }) {
 
             <TypeCardList>
               {EMPLOYMENT_TYPES.map((type) => {
-                const selected = form.employmentType === type.value;
+                const selected = form.employment_type === type.value;
 
                 return (
                   <TypeCard
                     key={type.value}
                     type="button"
                     $selected={selected}
-                    onClick={() => handleChange("employmentType", type.value)}
+                    onClick={() => handleChange("employment_type", type.value)}
                   >
                     <Radio $selected={selected}>
                       {selected && <RadioDot />}
@@ -115,29 +112,29 @@ function AddEmployeeModal({ open, onClose, onSubmit }) {
               })}
             </TypeCardList>
           </FieldGroup>
-                      {form.employmentType === "parttime" && (
+                      {form.employment_type === "PART_TIME" && (
               <InsuranceOption
                 type="button"
-                $checked={form.employmentInsurance}
+                $checked={form.is_employment_insured}
                 onClick={() =>
-                  handleChange("employmentInsurance", !form.employmentInsurance)
+                  handleChange("is_employment_insured", !form.is_employment_insured)
                 }
               >
-                <CheckBox $checked={form.employmentInsurance}>
-                  {form.employmentInsurance && "✓"}
+                <CheckBox $checked={form.is_employment_insured}>
+                  {form.is_employment_insured && "✓"}
                 </CheckBox>
 
                 <InsuranceContent>
-                  <InsuranceTitle $checked={form.employmentInsurance}>
+                  <InsuranceTitle $checked={form.is_employment_insured}>
                     근로계약 기간 3개월 이상 (고용보험 적용 대상)
                   </InsuranceTitle>
 
-                  <InsuranceDesc $checked={form.employmentInsurance}>
+                  <InsuranceDesc $checked={form.is_employment_insured}>
                     근로계약서 상 계약기간이 3개월 이상(또는 기간의 정함이 없는
                     경우)이면 고용보험 가입 대상입니다.
                   </InsuranceDesc>
 
-                  {form.employmentInsurance && (
+                  {form.is_employment_insured && (
                     <InsuranceIncluded>
                       <SmallCheck>✓</SmallCheck>
                       고용보험료가 급여 계산에 포함됩니다.
@@ -154,9 +151,9 @@ function AddEmployeeModal({ open, onClose, onSubmit }) {
                 required
                 type="number"
                 unit="원"
-                value={form.hourlyWage}
+                value={form.hourly_wage}
                 onChange={(e) =>
-                  handleChange("hourlyWage", Number(e.target.value))
+                  handleChange("hourly_wage", Number(e.target.value))
                 }
               />
 
@@ -170,9 +167,9 @@ function AddEmployeeModal({ open, onClose, onSubmit }) {
                 type="number"
                 unit="시간"
                 placeholder="예: 209"
-                value={form.monthlyHours}
+                value={form.monthly_contracted_hours}
                 onChange={(e) =>
-                  handleChange("monthlyHours", Number(e.target.value))
+                  handleChange("monthly_contracted_hours", Number(e.target.value))
                 }
               />
 
@@ -188,8 +185,8 @@ function AddEmployeeModal({ open, onClose, onSubmit }) {
 
             <Input
               placeholder="990101-1******"
-              value={form.residentIdFront}
-              onChange={(e) => handleChange("residentIdFront", e.target.value)}
+              value={form.resident_id_front}
+              onChange={(e) => handleChange("resident_id_front", e.target.value)}
             />
 
             <HelperText>

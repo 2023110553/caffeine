@@ -43,7 +43,7 @@ function ExpenseList({ transactions, summary, onCategoryChange }) {
       <CardGrid>
         {transactions.map((tx) => (
           <ExpenseListItem
-            key={tx.id}
+            key={tx.transaction_id}
             transaction={tx}
             onCategoryChange={onCategoryChange}
           />

@@ -13,8 +13,8 @@ export const confirmDeduction = (transactionId, data) =>
   client.patch(`/tax/deductions/${transactionId}/`, data);
 
 // 예상 부가세 조회
-export const getVatForecast = (month) =>
-  client.get(`/tax/vat-forecast/`, { params: { month } });
+export const getVatForecast = (businessId, year, month) =>
+  client.get(`/tax/vat-forecast/`, { params: { business_id: businessId, year, month } });
 
 // 월 마감 요약
 export const getClosingSummary = (month) =>

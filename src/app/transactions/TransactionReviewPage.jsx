@@ -7,124 +7,124 @@ import TaxImpactPanel from "./components/TaxImpactPanel";
 
 const MOCK_TRANSACTIONS = [
   {
-    id: 1,
+    transaction_id: 1,
     icon: "🥛",
-    merchant: "서울우유 대리점",
+    merchant_name: "서울우유 대리점",
     memo: "식자재",
     date: "8월 8일",
-    amount: 850000,
+    total_amount: 850000,
     category: null,
-    isDeemed: true,
+    is_deemed: true, // TODO: 실제 API 필드명 백엔드 확인 필요 - 명세서에서 근거 못 찾음
   },
   {
-    id: 2,
+    transaction_id: 2,
     icon: "🛒",
-    merchant: "신세계 마트",
+    merchant_name: "신세계 마트",
     memo: "식자재·소모품",
     date: "8월 7일",
-    amount: 320000,
+    total_amount: 320000,
     category: null,
-    isDeemed: false,
+    is_deemed: false,
   },
   {
-    id: 3,
+    transaction_id: 3,
     icon: "🏪",
-    merchant: "GS25 편의점",
+    merchant_name: "GS25 편의점",
     memo: "개인구매",
     date: "8월 6일",
-    amount: 12500,
+    total_amount: 12500,
     category: null,
-    isDeemed: false,
+    is_deemed: false,
   },
   {
-    id: 4,
+    transaction_id: 4,
     icon: "⚡",
-    merchant: "한국전력공사",
+    merchant_name: "한국전력공사",
     memo: "전기요금",
     date: "8월 5일",
-    amount: 278000,
+    total_amount: 278000,
     category: null,
-    isDeemed: false,
+    is_deemed: false,
   },
   {
-    id: 5,
+    transaction_id: 5,
     icon: "📦",
-    merchant: "쿠팡 비즈니스",
+    merchant_name: "쿠팡 비즈니스",
     memo: "사무용품",
     date: "8월 4일",
-    amount: 95400,
+    total_amount: 95400,
     category: null,
-    isDeemed: false,
+    is_deemed: false,
   },
   {
-    id: 6,
+    transaction_id: 6,
     icon: "🎬",
-    merchant: "넷플릭스 코리아",
+    merchant_name: "넷플릭스 코리아",
     memo: "구독",
     date: "8월 3일",
-    amount: 17000,
+    total_amount: 17000,
     category: null,
-    isDeemed: false,
+    is_deemed: false,
   },
   {
-    id: 7,
+    transaction_id: 7,
     icon: "☕",
-    merchant: "더치트커피 원두",
+    merchant_name: "더치트커피 원두",
     memo: "원두·재료",
     date: "8월 2일",
-    amount: 430000,
+    total_amount: 430000,
     category: null,
-    isDeemed: true,
+    is_deemed: true,
   },
   {
-    id: 8,
+    transaction_id: 8,
     icon: "💳",
-    merchant: "카카오페이 수수료",
+    merchant_name: "카카오페이 수수료",
     memo: "결제수수료",
     date: "8월 1일",
-    amount: 22300,
+    total_amount: 22300,
     category: null,
-    isDeemed: false,
+    is_deemed: false,
   },
   {
-    id: 9,
+    transaction_id: 9,
     icon: "🧴",
-    merchant: "올리브영",
+    merchant_name: "올리브영",
     memo: "개인용품",
     date: "7월 31일",
-    amount: 38000,
+    total_amount: 38000,
     category: null,
-    isDeemed: false,
+    is_deemed: false,
   },
   {
-    id: 10,
+    transaction_id: 10,
     icon: "📡",
-    merchant: "KT 인터넷",
+    merchant_name: "KT 인터넷",
     memo: "통신비",
     date: "7월 30일",
-    amount: 55000,
+    total_amount: 55000,
     category: null,
-    isDeemed: false,
+    is_deemed: false,
   },
   {
-    id: 11,
+    transaction_id: 11,
     icon: "🏬",
-    merchant: "이마트 트레이더스",
+    merchant_name: "이마트 트레이더스",
     memo: "식자재",
     date: "7월 29일",
-    amount: 512000,
+    total_amount: 512000,
     category: null,
-    isDeemed: false,
+    is_deemed: false,
   },
   {
-    id: 12,
+    transaction_id: 12,
     icon: "📣",
-    merchant: "배달의민족 광고",
+    merchant_name: "배달의민족 광고",
     memo: "마케팅",
     date: "7월 28일",
-    amount: 180000,
+    total_amount: 180000,
     category: null,
-    isDeemed: false,
+    is_deemed: false,
   },
 ];
 
@@ -134,7 +134,7 @@ function TransactionReviewPage() {
   const handleCategoryChange = (id, category) => {
     setTransactions((prev) =>
       prev.map((tx) =>
-        tx.id === id
+        tx.transaction_id === id
           ? {
               ...tx,
               category: tx.category === category ? null : category,
@@ -156,7 +156,7 @@ function TransactionReviewPage() {
       if (!result[key]) return;
 
       result[key].count += 1;
-      result[key].total += tx.amount;
+      result[key].total += tx.total_amount;
     });
 
     return result;
@@ -170,10 +170,10 @@ function TransactionReviewPage() {
     transactions.forEach((tx) => {
       if (tx.category !== "business") return;
 
-      if (tx.isDeemed) {
-        deemedInputTax += Math.round(tx.amount * (9 / 109));
+      if (tx.is_deemed) {
+        deemedInputTax += Math.round(tx.total_amount * (9 / 109));
       } else {
-        normalInputTax += Math.round(tx.amount * 0.1);
+        normalInputTax += Math.round(tx.total_amount * 0.1);
       }
     });
 
