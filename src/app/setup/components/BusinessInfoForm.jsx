@@ -73,10 +73,12 @@ function BusinessInfoForm({ form, onChange, onSubmit }) {
 const Card = styled.div`
   display: flex;
   flex-direction: column;
+  align-self: stretch;
   gap: 20px; /* TODO: design token화 */
   background-color: ${({ theme }) => theme.colors.card_white};
   border: 0.8px solid #eae0d2; /* TODO: theme.js에 없는 값 */
   border-radius: ${({ theme }) => theme.radius.large};
+  box-shadow: 0 1px 4px 0 rgba(61, 37, 30, 0.05);
   padding: 20px; /* TODO: design token화 */
 `;
 

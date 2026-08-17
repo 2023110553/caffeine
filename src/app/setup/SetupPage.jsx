@@ -94,9 +94,11 @@ const ColumnGrid = styled.div`
   min-height: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px; /* TODO: design token화 */
+  row-gap: 20px; /* TODO: design token화 */
+  column-gap: 20px; /* TODO: design token화 */
   align-items: start;
-  padding: 20px 28px 28px; /* TODO: design token화 */
+  align-self: stretch;
+  padding: 24px; /* 피그마 스펙 */
 `;
 
 const Title = styled.h1`
