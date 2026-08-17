@@ -1,57 +1,90 @@
 import styled from "styled-components";
 import Button from "../../../components/Button";
+import lightningIcon from "../../../assets/lightningIcon.svg";
+import cardIcon from "../../../assets/cardIcon.svg";
+import checkCircleIcon from "../../../assets/checkCircleIcon.svg";
 
 function MembershipCard({ membership, onChangePayment, onCancelSubscription }) {
   const { planName, price, billingDate, nextBillingDate, dDay, paymentMethod, benefits } = membership;
 
   return (
     <Card>
-      <CardHeader>
-        <TitleGroup>
+      <CardHeader> 
+        <TitleRow>
           <Title>이용 플랜 및 멤버십</Title>
-          <Description>현재 이용 중인 구독 요금제와 결제 정보를 관리합니다</Description>
-        </TitleGroup>
-        <StatusBadge>● 구독 이용 중</StatusBadge>
+          <StatusBadge>
+            <StatusDot />
+            구독 이용 중
+          </StatusBadge>
+        </TitleRow>
+        <Description>현재 이용 중인 구독 요금제와 결제 정보를 관리합니다</Description>
       </CardHeader>
 
-      <PlanBox>
-        <PlanRow>
-          <PlanBadge>⚡ PRO</PlanBadge>
-          <PriceGroup>
-            <Price>월 {price.toLocaleString()}원</Price>
-            <PriceNote>{billingDate} 자동결제</PriceNote>
-          </PriceGroup>
-        </PlanRow>
-        <PlanName>{planName}</PlanName>
+      <CardBody>
+        <PlanBox>
+          
+          <PlanRow>
+            <PlanGroup>
+              <PlanBadgeWrapper>
+                <PlanBadge>
+                  <LightningIcon src={lightningIcon} alt="" />
+                  PRO
+                </PlanBadge>
+              </PlanBadgeWrapper>
+              <PlanName>{planName}</PlanName>
+            </PlanGroup>
+            <PriceGroup>
+              <Price>월 {price.toLocaleString()}원</Price>
+              <PriceNote>{billingDate} 자동결제</PriceNote>
+            </PriceGroup>
+          </PlanRow>
 
-        <InfoList>
-          <InfoRow>
-            <InfoLabel>다음 결제 예정일</InfoLabel>
-            <InfoValue>
-              {nextBillingDate} <DDayBadge>{dDay}일 남음</DDayBadge>
-            </InfoValue>
-          </InfoRow>
-          <InfoRow>
-            <InfoLabel>결제 수단</InfoLabel>
-            <InfoValue>💳 {paymentMethod}</InfoValue>
-          </InfoRow>
-        </InfoList>
+          <DividerWrapper>
+            <Divider />
+          </DividerWrapper>
 
-        <BenefitList>
-          {benefits.map((benefit) => (
-            <BenefitItem key={benefit}>✓ {benefit}</BenefitItem>
-          ))}
-        </BenefitList>
-      </PlanBox>
+          <InfoList>
+            <InfoRow>
+              <InfoLabel>다음 결제 예정일</InfoLabel>
+              <InfoValue>
+                <DateValue>{nextBillingDate}</DateValue>
+                <DDayBadge>{dDay}일 남음</DDayBadge>
+              </InfoValue>
+            </InfoRow>
+            <InfoRow>
+              <InfoLabel>결제 수단</InfoLabel>
+              <InfoValue>
+                <CardIcon src={cardIcon} alt="" />
+                <PaymentMethodText>{paymentMethod}</PaymentMethodText>
+              </InfoValue>
+            </InfoRow>
+          </InfoList>
 
-      <ButtonRow>
-        <Button variant="unchecked_button" onClick={onChangePayment}>
-          💳  결제 수단 변경
-        </Button>
-        <Button variant="unchecked_button" onClick={onCancelSubscription}>
-          구독 취소
-        </Button>
-      </ButtonRow>
+          <DividerWrapper>
+            <Divider />
+          </DividerWrapper>
+
+          <BenefitList>
+            {benefits.map((benefit) => (
+              <BenefitItem key={benefit}>
+                <CheckIconWrapper>
+                  <CheckIcon src={checkCircleIcon} alt="" />
+                </CheckIconWrapper>
+                <BenefitText>{benefit}</BenefitText>
+              </BenefitItem>
+            ))}
+          </BenefitList>
+        </PlanBox>
+
+        <ButtonRow>
+          <Button variant="unchecked_button" onClick={onChangePayment}>
+            💳  결제 수단 변경
+          </Button>
+          <Button variant="unchecked_button" onClick={onCancelSubscription}>
+            구독 취소
+          </Button>
+        </ButtonRow>
+      </CardBody>
     </Card>
   );
 }
@@ -59,152 +92,339 @@ function MembershipCard({ membership, onChangePayment, onCancelSubscription }) {
 const Card = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 16px; /* TODO: design token화 */
+  align-self: stretch;
   background-color: ${({ theme }) => theme.colors.card_white};
   border: 0.8px solid #eae0d2; /* TODO: theme.js에 없는 값 */
   border-radius: ${({ theme }) => theme.radius.large};
-  padding: 20px; /* TODO: design token화 */
+  box-shadow: 0 1px 4px 0 rgba(61, 37, 30, 0.05);
 `;
 
 const CardHeader = styled.div`
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: flex-start;
+  align-self: stretch;
+  padding: 20px 24px 16px 24px; /* 피그마 스펙 */
+  border-bottom: 0.8px solid #f0e8da; /* TODO: theme.js에 없는 값 */
 `;
 
-const TitleGroup = styled.div`
+const TitleRow = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 4px; /* TODO: design token화 */
+  justify-content: space-between;
+  align-items: center;
+  align-self: stretch;
 `;
 
 const Title = styled.h2`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   color: ${({ theme }) => theme.colors.txt_brown};
-  font-size: 16px; /* TODO: design token화 */
+  font-family: var(--Font-familiy-Noto, "Noto Sans KR");
+  font-size: 14.5px; /* TODO: design token화 */
   font-weight: 700;
+  line-height: 21.75px; /* TODO: design token화 - 150% */
+  letter-spacing: -0.145px; /* TODO: design token화 */
 `;
 
 const Description = styled.p`
-  color: ${({ theme }) => theme.colors.txt_beige};
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-top: 4px; /* TODO: design token화 */
+  color: #a07860; /* TODO: theme.js에 없는 값 */
+  font-family: var(--Font-familiy-Noto, "Noto Sans KR");
   font-size: 12px; /* TODO: design token화 */
+  font-weight: 400;
+  line-height: 18px; /* TODO: design token화 - 150% */
 `;
 
 const StatusBadge = styled.span`
+  display: flex;
+  align-items: center;
+  gap: 5px; /* TODO: design token화 */
   flex-shrink: 0;
-  background-color: #eaf6ee; /* TODO: theme.js에 없는 값 */
-  color: #2a6347; /* TODO: theme.js에 없는 값 */
-  border-radius: 999px;
+  background-color: #ecfdf5; /* TODO: theme.js에 없는 값 */
+  color: #059669; /* TODO: theme.js에 없는 값 (Functional-Success) */
+  border-radius: 7px; /* TODO: theme.js에 없는 값 (기존 radius 토큰과 불일치) */
   padding: 4px 10px; /* TODO: design token화 */
-  font-size: 11px; /* TODO: design token화 */
-  font-weight: 600;
+  font-family: var(--Font-familiy-Noto, "Noto Sans KR");
+  font-size: 11.5px; /* TODO: design token화 */
+  font-weight: 700;
+  line-height: 17.25px; /* TODO: design token화 - 150% */
+`;
+
+const StatusDot = styled.span`
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background-color: #059669; /* TODO: theme.js에 없는 값 (Functional-Success) */
+`;
+
+const CardBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: stretch;
+  height: 489.25px;
+  padding: 18px 24px;
+  gap: 16px; /* TODO: design token화 */
 `;
 
 const PlanBox = styled.div`
   display: flex;
   flex-direction: column;
-  background-color: ${({ theme }) => theme.colors.bg_gray};
+  align-self: stretch;
+  flex-shrink: 0;
+  height: 395.65px;
+  background-color: #f3eee6; /* TODO: theme.js에 없는 값 */
+  border: 0.8px solid #e2d5c3; /* TODO: theme.js에 없는 값 */
   border-radius: ${({ theme }) => theme.radius.medium_large};
-  padding: 18px; /* TODO: design token화 */
 `;
 
 const PlanRow = styled.div`
   display: flex;
+  height: 87.275px;
   justify-content: space-between;
   align-items: flex-start;
+  flex-shrink: 0;
+  padding: 18px 20px 20px 20px; /* 피그마 스펙 */
+`;
+
+const DividerWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: stretch;
+  padding: 0 20px;
+`;
+
+const Divider = styled.div`
+  height: 1px;
+  align-self: stretch;
+  background-color: #d9cabf; /* TODO: theme.js에 없는 값 */
+`;
+
+const PlanGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-shrink: 0;
+`;
+
+const PlanBadgeWrapper = styled.div`
+  display: flex;
+  padding: 2.525px 44.738px 7.75px 0;
+  align-items: center;
+  align-self: stretch;
+`;
+
+const LightningIcon = styled.img`
+  flex-shrink: 0;
+  width: 9px;
+  height: 10px;
+  object-fit: contain;
+`;
+
+const CardIcon = styled.img`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+`;
+
+const CheckIconWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 14px;
+  height: 15px;
+  padding-top: 1px;
+`;
+
+const CheckIcon = styled.img`
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
 `;
 
 const PlanBadge = styled.span`
+  display: flex;
+  align-items: center;
+  gap: 5px; /* TODO: design token화 */
   background-color: ${({ theme }) => theme.colors.bg_brown};
   color: ${({ theme }) => theme.colors.txt_white};
-  border-radius: ${({ theme }) => theme.radius.small};
-  padding: 3px 8px; /* TODO: design token화 */
-  font-size: 11px; /* TODO: design token화 */
+  border-radius: 6px; /* TODO: theme.js에 없는 값 (기존 radius 토큰과 불일치) */
+  padding: 2px 9px; /* TODO: design token화 */
+  font-family: var(--Font-familiy-Noto, "Noto Sans KR");
+  font-size: 10.5px; /* TODO: design token화 */
   font-weight: 700;
+  line-height: 15.75px; /* TODO: design token화 - 150% */
+  letter-spacing: 0.42px; /* TODO: design token화 */
 `;
 
 const PriceGroup = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  padding-top: 2px; /* TODO: design token화 */
+  flex-shrink: 0;
 `;
 
 const Price = styled.span`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  align-self: stretch;
   color: ${({ theme }) => theme.colors.txt_brown};
-  font-size: 18px; /* TODO: design token화 */
-  font-weight: 800;
+  text-align: right;
+  font-family: var(--Font-familiy-Noto, "Noto Sans KR");
+  font-size: 16px; /* TODO: design token화 */
+  font-weight: 700;
+  line-height: 24px; /* TODO: design token화 - 150% */
+  letter-spacing: -0.16px; /* TODO: design token화 */
 `;
 
 const PriceNote = styled.span`
-  color: ${({ theme }) => theme.colors.txt_beige};
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding-top: 2px; /* TODO: design token화 */
+  color: #a07860; /* TODO: theme.js에 없는 값 */
+  text-align: right;
+  font-family: var(--Font-familiy-Noto, "Noto Sans KR");
   font-size: 11px; /* TODO: design token화 */
+  font-weight: 400;
+  line-height: 16.5px; /* TODO: design token화 - 150% */
 `;
 
 const PlanName = styled.p`
-  margin-top: 6px; /* TODO: design token화 */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: stretch;
   color: ${({ theme }) => theme.colors.txt_brown};
-  font-size: 17px; /* TODO: design token화 */
+  font-family: var(--Font-familiy-Noto, "Noto Sans KR");
+  font-size: 19px; /* TODO: design token화 */
   font-weight: 700;
+  line-height: 22.8px; /* TODO: design token화 - 120% */
+  letter-spacing: -0.38px; /* TODO: design token화 */
 `;
 
 const InfoList = styled.div`
   display: flex;
+  padding: 14px 20px;
   flex-direction: column;
-  gap: 10px; /* TODO: design token화 */
-  margin-top: 16px; /* TODO: design token화 */
-  padding-top: 16px; /* TODO: design token화 */
-  border-top: 0.8px solid #e0d5c5; /* TODO: theme.js에 없는 값 */
+  align-items: flex-start;
+  gap: 10px;
+  align-self: stretch;
 `;
 
 const InfoRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  align-self: stretch;
 `;
 
 const InfoLabel = styled.span`
-  color: ${({ theme }) => theme.colors.txt_beige};
-  font-size: 12.5px; /* TODO: design token화 */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: #9e7060; /* TODO: theme.js에 없는 값 */
+  font-family: var(--Font-familiy-Noto, "Noto Sans KR");
+  font-size: 12px; /* TODO: design token화 */
+  font-weight: 400;
+  line-height: 18px; /* TODO: design token화 - 150% */
 `;
 
 const InfoValue = styled.span`
   display: flex;
   align-items: center;
-  gap: 6px; /* TODO: design token화 */
+  gap: 7px; /* TODO: design token화 */
   color: ${({ theme }) => theme.colors.txt_brown};
   font-size: 12.5px; /* TODO: design token화 */
   font-weight: 600;
 `;
 
+const DateValue = styled.span`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: ${({ theme }) => theme.colors.txt_brown};
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12.5px; /* TODO: design token화 */
+  font-weight: 500;
+  line-height: 18.75px; /* TODO: design token화 - 150% */
+`;
+
+const PaymentMethodText = styled.span`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: ${({ theme }) => theme.colors.txt_brown};
+  font-family: var(--Font-familiy-Noto, "Noto Sans KR");
+  font-size: 12.5px; /* TODO: design token화 */
+  font-weight: 400;
+  line-height: 18.75px; /* TODO: design token화 - 150% */
+`;
+
 const DDayBadge = styled.span`
-  background-color: #fef6ec; /* TODO: theme.js에 없는 값 */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: #fef3c7; /* TODO: theme.js에 없는 값 */
   color: #b45309; /* TODO: theme.js에 없는 값 */
-  border-radius: 999px;
+  border-radius: 6px; /* TODO: theme.js에 없는 값 (기존 radius 토큰과 불일치) */
   padding: 2px 8px; /* TODO: design token화 */
+  font-family: var(--Font-familiy-Noto, "Noto Sans KR");
   font-size: 11px; /* TODO: design token화 */
   font-weight: 600;
+  line-height: 16.5px; /* TODO: design token화 - 150% */
 `;
 
 const BenefitList = styled.div`
   display: flex;
+  padding: 14px 20px 18px 20px;
   flex-direction: column;
-  gap: 8px; /* TODO: design token화 */
-  margin-top: 16px; /* TODO: design token화 */
-  padding-top: 16px; /* TODO: design token화 */
-  border-top: 0.8px solid #e0d5c5; /* TODO: theme.js에 없는 값 */
+  align-items: flex-start;
+  gap: 9px;
+  align-self: stretch;
 `;
 
 const BenefitItem = styled.p`
+  display: flex;
+  align-items: flex-start;
+  gap: 9px; /* TODO: design token화 */
+  align-self: stretch;
   color: ${({ theme }) => theme.colors.txt_brown};
   font-size: 12.5px; /* TODO: design token화 */
 `;
 
+const BenefitText = styled.span`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: ${({ theme }) => theme.colors.txt_brown};
+  font-family: var(--Font-familiy-Noto, "Noto Sans KR");
+  font-size: 12.5px; /* TODO: design token화 */
+  font-weight: 400;
+  line-height: 18.125px; /* TODO: design token화 - 145% */
+`;
+
 const ButtonRow = styled.div`
   display: flex;
+  align-self: stretch;
   gap: 8px; /* TODO: design token화 */
 
   > button {
     flex: 1;
     width: auto;
+    border: 0.8px solid #e2d5c3;
   }
 `;
 
