@@ -184,6 +184,8 @@ function TransactionReviewPage() {
     };
   }, [transactions]);
 
+  const [selectedFilter, setSelectedFilter] = useState("all");
+
   return (
     <Wrapper>
       <ExpenseHeader />
@@ -193,11 +195,17 @@ function TransactionReviewPage() {
           <ExpenseSummaryBanner
             unclassifiedCount={summary.unclassified.count}
             estimatedDeduction={taxSummary.estimatedVat}
+            summary={summary}
+            totalCount={transactions.length}
+            itemUnclassifiedCount={summary.unclassified.count}
+            selectedFilter={selectedFilter}
+            onFilterChange={setSelectedFilter}
           />
 
           <ExpenseList
             transactions={transactions}
             summary={summary}
+            selectedFilter={selectedFilter}
             onCategoryChange={handleCategoryChange}
           />
         </LeftColumn>

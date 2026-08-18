@@ -144,11 +144,17 @@ function TaxImpactPanel({
         size="large"
         onClick={handleButtonClick}
       >
-        {isSaved
-          ? "✓ 저장 완료!"
-          : isCompleted
-            ? "분류 완료 및 부가세 예측 반영하기"
-            : "미분류 내역 모두 분류하고 부가세 예측하기"}
+        {isSaved ? (
+          "✓ 저장 완료!"
+        ) : isCompleted ? (
+          "분류 완료 및 부가세 예측 반영하기"
+        ) : (
+          <>
+            품목 분류와 지출 선택 마치고
+            <br />
+            부가세 예측하기
+          </>
+        )}
       </Button>
       {/*절감예상 표시유무 */}
       {isCompleted && (
@@ -181,7 +187,6 @@ const Wrapper = styled.aside`
   > button {
     box-sizing: border-box;
     width: 100%;
-    height: 7.059vh;
     min-height: 7.059vh;
 
     margin-top: 2.353vh;
@@ -192,13 +197,9 @@ const Wrapper = styled.aside`
 
     box-shadow: 0 0.588vh 0.686vw rgba(61, 37, 30, 0.25);
 
-    font-family: "Outfit", sans-serif;
-    font-size: 0.875rem;
-    font-weight: 700;
-    line-height: 1.225rem;
+   
 
     text-align: center;
-    white-space: nowrap;
   }
 `;
 
