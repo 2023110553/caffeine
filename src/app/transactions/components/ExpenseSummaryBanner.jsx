@@ -46,9 +46,7 @@ function ExpenseSummaryBanner({
         <FilterButton onClick={() => onFilterChange("all")}>
           <Button
             variant={
-              selectedFilter === "all"
-                ? "filter_checked"
-                : "filter_unchecked"
+              selectedFilter === "all" ? "filter_checked" : "filter_unchecked"
             }
             size="filter"
           >
@@ -89,23 +87,19 @@ function ExpenseSummaryBanner({
           </Button>
         </FilterButton>
 
-        <FilterButton onClick={() => onFilterChange("unclassified")}>
-          <Button
-            variant={
-              itemUnclassifiedCount > 0
-                ? "item_unclassified"
-                : "item_classified"
-            }
-            size="filter"
+        <ItemFilterButton
+          $active={selectedFilter === "unclassified"}
+          $hasUnclassified={itemUnclassifiedCount > 0}
+          onClick={() => onFilterChange("unclassified")}
+        >
+          품목 미분류
+          <ItemCount
+            $active={selectedFilter === "unclassified"}
+            $hasUnclassified={itemUnclassifiedCount > 0}
           >
-            품목 미분류{" "}
-            <Count
-              $type={itemUnclassifiedCount > 0 ? "unclassified" : "classified"}
-            >
-              {itemUnclassifiedCount}
-            </Count>
-          </Button>
-        </FilterButton>
+            {itemUnclassifiedCount}
+          </ItemCount>
+        </ItemFilterButton>
       </FilterRow>
     </Container>
   );
@@ -234,7 +228,6 @@ const FilterButton = styled.div`
     line-height: 20px;
   }
 `;
-
 const Count = styled.span`
   padding: 2px 6px;
   border-radius: 6px;
@@ -245,18 +238,101 @@ const Count = styled.span`
   line-height: 12px;
 
   background-color: ${({ $active, $type }) => {
-    if ($type === "unclassified") return "#E07B54";
-    if ($type === "classified") return "rgba(255, 255, 255, 0.15)";
+    // 품목 미분류 있음
+    if ($type === "unclassified") {
+      return $active ? "#FFE2D7" : "#E07B54";
+    }
 
+    // 품목 미분류 0개
+    if ($type === "classified") {
+      return $active ? "#D9EAF4" : "#5687B7";
+    }
+
+    // 전체 / 사업 / 개인 버튼
     return $active ? "rgba(255, 255, 255, 0.15)" : "rgba(61, 37, 30, 0.09)";
   }};
 
   color: ${({ $active, $type }) => {
-    if ($type === "unclassified") return "#FFFFFF";
-    if ($type === "classified") return "#FFFFFF";
+    // 품목 미분류 있음
+    if ($type === "unclassified") {
+      return $active ? "#C05328" : "#FFFFFF";
+    }
 
+    // 품목 미분류 0개
+    if ($type === "classified") {
+      return $active ? "#5687B7" : "#FFFFFF";
+    }
+
+    // 전체 / 사업 / 개인 버튼
     return $active ? "#FDF9F3" : "#9B6E62";
   }};
 `;
+const ItemFilterButton = styled.button`
+  height: 36px;
 
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px 16px;
+
+  border: none;
+  border-radius: 12px;
+
+  font-family: Outfit, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+
+  cursor: pointer;
+
+  background-color: ${({ $active, $hasUnclassified }) => {
+    if ($hasUnclassified) {
+      if ($active) return "#E07B54";
+
+      return "#FFE2D7";
+    }
+
+    if ($active) return "#466A8A";
+
+    return "#7B9EC5";
+  }};
+
+  color: ${({ $active, $hasUnclassified }) => {
+    if ($hasUnclassified) {
+      if ($active) return "#FDF9F3";
+
+      return "#9B6E62";
+    }
+
+    return "#FDF9F3";
+  }};
+`;
+
+const ItemCount = styled.span`
+  padding: 2px 6px;
+  border-radius: 6px;
+
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 12px;
+
+  background-color: ${({ $active, $hasUnclassified }) => {
+    if ($hasUnclassified) {
+      if ($active) return "#FFE2D7";
+      return "#E07B54";
+    }
+
+    return "rgba(255, 255, 255, 0.15)";
+  }};
+
+  color: ${({ $active, $hasUnclassified }) => {
+    if ($hasUnclassified) {
+      if ($active) return "#98582A";
+      return "#FFF";
+    }
+
+    return "#FDF9F3";
+  }};
+`;
 export default ExpenseSummaryBanner;
