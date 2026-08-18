@@ -1,24 +1,79 @@
+import { useState } from "react";
 import styled from "styled-components";
 import Input from "../../../components/Input";
 
 const EMPLOYMENT_TYPE_LABEL = {
-  REGULAR: "4대보험 정직원",
+  FULL_TIME: "4대보험 정직원",
   PART_TIME: "단시간 근로자 (주 15시간 미만)",
   FREELANCER: "3.3% 프리랜서",
 };
 
 const DETAIL_BUTTON_LABEL = {
-  REGULAR: "임금명세서 상세",
+  FULL_TIME: "임금명세서 상세",
   PART_TIME: "임금명세서 상세",
   FREELANCER: "지급내역서 상세",
 };
 
-function EmployeeRow({ employee, onUpdate }) {
-  const { employee_id, name, employment_type, hourly_wage, monthly_contracted_hours, grossPay, withholdingTax, withholdingNote } = employee;
+// FREELANCER는 세법상 3.3% 고정, PART_TIME/FULL_TIME은 간이세액표 기준이라 급여에 따라 달라짐 - 서버 값으로 실효세율 역산
+function getWithholdingNote(employmentType, grossPay, withholdingTax) {
+  if (employmentType === "FREELANCER") return "3.3%";
+  if (employmentType === "PART_TIME" && grossPay > 0) {
+    return `${((withholdingTax / grossPay) * 100).toFixed(1)}%`;
+  }
+  return null;
+}
+
+function EmployeeRow({ employee, onUpdate, onViewPayslip, onDelete }) {
+  const { employee_id, name, employment_type, hourly_wage, monthly_contracted_hours, grossPay, withholdingTax, paymentId } = employee;
   const hasTaxOwed = withholdingTax > 0;
+  const withholdingNote = getWithholdingNote(employment_type, grossPay, withholdingTax);
+
+  const handleDelete = () => {
+    if (window.confirm(`${name} 직원을 삭제하시겠습니까?`)) {
+      onDelete(employee_id);
+    }
+  };
+
+  // 타이핑 중엔 문자열 그대로 보여주고(빈 값·선행 0 자유롭게 편집), blur 시에만 숫자로 변환해 저장
+  // prop이 바뀌면(서버 재조회 등) 렌더링 중 비교해서 로컬 입력값을 리셋 - effect 대신 렌더 중 조정 패턴 사용
+  const [hoursInput, setHoursInput] = useState(String(monthly_contracted_hours ?? ""));
+  const [prevHours, setPrevHours] = useState(monthly_contracted_hours);
+  if (monthly_contracted_hours !== prevHours) {
+    setPrevHours(monthly_contracted_hours);
+    setHoursInput(String(monthly_contracted_hours ?? ""));
+  }
+
+  const [wageInput, setWageInput] = useState(String(hourly_wage ?? ""));
+  const [prevWage, setPrevWage] = useState(hourly_wage);
+  if (hourly_wage !== prevWage) {
+    setPrevWage(hourly_wage);
+    setWageInput(String(hourly_wage ?? ""));
+  }
+
+  const commitHours = () => {
+    const value = Number(hoursInput);
+    if (hoursInput === "" || Number.isNaN(value) || value === monthly_contracted_hours) {
+      setHoursInput(String(monthly_contracted_hours ?? ""));
+      return;
+    }
+    onUpdate(employee_id, "monthly_contracted_hours", value);
+  };
+
+  const commitWage = () => {
+    const value = Number(wageInput);
+    if (wageInput === "" || Number.isNaN(value) || value === hourly_wage) {
+      setWageInput(String(hourly_wage ?? ""));
+      return;
+    }
+    onUpdate(employee_id, "hourly_wage", value);
+  };
 
   return (
     <Card>
+      <DeleteButton type="button" onClick={handleDelete} aria-label={`${name} 삭제`}>
+        ✕
+      </DeleteButton>
+
       <NameArea>
         <Avatar>{name[0]}</Avatar>
         <NameGroup>
@@ -44,8 +99,9 @@ function EmployeeRow({ employee, onUpdate }) {
         <Input
           type="number"
           unit="시간"
-          value={monthly_contracted_hours}
-          onChange={(e) => onUpdate(employee_id, "monthly_contracted_hours", Number(e.target.value))}
+          value={hoursInput}
+          onChange={(e) => setHoursInput(e.target.value)}
+          onBlur={commitHours}
         />
       </HoursArea>
 
@@ -53,8 +109,9 @@ function EmployeeRow({ employee, onUpdate }) {
         <Input
           type="number"
           unit="원"
-          value={hourly_wage}
-          onChange={(e) => onUpdate(employee_id, "hourly_wage", Number(e.target.value))}
+          value={wageInput}
+          onChange={(e) => setWageInput(e.target.value)}
+          onBlur={commitWage}
         />
       </WageArea>
 
@@ -64,7 +121,11 @@ function EmployeeRow({ employee, onUpdate }) {
       </GrossPayArea>
 
       <DetailButtonArea>
-        <DetailButton type="button">
+        <DetailButton
+          type="button"
+          disabled={!paymentId}
+          onClick={() => onViewPayslip(paymentId)}
+        >
           📄 {DETAIL_BUTTON_LABEL[employment_type]} &gt;
         </DetailButton>
       </DetailButtonArea>
@@ -82,6 +143,7 @@ function EmployeeRow({ employee, onUpdate }) {
 
 const Card = styled.div`
   box-sizing: border-box;
+  position: relative;
 
   width: 100%;
   min-height: 9.75625rem;
@@ -114,6 +176,36 @@ const NameArea = styled.div`
   align-items: center;
 
   gap: 0.75rem;
+`;
+
+const DeleteButton = styled.button`
+  box-sizing: border-box;
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+
+  width: 1.5rem;
+  height: 1.5rem;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 50%;
+
+  background-color: transparent;
+  color: #b45309;
+
+  font-size: 0.75rem;
+
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f5ede0;
+  }
 `;
 
 const Avatar = styled.div`
@@ -292,6 +384,11 @@ const DetailButton = styled.button`
   line-height: 1.125rem;
 
   cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
 const TaxArea = styled.div`
@@ -323,4 +420,5 @@ const TaxNote = styled.span`
   font-weight: 500;
   line-height: 0.9375rem;
 `;
+
 export default EmployeeRow;

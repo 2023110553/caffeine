@@ -16,6 +16,10 @@ export const confirmDeduction = (transactionId, data) =>
 export const getVatForecast = (businessId, year, month) =>
   client.get(`/tax/vat-forecast/`, { params: { business_id: businessId, year, month } });
 
+// 부가세 공제 구조 분석
+export const getDeductionBreakdown = (businessId, year, month) =>
+  client.get(`/tax/deduction-breakdown/`, { params: { business_id: businessId, year, month } });
+
 // 월 마감 요약
 export const getClosingSummary = (month) =>
   client.get(`/tax/closing/${month}/`);

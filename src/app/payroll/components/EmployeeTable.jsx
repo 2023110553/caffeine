@@ -3,7 +3,7 @@ import EmployeeRow from "./EmployeeRow";
 
 const COLUMNS = ["직원", "고용 형태", "월 근무시간", "시급", "세전 급여"];
 
-function EmployeeTable({ employees, onUpdateEmployee }) {
+function EmployeeTable({ employees, onUpdateEmployee, onViewPayslip, onDeleteEmployee }) {
   return (
     <Wrapper>
       <ListHeader>
@@ -26,6 +26,8 @@ function EmployeeTable({ employees, onUpdateEmployee }) {
             key={emp.employee_id}
             employee={emp}
             onUpdate={onUpdateEmployee}
+            onViewPayslip={onViewPayslip}
+            onDelete={onDeleteEmployee}
           />
         ))}
       </RowList>

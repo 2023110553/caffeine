@@ -6,7 +6,7 @@ import Button from "../../../components/Button";
 
 const EMPLOYMENT_TYPES = [
   {
-    value: "REGULAR", // TODO: 백엔드 실제 enum 값 확인 필요
+    value: "FULL_TIME",
     label: "4대보험 정직원",
     desc: "국민연금·건강·고용·산재보험 가입",
   },
@@ -16,7 +16,7 @@ const EMPLOYMENT_TYPES = [
     desc: "4대보험 중 일부 적용 제외, 주휴수당 없음",
   },
   {
-    value: "FREELANCER", // TODO: 백엔드 실제 enum 값 확인 필요
+    value: "FREELANCER",
     label: "3.3% 프리랜서",
     desc: "사업소득세 3.3% 원천징수",
   },
@@ -24,12 +24,12 @@ const EMPLOYMENT_TYPES = [
 
 const INITIAL_FORM = {
   name: "",
-  employment_type: "REGULAR",
+  employment_type: "FULL_TIME",
   hourly_wage: 10320,
   monthly_contracted_hours: "",
   work_started_at: "", // TODO: 폼에 입사일 입력 필드(date input) 추가 필요 - 현재 UI엔 없음
-  resident_id_front: "", // TODO: 실제 API 필드명 백엔드 확인 필요, 어느 엔드포인트에서 쓰이는지도 미확인
-  is_employment_insured: false, // TODO: 실제 API 필드명 백엔드 확인 필요
+  resident_id_front: "", // TODO: employees 응답에 필드가 없음 - 서버가 저장/사용하는지 백엔드 확인 필요
+  is_employment_insured: false, // TODO: employees 응답에 필드가 없음 - 서버가 저장/사용하는지 백엔드 확인 필요
 };
 
 function AddEmployeeModal({ open, onClose, onSubmit }) {
@@ -46,8 +46,6 @@ function AddEmployeeModal({ open, onClose, onSubmit }) {
 
   const handleSubmit = () => {
     if (!isValid) return;
-
-    
 
     onSubmit({
       name: form.name,
