@@ -223,9 +223,11 @@ function TransactionReviewPage() {
 
 const Wrapper = styled.div`
   height: 100%;
-  min-height: 0; /* 스크롤 체인 2단계 */
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
+  
+  scrollbar-width: none;
 `;
 
 const ContentGrid = styled.div`

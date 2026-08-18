@@ -84,18 +84,54 @@ function TaxImpactPanel({
           </RowValue>
         </BreakdownRow>
 
-        <BreakdownRow>
-          <RowLabel>
-            <Dot $color="bg_gray" />
-            미분류
-          </RowLabel>
+        <UnselectedBox $completed={isCompleted}>
+          <UnselectedTop>
+            <RowLabel>
+              <UnselectedDot $completed={isCompleted} />
+              <UnselectedTitle $completed={isCompleted}>
+                지출 미선택
+              </UnselectedTitle>
+            </RowLabel>
 
-          <RowValue>
-            <Count>{summary.unclassified.count}건</Count>
-            <Amount>{summary.unclassified.total.toLocaleString()}원</Amount>
-          </RowValue>
-        </BreakdownRow>
+            <RowValue>
+              <UnselectedCount $completed={isCompleted}>
+                {summary.unclassified.count}건
+              </UnselectedCount>
+
+              {!isCompleted && (
+                <UnselectedAmount>
+                  {summary.unclassified.total.toLocaleString()}원
+                </UnselectedAmount>
+              )}
+            </RowValue>
+          </UnselectedTop>
+
+          <UnselectedDescription $completed={isCompleted}>
+            {isCompleted ? "모든 지출 구분 완료" : "사업/개인 여부 미선택"}
+          </UnselectedDescription>
+        </UnselectedBox>
       </BreakdownList>
+      <ProgressInfo>
+        <span>
+          {summary.business.count + summary.personal.count}/
+          {summary.business.count +
+            summary.personal.count +
+            summary.unclassified.count}
+          건 완료
+        </span>
+
+        <span>
+          {Math.round(
+            ((summary.business.count + summary.personal.count) /
+              (summary.business.count +
+                summary.personal.count +
+                summary.unclassified.count)) *
+              100,
+          ) || 0}
+          %
+        </span>
+      </ProgressInfo>
+
       <SegmentBar>
         {["business", "personal", "unclassified"].map((key) => {
           const ratio =
@@ -127,7 +163,8 @@ function TaxImpactPanel({
               아직 <strong>{summary.unclassified.count}건</strong>이
               미분류입니다.
               <br />
-              모두 분류하면 공제 혜택을 최대로 받을 수 있어요.
+              모두 분류하면 공제 혜택을 최대로
+              <br /> 받을 수 있어요.
             </>
           )}
         </span>
@@ -177,7 +214,6 @@ const Wrapper = styled.aside`
 
   padding: 3.529vh 1.783vw 3.529vh 1.715vw;
 
-  overflow-y: hidden;
 
   background-color: #fdf9f3;
   border-left: 0.069vw solid rgba(61, 37, 30, 0.08);
@@ -196,8 +232,6 @@ const Wrapper = styled.aside`
     border-radius: 1.372vw;
 
     box-shadow: 0 0.588vh 0.686vw rgba(61, 37, 30, 0.25);
-
-   
 
     text-align: center;
   }
@@ -358,7 +392,7 @@ const BreakdownTitle = styled.p`
 const BreakdownList = styled.div`
   box-sizing: border-box;
   width: 100%;
-  height: 15.294vh;
+  height: auto;
 
   display: flex;
   flex-direction: column;
@@ -375,7 +409,7 @@ const BreakdownList = styled.div`
 const BreakdownRow = styled.div`
   box-sizing: border-box;
   width: 100%;
-  height: 3.529vh;
+  height: 3.529v;
   min-height: 3.529vh;
 
   display: flex;
@@ -537,5 +571,93 @@ const SavingText = styled.p`
     font-weight: 600;
   }
 `;
+const UnselectedBox = styled.div`
+  box-sizing: border-box;
+  width: 100%;
 
+  display: flex;
+  flex-direction: column;
+
+  padding: 10px 12px;
+
+  background-color: ${({ $completed }) => ($completed ? "#F0F7F2" : "#FFF0E6")};
+
+  border-radius: 12px;
+`;
+
+const UnselectedTop = styled.div`
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const UnselectedDot = styled.span`
+  width: 0.625rem;
+  height: 0.625rem;
+  flex-shrink: 0;
+
+  background-color: ${({ $completed }) => ($completed ? "#2E7D52" : "#E98252")};
+
+  border-radius: 0.25rem;
+`;
+
+const UnselectedTitle = styled.span`
+  color: ${({ $completed }) => ($completed ? "#2E7D52" : "#C05328")};
+
+  font-family: "Outfit", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1rem;
+`;
+
+const UnselectedCount = styled.span`
+  color: ${({ $completed }) => ($completed ? "#2E7D52" : "#C05328")};
+
+  font-family: "Outfit", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1rem;
+`;
+
+const UnselectedAmount = styled.span`
+  color: #9b6e62;
+
+  font-family: "Outfit", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1rem;
+`;
+
+const UnselectedDescription = styled.p`
+  margin: 4px 0 0;
+
+  color: ${({ $completed }) => ($completed ? "#6A9B7E" : "#D88662")};
+
+  font-family: "Outfit", sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 400;
+  line-height: 1rem;
+`;
+
+const ProgressInfo = styled.div`
+  width: 100%;
+
+  display: flex;
+  justify-content: space-between;
+
+  padding: 10px 1.441vw 0;
+
+  color: #9b6e62;
+
+  font-family: "Outfit", sans-serif;
+  font-size: 0.6875rem;
+  line-height: 1rem;
+
+  background-color: #fffcf8;
+
+  border-right: 0.069vw solid rgba(61, 37, 30, 0.07);
+  border-left: 0.069vw solid rgba(61, 37, 30, 0.07);
+`;
 export default TaxImpactPanel;
