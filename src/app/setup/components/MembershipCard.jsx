@@ -92,7 +92,6 @@ function MembershipCard({ membership, onChangePayment, onCancelSubscription }) {
 const Card = styled.div`
   display: flex;
   flex-direction: column;
-  align-self: stretch;
   background-color: ${({ theme }) => theme.colors.card_white};
   border: 0.8px solid #eae0d2; /* TODO: theme.js에 없는 값 */
   border-radius: ${({ theme }) => theme.radius.large};
