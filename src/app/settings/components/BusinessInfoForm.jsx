@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import Button from "../../../components/Button";
-import chevronDownIcon from "../../../assets/chevronDownIcon.svg";
 
 const TAX_TYPE_OPTIONS = [
   { value: "GENERAL", label: "일반과세자 (연 매출 1억 400만 원 이상 또는 선택)" },
@@ -8,8 +7,9 @@ const TAX_TYPE_OPTIONS = [
   { value: "EXEMPT", label: "면세사업자 (부가가치세 면제 품목 취급 사업자)" },
 ];
 
-function BusinessInfoForm({ form, onChange, onSubmit }) {
-  const { businessName, ownerName, businessNumber, taxType, industryCode, industryName } = form;
+function BusinessInfoForm({ form, onChange, onSubmit, onSyncTaxType, isSyncingTaxType }) {
+  const { business_name, representative_name, business_number, tax_type, industry_code, industry_name } = form;
+  const taxTypeLabel = TAX_TYPE_OPTIONS.find((option) => option.value === tax_type)?.label ?? tax_type;
 
   return (
     <Card>
@@ -22,52 +22,45 @@ function BusinessInfoForm({ form, onChange, onSubmit }) {
         <FieldGroup>
           <Label>상호명</Label>
           <FieldInput
-            value={businessName}
-            onChange={(e) => onChange("businessName", e.target.value)}
+            value={business_name}
+            onChange={(e) => onChange("business_name", e.target.value)}
           />
         </FieldGroup>
 
         <FieldGroup>
           <Label>대표자명</Label>
           <FieldInput
-            value={ownerName}
-            onChange={(e) => onChange("ownerName", e.target.value)}
+            value={representative_name}
+            onChange={(e) => onChange("representative_name", e.target.value)}
           />
         </FieldGroup>
 
         <FieldGroup>
           <Label>사업자등록번호</Label>
           <BusinessNumberInput
-            value={businessNumber}
-            onChange={(e) => onChange("businessNumber", e.target.value)}
+            value={business_number}
+            onChange={(e) => onChange("business_number", e.target.value)}
           />
         </FieldGroup>
 
         <FieldGroup>
           <Label>과세 유형</Label>
-          <SelectWrapper>
-            <Select
-              value={taxType}
-              onChange={(e) => onChange("taxType", e.target.value)}
-            >
-              {TAX_TYPE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </Select>
-            <ChevronIcon src={chevronDownIcon} alt="" />
-          </SelectWrapper>
+          <TaxTypeRow>
+            <TaxTypeValue>{taxTypeLabel}</TaxTypeValue>
+            <SyncButton type="button" onClick={onSyncTaxType} disabled={isSyncingTaxType}>
+              {isSyncingTaxType ? "동기화 중…" : "🔄 홈택스 동기화"}
+            </SyncButton>
+          </TaxTypeRow>
         </FieldGroup>
 
         <FieldGroup>
           <Label>업종 코드</Label>
           <IndustryRow>
             <IndustryCodeInput
-              value={industryCode}
-              onChange={(e) => onChange("industryCode", e.target.value)}
+              value={industry_code}
+              onChange={(e) => onChange("industry_code", e.target.value)}
             />
-            <IndustryName>{industryName}</IndustryName>
+            <IndustryName>{industry_name}</IndustryName>
           </IndustryRow>
         </FieldGroup>
       </FormArea>
@@ -182,37 +175,47 @@ const BusinessNumberInput = styled(FieldInput)`
   line-height: 19.5px; /* TODO: design token화 - 150% */
 `;
 
-const SelectWrapper = styled.div`
-  position: relative;
+const TaxTypeRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px; /* TODO: design token화 */
   width: 100%;
 `;
 
-const Select = styled.select`
+const TaxTypeValue = styled.div`
+  flex: 1;
   display: flex;
   align-items: center;
-  width: 100%;
   height: 41.85px;
-  padding: 10.8px 38.8px 10.8px 13.8px; /* TODO: design token화 */
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
+  padding: 10px 13px; /* TODO: design token화 */
   border-radius: 10px; /* TODO: theme.js에 없는 값 (기존 radius 토큰과 불일치) */
   border: 0.8px solid #e8ddd0; /* TODO: theme.js에 없는 값 */
-  background-color: #faf6f0; /* TODO: theme.js에 없는 값 */
+  background-color: #f3ede3; /* TODO: theme.js에 없는 값 - 수정 불가 필드라 IndustryName과 동일 톤 */
   color: ${({ theme }) => theme.colors.txt_brown};
+  font-family: var(--Font-familiy-Noto, "Noto Sans KR");
   font-size: 13.5px; /* TODO: design token화 */
   font-weight: 400;
   line-height: 20.25px; /* TODO: design token화 - 150% */
 `;
 
-const ChevronIcon = styled.img`
-  position: absolute;
-  top: 50%;
-  right: 13.8px;
-  transform: translateY(-50%);
-  width: 9px;
-  height: 5px;
-  pointer-events: none;
+const SyncButton = styled.button`
+  flex-shrink: 0;
+  height: 41.85px;
+  padding: 0 14px; /* TODO: design token화 */
+  border-radius: 10px; /* TODO: theme.js에 없는 값 (기존 radius 토큰과 불일치) */
+  border: 0.8px solid #c4956a;
+  background-color: #f5ede0;
+  color: #6b3f30;
+  font-family: var(--Font-familiy-Noto, "Noto Sans KR");
+  font-size: 12.5px; /* TODO: design token화 */
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 `;
 
 const IndustryRow = styled.div`

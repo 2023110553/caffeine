@@ -5,11 +5,12 @@ import cardIcon from "../../../assets/cardIcon.svg";
 import checkCircleIcon from "../../../assets/checkCircleIcon.svg";
 
 function MembershipCard({ membership, onChangePayment, onCancelSubscription }) {
-  const { planName, price, billingDate, nextBillingDate, dDay, paymentMethod, benefits } = membership;
+  const { plan_display_name, price, next_billing_date, days_until_billing, card_company, card_last4, benefits } = membership;
+  const paymentMethodText = card_company && card_last4 ? `${card_company} (${card_last4}) · 자동 갱신` : "등록된 결제 수단 없음";
 
   return (
     <Card>
-      <CardHeader> 
+      <CardHeader>
         <TitleRow>
           <Title>이용 플랜 및 멤버십</Title>
           <StatusBadge>
@@ -22,7 +23,7 @@ function MembershipCard({ membership, onChangePayment, onCancelSubscription }) {
 
       <CardBody>
         <PlanBox>
-          
+
           <PlanRow>
             <PlanGroup>
               <PlanBadgeWrapper>
@@ -31,11 +32,10 @@ function MembershipCard({ membership, onChangePayment, onCancelSubscription }) {
                   PRO
                 </PlanBadge>
               </PlanBadgeWrapper>
-              <PlanName>{planName}</PlanName>
+              <PlanName>{plan_display_name}</PlanName>
             </PlanGroup>
             <PriceGroup>
               <Price>월 {price.toLocaleString()}원</Price>
-              <PriceNote>{billingDate} 자동결제</PriceNote>
             </PriceGroup>
           </PlanRow>
 
@@ -47,15 +47,15 @@ function MembershipCard({ membership, onChangePayment, onCancelSubscription }) {
             <InfoRow>
               <InfoLabel>다음 결제 예정일</InfoLabel>
               <InfoValue>
-                <DateValue>{nextBillingDate}</DateValue>
-                <DDayBadge>{dDay}일 남음</DDayBadge>
+                <DateValue>{next_billing_date}</DateValue>
+                <DDayBadge>{days_until_billing}일 남음</DDayBadge>
               </InfoValue>
             </InfoRow>
             <InfoRow>
               <InfoLabel>결제 수단</InfoLabel>
               <InfoValue>
                 <CardIcon src={cardIcon} alt="" />
-                <PaymentMethodText>{paymentMethod}</PaymentMethodText>
+                <PaymentMethodText>{paymentMethodText}</PaymentMethodText>
               </InfoValue>
             </InfoRow>
           </InfoList>
@@ -286,19 +286,6 @@ const Price = styled.span`
   font-weight: 700;
   line-height: 24px; /* TODO: design token화 - 150% */
   letter-spacing: -0.16px; /* TODO: design token화 */
-`;
-
-const PriceNote = styled.span`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  padding-top: 2px; /* TODO: design token화 */
-  color: #a07860; /* TODO: theme.js에 없는 값 */
-  text-align: right;
-  font-family: var(--Font-familiy-Noto, "Noto Sans KR");
-  font-size: 11px; /* TODO: design token화 */
-  font-weight: 400;
-  line-height: 16.5px; /* TODO: design token화 - 150% */
 `;
 
 const PlanName = styled.p`
