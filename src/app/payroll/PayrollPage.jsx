@@ -5,6 +5,7 @@ import PayrollSummaryCards from "./components/PayrollSummaryCards";
 import EmployeeTable from "./components/EmployeeTable";
 import AddEmployeeModal from "./components/AddEmployeeModal";
 import Loading from "../../components/Loading";
+import ErrorState from "../../components/ErrorState";
 import { useBusiness } from "../../contexts/BusinessContext";
 import {
   getEmployees,
@@ -69,6 +70,7 @@ function PayrollPage() {
   const [summary, setSummary] = useState({ total_labor_cost: 0, withholding_tax: 0 });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const loadData = useCallback(async () => {
     const [employeesRes, paymentsRes, summaryRes] = await Promise.all([
@@ -82,8 +84,15 @@ function PayrollPage() {
 
   useEffect(() => {
     const load = async () => {
-      await loadData();
-      setIsLoading(false);
+      setIsLoading(true);
+      setError(null);
+      try {
+        await loadData();
+      } catch {
+        setError("급여 정보를 불러오지 못했어요. 사업장 정보를 확인해주세요.");
+      } finally {
+        setIsLoading(false);
+      }
     };
     load();
   }, [loadData]);
@@ -163,7 +172,20 @@ function PayrollPage() {
     }
   };
 
+  const handleRetry = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await loadData();
+    } catch {
+      setError("급여 정보를 불러오지 못했어요. 사업장 정보를 확인해주세요.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (isLoading) return <Loading />;
+  if (error) return <ErrorState message={error} onRetry={handleRetry} />;
 
   return (
     <Wrapper>

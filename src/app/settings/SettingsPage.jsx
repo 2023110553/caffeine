@@ -3,6 +3,7 @@ import styled from "styled-components";
 import MembershipCard from "./components/MembershipCard";
 import BusinessInfoForm from "./components/BusinessInfoForm";
 import Loading from "../../components/Loading";
+import ErrorState from "../../components/ErrorState";
 import { useBusiness } from "../../contexts/BusinessContext";
 import {
   getBusinessSettings, updateBusinessSettings,
@@ -23,6 +24,7 @@ function SettingsPage() {
   const [businessForm, setBusinessForm] = useState(null);
   const [membership, setMembership] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [isSyncingTaxType, setIsSyncingTaxType] = useState(false);
   const [isChangingPayment, setIsChangingPayment] = useState(false);
 
@@ -37,8 +39,15 @@ function SettingsPage() {
 
   useEffect(() => {
     const load = async () => {
-      await loadData();
-      setIsLoading(false);
+      setIsLoading(true);
+      setError(null);
+      try {
+        await loadData();
+      } catch {
+        setError("설정 정보를 불러오지 못했어요. 사업장 정보를 확인해주세요.");
+      } finally {
+        setIsLoading(false);
+      }
     };
     load();
   }, [loadData]);
@@ -92,7 +101,20 @@ function SettingsPage() {
     await loadData();
   };
 
+  const handleRetry = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await loadData();
+    } catch {
+      setError("설정 정보를 불러오지 못했어요. 사업장 정보를 확인해주세요.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (isLoading) return <Loading />;
+  if (error) return <ErrorState message={error} onRetry={handleRetry} />;
   if (!businessForm || !membership) return null;
 
   return (
