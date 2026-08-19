@@ -20,9 +20,12 @@ export const getMonthlySummary = (year, month) =>
 export const getDeductionBreakdown = (year, month) =>
   client.get(`/analytics/deduction-breakdown/`, { params: { year, month } });
 
-// 세무사 전달용 클린데이터 다운로드
-export const exportCleanData = (year, month, format) =>
-  client.get(`/analytics/export/`, { params: { year, month, format }, responseType: "blob" });
+// 세무사 전달용 클린데이터 다운로드 (file_type 기본값 csv, pdf 선택 가능)
+export const exportCleanData = (businessId, year, month, fileType) =>
+  client.get(`/businesses/${businessId}/analytics/export/`, {
+    params: { year, month, file_type: fileType },
+    responseType: "blob",
+  });
 
 // 월별 장부 마감 승인/조회는 tax.js의 approveClosing() / getClosingSummary()를 사용한다.
 // (백엔드 인수인계 문서 기준 마감 상태의 단일 원본은 Tax의 MonthlyClose이고,

@@ -5,6 +5,7 @@ import ExpenseSummaryBanner from "./components/ExpenseSummaryBanner";
 import ExpenseList from "./components/ExpenseList";
 import TaxImpactPanel from "./components/TaxImpactPanel";
 import Loading from "../../components/Loading";
+import ErrorState from "../../components/ErrorState";
 import { useBusiness } from "../../contexts/BusinessContext";
 import { getTransactions, updateTransactionPurpose, updateTransactionCategory } from "../../api/transactions";
 import { ITEM_CATEGORY_LABEL } from "./constants";
@@ -39,6 +40,7 @@ function TransactionReviewPage() {
   const { business } = useBusiness();
   const [transactions, setTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const loadData = useCallback(async () => {
     const res = await getTransactions(business.businessId, { start_date: `${YEAR}-${String(MONTH).padStart(2, "0")}-01` });
@@ -47,8 +49,15 @@ function TransactionReviewPage() {
 
   useEffect(() => {
     const load = async () => {
-      await loadData();
-      setIsLoading(false);
+      setIsLoading(true);
+      setError(null);
+      try {
+        await loadData();
+      } catch {
+        setError("거래 내역을 불러오지 못했어요. 사업장 정보를 확인해주세요.");
+      } finally {
+        setIsLoading(false);
+      }
     };
     load();
   }, [loadData]);
@@ -128,11 +137,24 @@ function TransactionReviewPage() {
 
   const [selectedFilter, setSelectedFilter] = useState("all");
 
+  const handleRetry = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await loadData();
+    } catch {
+      setError("거래 내역을 불러오지 못했어요. 사업장 정보를 확인해주세요.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (isLoading) return <Loading />;
+  if (error) return <ErrorState message={error} onRetry={handleRetry} />;
 
   return (
     <Wrapper>
-      <ExpenseHeader />
+      <ExpenseHeader year={YEAR} month={MONTH} />
 
       <ContentGrid>
         <LeftColumn>

@@ -1,7 +1,34 @@
+import { useState } from "react";
 import styled from "styled-components";
 import Button from "../../../components/Button";
 import notice from "../../../assets/notice.png";
-function ExpenseHeader() {
+import { useBusiness } from "../../../contexts/BusinessContext";
+import { exportTransactions } from "../../../api/transactions";
+
+function ExpenseHeader({ year, month }) {
+  const { business } = useBusiness();
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleExport = async () => {
+    setIsDownloading(true);
+    try {
+      const res = await exportTransactions(business.businessId, year, month);
+      const blob = new Blob([res.data], { type: "text/csv; charset=utf-8;" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `caffeine_transactions_${year}-${String(month).padStart(2, "0")}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch {
+      alert("CSV 파일을 다운로드하는 중 오류가 발생했어요.");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   return (
     <Wrapper>
       <TitleGroup>
@@ -9,15 +36,15 @@ function ExpenseHeader() {
         <Title>지출 내역 분류</Title>
       </TitleGroup>
       <CsvArea>
-        <CsvButton variant="unchecked_button" size="small">
-          CSV 파일 내보내기
+        <CsvButton
+          variant="unchecked_button"
+          size="small"
+          onClick={handleExport}
+          disabled={isDownloading}
+        >
+          {isDownloading ? "내보내는 중..." : "CSV 파일 내보내기"}
           <img src={notice} alt="" />
         </CsvButton>
-
-        <Tooltip>
-          부가가치세/종합소득세 세금신고 때 세무사에게 이 파일을 보내면 더
-          정확한 세무 도움을 받을 수 있어요!
-        </Tooltip>
       </CsvArea>
     </Wrapper>
   );
@@ -62,10 +89,6 @@ const CsvArea = styled.div`
 
   display: flex;
   align-items: center;
-
-  &:hover > div {
-    display: inline-flex;
-  }
 `;
 
 const CsvButton = styled(Button)`
@@ -92,34 +115,6 @@ const CsvButton = styled(Button)`
     height: 15px;
     flex-shrink: 0;
   }
-`;
-
-const Tooltip = styled.div`
-  box-sizing: border-box;
-
-  position: absolute;
-  right: calc(100% + 8px);
-  top: 50%;
-  transform: translateY(-50%);
-
-  display: inline-flex;
-padding: 5px;
-justify-content: center;
-align-items: center;
-gap: 10px;
-
-display: none;
-
-border-radius: var(--Font-size-40, 40px);
-background: var(--Neutral-Surface-Card, #FFF);
-
-color: #3D251E;
-font-family: Outfit;
-font-size: 12px;
-font-style: normal;
-font-weight: 500;
-line-height: 16px; /* 133.333% */
-  white-space: nowrap;
 `;
 
 export default ExpenseHeader;
