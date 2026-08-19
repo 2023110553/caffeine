@@ -3,6 +3,7 @@ export const ROUTES = {
   SETUP_AUTH: "/app/setup/auth", // TODO: 위와 동일
   SETTINGS: "/app/settings",
   DASHBOARD: "/app/dashboard",
+  BENCHMARK: "/app/benchmark",
   TRANSACTIONS: "/app/transactions",
   TRANSACTIONS_REVIEW: "/app/transactions/review",
   CLOSING: (month) => `/app/closing/${month}`,

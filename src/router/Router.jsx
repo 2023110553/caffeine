@@ -5,6 +5,7 @@ import ChatPage from "../app/chat/ChatPage";
 import PayrollPage from "../app/payroll/PayrollPage";
 import DashboardPage from "../app/dashboard/DashboardPage";
 import SettingsPage from "../app/settings/SettingsPage";
+import BenchmarkPage from "../app/benchmark/BenchmarkPage";
 import ComponentPreviewPage from "../dev/ComponentPreviewPage"; // ⚠️ 임시 — 커밋 전 삭제
 
 function Router() {
@@ -18,6 +19,7 @@ function Router() {
         {/* <Route path="setup/auth" element={<AuthSetupPage />} /> */}
         <Route path="settings" element={<SettingsPage />} />
         <Route path="dashboard" element={<DashboardPage />} />
+        <Route path="benchmark" element={<BenchmarkPage />} />
         <Route path="transactions/review" element={<TransactionReviewPage />} />
         {/* <Route path="closing/:month" element={<ClosingPage />} /> */}
         <Route path="chat" element={<ChatPage />} />
