@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-function PayrollSummaryCards({ totalExpense, totalWithholdingTax }) {
+function PayrollSummaryCards({ totalExpense, totalWithholdingTax, onExport }) {
   return (
     <Wrapper>
       <Card>
@@ -25,8 +25,7 @@ function PayrollSummaryCards({ totalExpense, totalWithholdingTax }) {
         <Description>
           전 직원의 임금명세서를 PDF 또는 엑셀 파일로 일괄 내보낼 수 있습니다.
         </Description>
-        {/* TODO: 파일 내보내기 기능 - 백엔드 API 확정 후 구현 */}
-        <ExportButton type="button">
+        <ExportButton type="button" onClick={onExport}>
           ⬇ 급여명세서 일괄 내보내기
         </ExportButton>
       </Card>

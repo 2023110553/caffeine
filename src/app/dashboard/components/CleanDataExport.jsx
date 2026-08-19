@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { exportCleanData } from "../../../api/analytics";
+import { useBusiness } from "../../../contexts/BusinessContext";
 
 const INCLUDED_ITEMS = [
   { icon: "📋", label: "매출·매입 세금계산서" },
@@ -9,17 +10,19 @@ const INCLUDED_ITEMS = [
 ];
 
 function CleanDataExport({ year, month, isClosed }) {
+  const { business } = useBusiness();
+
   const handleDownload = async (format) => {
     if (!isClosed) return;
     try {
-      const res = await exportCleanData(year, month, format);
+      const res = await exportCleanData(business.businessId, year, month, format);
       const url = URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement("a");
       link.href = url;
       link.download = `카페비서_${year}년${month}월_세무자료.${format}`;
       link.click();
       URL.revokeObjectURL(url);
-    } catch (err) {
+    } catch {
       // TODO: 409(MONTHLY_CLOSE_REQUIRED) 등 에러 처리
     }
   };

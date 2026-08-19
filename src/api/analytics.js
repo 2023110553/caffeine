@@ -13,17 +13,13 @@ export const getAnalyticsSummary = (month) =>
   client.get(`/analytics/summary/`, { params: { month } });
 
 // 월별 세무 현황 결산 (홈 화면 상단부 통합)
-export const getMonthlySummary = (year, month) =>
-  client.get(`/analytics/monthly-summary/`, { params: { year, month } });
-
-// 부가세 공제 구조 분석
-export const getDeductionBreakdown = (year, month) =>
-  client.get(`/analytics/deduction-breakdown/`, { params: { year, month } });
+export const getMonthlySummary = (businessId, year, month) =>
+  client.get(`/businesses/${businessId}/analytics/monthly-summary/`, { params: { year, month } });
 
 // 세무사 전달용 클린데이터 다운로드
-export const exportCleanData = (year, month, format) =>
-  client.get(`/analytics/export/`, { params: { year, month, format }, responseType: "blob" });
+export const exportCleanData = (businessId, year, month, format) =>
+  client.get(`/businesses/${businessId}/analytics/export/`, { params: { year, month, format }, responseType: "blob" });
 
 // 월별 장부 마감 승인 (⚠️ tax.js의 approveClosing과 역할 중복 가능성 - 팀 확인 필요)
-export const approveMonthlyClose = (year, month) =>
-  client.post(`/analytics/monthly-summary/close/`, { year, month });
+export const approveMonthlyClose = (businessId, year, month) =>
+  client.post(`/businesses/${businessId}/analytics/monthly-summary/close/`, { year, month });

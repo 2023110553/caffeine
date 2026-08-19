@@ -1,83 +1,184 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import PayrollHeader from "./components/PayrollHeader";
 import PayrollSummaryCards from "./components/PayrollSummaryCards";
 import EmployeeTable from "./components/EmployeeTable";
 import AddEmployeeModal from "./components/AddEmployeeModal";
+import Loading from "../../components/Loading";
+import { useBusiness } from "../../contexts/BusinessContext";
+import {
+  getEmployees,
+  createEmployee,
+  updateEmployee,
+  deleteEmployee,
+  getPayrollSummary,
+  getPayments,
+  createPayment,
+  updatePayment,
+  exportPayslips,
+  getPayslip,
+} from "../../api/payroll";
 
-// TODO: 백엔드 연동 시 getEmployees() 응답으로 교체
-const MOCK_EMPLOYEES = [
-  {
-    employee_id: 1,
-    name: "허현",
-    employment_type: "REGULAR", // TODO: 백엔드 실제 enum 값 확인 필요
-    hourly_wage: 10320,
-    monthly_contracted_hours: 141,
-    work_started_at: "2025-11-01",
-    status: "ACTIVE",
-  },
-  {
-    employee_id: 2,
-    name: "황사라",
-    employment_type: "PART_TIME",
-    hourly_wage: 10320,
-    monthly_contracted_hours: 43.2,
-    work_started_at: "2026-06-01",
-    status: "ACTIVE",
-  },
-  {
-    employee_id: 3,
-    name: "윤재원",
-    employment_type: "FREELANCER", // TODO: 백엔드 실제 enum 값 확인 필요
-    hourly_wage: 12000,
-    monthly_contracted_hours: 90,
-    work_started_at: "2026-03-15",
-    status: "ACTIVE",
-  },
-];
+const YEAR = 2026;
+const MONTH = 8; // TODO: 실제로는 현재 월 기준 동적 계산 필요
 
-function PayrollPage() {
-  const [employees, setEmployees] = useState(MOCK_EMPLOYEES);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+// 한글 파일명이 섞이면 서버가 Content-Disposition 자체를 RFC 2047(=?utf-8?b?...?=)로 인코딩해서 내려줌
+function decodeRfc2047(value) {
+  const match = value.match(/^=\?utf-8\?b\?([^?]+)\?=$/i);
+  if (!match) return value;
+  return decodeURIComponent(
+    atob(match[1])
+      .split("")
+      .map((c) => "%" + c.charCodeAt(0).toString(16).padStart(2, "0"))
+      .join("")
+  );
+}
 
-  const handleUpdateEmployee = (employeeId, field, value) => {
-    setEmployees((prev) =>
-      prev.map((emp) => (emp.employee_id === employeeId ? { ...emp, [field]: value } : emp))
-    );
-    // TODO: 백엔드 연동 시 updateEmployee(employeeId, { [field]: value }) 호출 추가
-  };
+// Content-Disposition 헤더에서 파일명을 뽑아 blob 다운로드를 트리거
+function downloadBlob(res, fallbackFilename) {
+  const disposition = decodeRfc2047(res.headers["content-disposition"] ?? "");
+  const filename = disposition.match(/filename="?([^"]+)"?/)?.[1] ?? fallbackFilename;
 
-  const handleAddEmployee = (newEmployeeData) => {
-    setEmployees((prev) => [
-      ...prev,
-      { ...newEmployeeData, employee_id: Date.now(), status: "ACTIVE" },
-    ]);
-    setIsModalOpen(false);
-    // TODO: 백엔드 연동 시 createEmployee(newEmployeeData) 호출 후 getEmployees() 재조회로 교체
-  };
+  const url = URL.createObjectURL(new Blob([res.data]));
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+}
 
-  // 세전급여·원천세는 API 응답에 없는 파생값 - 프론트에서 계산
-  const withCalculated = employees.map((emp) => {
-    const grossPay = emp.hourly_wage * emp.monthly_contracted_hours;
-    const isFreelancer = emp.employment_type === "FREELANCER";
-    const withholdingTax = isFreelancer ? Math.round(grossPay * 0.033) : 0;
-    // TODO: REGULAR/PART_TIME 원천세는 간이세액표 기준 - withholding-tax/calculate API 연동 후 반영
+// employees(직원 기본정보)와 payments(월별 급여 계산 결과)를 employee_id 기준으로 합침
+// monthly_contracted_hours는 서버가 "80.0" 같은 소수점 문자열로 내려줘서 number input에 그대로 넣으면 편집이 불편해짐 - 숫자로 정규화
+function mergeEmployeesWithPayments(employees, payments) {
+  const paymentByEmployeeId = new Map(payments.map((p) => [p.employee_id, p]));
+  return employees.map((emp) => {
+    const payment = paymentByEmployeeId.get(emp.employee_id);
     return {
       ...emp,
-      grossPay,
-      withholdingTax,
-      withholdingNote: isFreelancer ? "3.3%" : grossPay > 0 && withholdingTax === 0 ? "소액부징수" : null,
+      monthly_contracted_hours: emp.monthly_contracted_hours === null ? "" : Number(emp.monthly_contracted_hours),
+      paymentId: payment?.payment_id ?? null,
+      grossPay: payment?.gross_pay ?? 0,
+      withholdingTax: payment?.withholding_tax ?? 0,
     };
   });
+}
 
-  const totalGrossPay = withCalculated.reduce((sum, emp) => sum + emp.grossPay, 0);
-  const totalWithholdingTax = withCalculated.reduce((sum, emp) => sum + emp.withholdingTax, 0);
+function PayrollPage() {
+  const { business } = useBusiness();
+  const [employees, setEmployees] = useState([]);
+  const [summary, setSummary] = useState({ total_labor_cost: 0, withholding_tax: 0 });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const loadData = useCallback(async () => {
+    const [employeesRes, paymentsRes, summaryRes] = await Promise.all([
+      getEmployees(business.businessId),
+      getPayments(business.businessId, YEAR, MONTH),
+      getPayrollSummary(business.businessId, YEAR, MONTH),
+    ]);
+    setEmployees(mergeEmployeesWithPayments(employeesRes.data.data, paymentsRes.data.data));
+    setSummary(summaryRes.data.data);
+  }, [business.businessId]);
+
+  useEffect(() => {
+    const load = async () => {
+      await loadData();
+      setIsLoading(false);
+    };
+    load();
+  }, [loadData]);
+
+  // 시급·근무시간이 바뀌면 급여도 다시 계산되어야 하므로 payments를 함께 갱신
+  const syncPayment = async (employee) => {
+    const workHours = employee.monthly_contracted_hours;
+    if (!workHours) return;
+
+    if (employee.paymentId) {
+      await updatePayment(business.businessId, employee.paymentId, { work_hours: workHours });
+    } else {
+      await createPayment(business.businessId, {
+        employee_id: employee.employee_id,
+        year: YEAR,
+        month: MONTH,
+        work_hours: workHours,
+      });
+    }
+    await loadData();
+  };
+
+  const handleUpdateEmployee = async (employeeId, field, value) => {
+    const target = employees.find((emp) => emp.employee_id === employeeId);
+    if (!target) return;
+    const updated = { ...target, [field]: value };
+
+    setEmployees((prev) =>
+      prev.map((emp) => (emp.employee_id === employeeId ? updated : emp))
+    );
+
+    await updateEmployee(business.businessId, employeeId, { [field]: value });
+
+    if (field === "hourly_wage" || field === "monthly_contracted_hours") {
+      await syncPayment(updated);
+    }
+  };
+
+  const handleAddEmployee = async (newEmployeeData) => {
+    const res = await createEmployee(business.businessId, newEmployeeData);
+    const { employee_id } = res.data.data;
+
+    if (newEmployeeData.monthly_contracted_hours) {
+      await createPayment(business.businessId, {
+        employee_id,
+        year: YEAR,
+        month: MONTH,
+        work_hours: newEmployeeData.monthly_contracted_hours,
+      });
+    }
+
+    setIsModalOpen(false);
+    await loadData();
+  };
+
+  const handleExport = async () => {
+    const res = await exportPayslips(business.businessId, YEAR, MONTH, "xlsx");
+    downloadBlob(res, `payslip_${YEAR}_${MONTH}.xlsx`);
+  };
+
+  const handleViewPayslip = async (paymentId) => {
+    const res = await getPayslip(business.businessId, paymentId);
+    downloadBlob(res, `payslip_${paymentId}.pdf`);
+  };
+
+  const handleDeleteEmployee = async (employeeId) => {
+    try {
+      await deleteEmployee(business.businessId, employeeId);
+      await loadData();
+    } catch (err) {
+      // 급여 기록이 있는 직원은 서버에서 409(EMPLOYEE_HAS_PAYROLL_DATA)로 삭제를 막음
+      if (err.response?.status === 409) {
+        window.alert("이번 달 급여 기록이 있는 직원은 삭제할 수 없습니다.");
+        return;
+      }
+      throw err;
+    }
+  };
+
+  if (isLoading) return <Loading />;
 
   return (
     <Wrapper>
       <PayrollHeader onAddClick={() => setIsModalOpen(true)} />
-      <PayrollSummaryCards totalExpense={totalGrossPay} totalWithholdingTax={totalWithholdingTax} />
-      <EmployeeTable employees={withCalculated} onUpdateEmployee={handleUpdateEmployee} />
+      <PayrollSummaryCards
+        totalExpense={summary.total_labor_cost}
+        totalWithholdingTax={summary.withholding_tax}
+        onExport={handleExport}
+      />
+      <EmployeeTable
+        employees={employees}
+        onUpdateEmployee={handleUpdateEmployee}
+        onViewPayslip={handleViewPayslip}
+        onDeleteEmployee={handleDeleteEmployee}
+      />
       <AddEmployeeModal open={isModalOpen} onClose={() => setIsModalOpen(false)} onSubmit={handleAddEmployee} />
     </Wrapper>
   );
