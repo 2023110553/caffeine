@@ -1,39 +1,8 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import {
   ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from "recharts";
-
-// TODO: 백엔드 benchmark API의 monthly_trends는 my_profit_ratio/benchmark_profit_ratio(%)만 제공함.
-// 이 차트가 필요로 하는 월별 매출·영업이익 절대금액(만원), 식자재 원가율 추이, 인건비 비중 추이는
-// 아직 API에 없어서 mock으로 채움. 백엔드 MonthlyTrendItem에 필드가 추가되면
-// (revenue, profit, raw_material_ratio, labor_ratio 등) 아래 MOCK_* 대신 API 응답으로 교체할 것.
-const MOCK_PROFIT_LOSS_TREND = [
-  { month: "3월", revenue: 950, profit: 340 },
-  { month: "4월", revenue: 980, profit: 355 },
-  { month: "5월", revenue: 1100, profit: 390 },
-  { month: "6월", revenue: 1150, profit: 400 },
-  { month: "7월", revenue: 1190, profit: 410 },
-  { month: "8월", revenue: 1250, profit: 465 },
-]; // 단위: 만원
-
-const MOCK_RAW_MATERIAL_TREND = [
-  { month: "3월", ratio: 33.5 },
-  { month: "4월", ratio: 33.8 },
-  { month: "5월", ratio: 34.0 },
-  { month: "6월", ratio: 34.2 },
-  { month: "7월", ratio: 34.5 },
-  { month: "8월", ratio: 34.8 },
-];
-
-const MOCK_LABOR_TREND = [
-  { month: "3월", ratio: 23.5 },
-  { month: "4월", ratio: 23.2 },
-  { month: "5월", ratio: 23.0 },
-  { month: "6월", ratio: 22.8 },
-  { month: "7월", ratio: 22.6 },
-  { month: "8월", ratio: 22.4 },
-];
 
 const TABS = [
   { key: "PROFIT_LOSS", label: "전체 손익" },
@@ -41,12 +10,10 @@ const TABS = [
   { key: "PAYROLL", label: "인건비 추이" },
 ];
 
-const avgRevenue = Math.round(
-  MOCK_PROFIT_LOSS_TREND.reduce((sum, d) => sum + d.revenue, 0) / MOCK_PROFIT_LOSS_TREND.length
-);
-const avgProfit = (
-  MOCK_PROFIT_LOSS_TREND.reduce((sum, d) => sum + d.profit, 0) / MOCK_PROFIT_LOSS_TREND.length
-).toFixed(1);
+const toManwon = (won) => Math.round(won / 10000);
+
+// "2026-08" -> "8월"
+const toMonthLabel = (yearMonth) => `${parseInt(yearMonth.slice(5, 7), 10)}월`;
 
 function ChartTooltip({ active, payload, label }) {
   if (!active || !payload || !payload.length) return null;
@@ -62,13 +29,54 @@ function ChartTooltip({ active, payload, label }) {
   );
 }
 
-function TrendChartCard() {
+function TrendChartCard({ monthlyTrends = [] }) {
   const theme = useTheme();
   const [activeTab, setActiveTab] = useState("PROFIT_LOSS");
 
+  const profitLossData = useMemo(
+    () => monthlyTrends.map((item) => ({
+      month: toMonthLabel(item.month),
+      revenue: toManwon(item.revenue),
+      profit: toManwon(item.profit),
+    })),
+    [monthlyTrends]
+  );
+
+  const rawMaterialData = useMemo(
+    () => monthlyTrends.map((item) => ({
+      month: toMonthLabel(item.month),
+      ratio: item.my_raw_material_ratio,
+    })),
+    [monthlyTrends]
+  );
+
+  const laborData = useMemo(
+    () => monthlyTrends.map((item) => ({
+      month: toMonthLabel(item.month),
+      ratio: item.my_labor_ratio,
+    })),
+    [monthlyTrends]
+  );
+
+  const rangeLabel = monthlyTrends.length
+    ? `(${toMonthLabel(monthlyTrends[0].month)} ~ ${toMonthLabel(monthlyTrends[monthlyTrends.length - 1].month)})`
+    : "";
+
+  const avgRevenue = profitLossData.length
+    ? Math.round(profitLossData.reduce((sum, d) => sum + d.revenue, 0) / profitLossData.length)
+    : 0;
+  const avgProfit = profitLossData.length
+    ? (profitLossData.reduce((sum, d) => sum + d.profit, 0) / profitLossData.length).toFixed(1)
+    : "0.0";
+
+  const activeData =
+    activeTab === "PROFIT_LOSS" ? profitLossData
+      : activeTab === "RAW_MATERIAL" ? rawMaterialData
+        : laborData;
+
   return (
     <Card>
-      <Title>최근 6개월 매출 및 영업이익 추이 (3월 ~ 8월)</Title>
+      <Title>최근 6개월 매출 및 영업이익 추이 {rangeLabel}</Title>
 
       <TabRow>
         {TABS.map((tab) => (
@@ -81,7 +89,7 @@ function TrendChartCard() {
       <ChartWrapper>
         <ResponsiveContainer width="100%" height={220}>
           {activeTab === "PROFIT_LOSS" ? (
-            <ComposedChart data={MOCK_PROFIT_LOSS_TREND}>
+            <ComposedChart data={activeData}>
               <CartesianGrid stroke="rgba(61, 37, 30, 0.08)" vertical={false} />
               <XAxis dataKey="month" tick={{ fontSize: 11, fill: "rgba(61, 37, 30, 0.45)" }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 10, fill: "rgba(61, 37, 30, 0.4)" }} axisLine={false} tickLine={false} tickFormatter={(v) => `${v}만`} />
@@ -90,7 +98,7 @@ function TrendChartCard() {
               <Line dataKey="profit" name="영업이익" stroke={theme.colors.txt_brown} strokeWidth={2} dot={{ r: 3 }} />
             </ComposedChart>
           ) : (
-            <ComposedChart data={activeTab === "RAW_MATERIAL" ? MOCK_RAW_MATERIAL_TREND : MOCK_LABOR_TREND}>
+            <ComposedChart data={activeData}>
               <CartesianGrid stroke="rgba(61, 37, 30, 0.08)" vertical={false} />
               <XAxis dataKey="month" tick={{ fontSize: 11, fill: "rgba(61, 37, 30, 0.45)" }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 10, fill: "rgba(61, 37, 30, 0.4)" }} axisLine={false} tickLine={false} tickFormatter={(v) => `${v}%`} />
