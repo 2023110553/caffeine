@@ -7,7 +7,11 @@ import TaxImpactPanel from "./components/TaxImpactPanel";
 import Loading from "../../components/Loading";
 import ErrorState from "../../components/ErrorState";
 import { useBusiness } from "../../contexts/BusinessContext";
-import { getTransactions, updateTransactionPurpose, updateTransactionCategory } from "../../api/transactions";
+import {
+  getTransactions,
+  updateTransactionPurpose,
+  updateTransactionCategory,
+} from "../../api/transactions";
 import { ITEM_CATEGORY_LABEL } from "./constants";
 
 const YEAR = 2026;
@@ -15,7 +19,11 @@ const MONTH = 8; // TODO: 실제로는 현재 월 기준 동적 계산 필요
 
 // expense_purpose.code(BUSINESS/PERSONAL/UNCLASSIFIED)를 mock 시절 category 값(business/personal/null)으로,
 // 나머지 필드(total_amount 문자열→숫자, date 포맷, icon/memo 등 API에 없는 표시용 값)를 컴포넌트가 기대하는 형태로 변환
-const PURPOSE_TO_CATEGORY = { BUSINESS: "business", PERSONAL: "personal", UNCLASSIFIED: null };
+const PURPOSE_TO_CATEGORY = {
+  BUSINESS: "business",
+  PERSONAL: "personal",
+  UNCLASSIFIED: null,
+};
 
 function formatDate(isoDate) {
   const [, month, day] = isoDate.split("-");
@@ -43,7 +51,9 @@ function TransactionReviewPage() {
   const [error, setError] = useState(null);
 
   const loadData = useCallback(async () => {
-    const res = await getTransactions(business.businessId, { start_date: `${YEAR}-${String(MONTH).padStart(2, "0")}-01` });
+    const res = await getTransactions(business.businessId, {
+      start_date: `${YEAR}-${String(MONTH).padStart(2, "0")}-01`,
+    });
     setTransactions(res.data.data.items.map(normalizeTransaction));
   }, [business.businessId]);
 
@@ -66,7 +76,8 @@ function TransactionReviewPage() {
     const target = transactions.find((tx) => tx.transaction_id === id);
     if (!target) return;
     const nextCategory = target.category === category ? null : category;
-    const expensePurpose = nextCategory === null ? "UNCLASSIFIED" : nextCategory.toUpperCase();
+    const expensePurpose =
+      nextCategory === null ? "UNCLASSIFIED" : nextCategory.toUpperCase();
 
     setTransactions((prev) =>
       prev.map((tx) =>
@@ -81,7 +92,11 @@ function TransactionReviewPage() {
     setTransactions((prev) =>
       prev.map((tx) =>
         tx.transaction_id === id
-          ? { ...tx, itemCategoryCode: categoryCode, memo: ITEM_CATEGORY_LABEL[categoryCode] }
+          ? {
+              ...tx,
+              itemCategoryCode: categoryCode,
+              memo: ITEM_CATEGORY_LABEL[categoryCode],
+            }
           : tx,
       ),
     );
@@ -109,7 +124,9 @@ function TransactionReviewPage() {
 
   // 사업/개인 미분류(category)와 품목 미분류(itemCategoryCode)는 서로 다른 개념이라 별도로 카운트
   const itemUnclassifiedCount = useMemo(
-    () => transactions.filter((tx) => tx.itemCategoryCode === "UNCLASSIFIED").length,
+    () =>
+      transactions.filter((tx) => tx.itemCategoryCode === "UNCLASSIFIED")
+        .length,
     [transactions],
   );
 
@@ -163,7 +180,6 @@ function TransactionReviewPage() {
             estimatedDeduction={taxSummary.estimatedVat}
             summary={summary}
             totalCount={transactions.length}
-            itemUnclassifiedCount={itemUnclassifiedCount}
             selectedFilter={selectedFilter}
             onFilterChange={setSelectedFilter}
           />
@@ -182,6 +198,7 @@ function TransactionReviewPage() {
           estimatedVat={taxSummary.estimatedVat}
           normalInputTax={taxSummary.normalInputTax}
           deemedInputTax={taxSummary.deemedInputTax}
+          transactions={transactions}
         />
       </ContentGrid>
     </Wrapper>
@@ -193,7 +210,7 @@ const Wrapper = styled.div`
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  
+
   scrollbar-width: none;
 `;
 
