@@ -1,13 +1,9 @@
 import styled from "styled-components";
 
-// TODO: 예상 부가세 공제액은 benchmark API 응답에 없음(Tax 모듈 소관인 vat-forecast 쪽 값).
-// 백엔드 benchmark 응답에 필드가 추가되면 이 mock 상수 대신 API 값으로 교체.
-const MOCK_VAT_DEDUCTION = 242247;
-
 const toManwon = (won) => Math.round(won / 10000).toLocaleString();
 
 function BenchmarkStatCards({ overview, monthlyTrends }) {
-  const { total_revenue, total_expense, revenue_diff_pct } = overview;
+  const { total_revenue, total_expense, revenue_diff_pct, vat_deduction_estimate } = overview;
   const netProfit = total_revenue - total_expense;
   const profitMargin = total_revenue > 0 ? (netProfit / total_revenue) * 100 : 0;
 
@@ -47,7 +43,7 @@ function BenchmarkStatCards({ overview, monthlyTrends }) {
 
       <Card>
         <Label>예상 부가세 공제액</Label>
-        <Value>{MOCK_VAT_DEDUCTION.toLocaleString()}원</Value>
+        <Value>{(vat_deduction_estimate ?? 0).toLocaleString()}원</Value>
         <SubText>확보된 절세 혜택</SubText>
       </Card>
     </Grid>

@@ -45,7 +45,7 @@ function BenchmarkPage() {
 
       <ColumnGrid>
         <CategoryComparisonCard categoryComparison={category_comparison} totalRevenue={overview.total_revenue} />
-        <TrendChartCard />
+        <TrendChartCard monthlyTrends={monthly_trends} />
       </ColumnGrid>
     </Wrapper>
   );
