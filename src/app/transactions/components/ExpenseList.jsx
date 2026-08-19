@@ -12,6 +12,7 @@ function ExpenseList({
   summary,
   selectedFilter,
   onCategoryChange,
+  onItemCategoryChange,
 }) {
   const totalCount = transactions.length;
   const classifiedCount = totalCount - summary.unclassified.count;
@@ -24,8 +25,9 @@ function ExpenseList({
       return true;
     }
 
+    // "품목 미분류" 필터는 사업/개인 구분(category)이 아니라 품목 분류(itemCategoryCode) 기준
     if (selectedFilter === "unclassified") {
-      return tx.category === null;
+      return tx.itemCategoryCode === "UNCLASSIFIED";
     }
 
     return tx.category === selectedFilter;
@@ -62,6 +64,7 @@ function ExpenseList({
             key={tx.transaction_id}
             transaction={tx}
             onCategoryChange={onCategoryChange}
+            onItemCategoryChange={onItemCategoryChange}
           />
         ))}
       </CardGrid>

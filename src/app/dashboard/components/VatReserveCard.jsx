@@ -1,28 +1,46 @@
 import styled from "styled-components";
 
+const TAX_TYPE_LABEL = {
+  GENERAL: "일반과세자",
+  SIMPLIFIED: "간이과세자",
+  EXEMPT: "면세사업자",
+};
+
 function VatReserveCard({ summary }) {
   const { month, vat_reserve_amount, vat_breakdown, vat_filing_due_date, tax_type } = summary;
+  // tax_type이 확인되지 않은 사업장(UNKNOWN)은 서버가 부가세 계산 자체를 못 해 null을 내려줌
+  const isUnavailable = vat_reserve_amount == null || vat_breakdown == null;
+
   return (
     <Card>
       <Label>{month}월 최종 예상 부가세 적립금</Label>
-      <AmountRow>
-        <Amount>{vat_reserve_amount.toLocaleString()}</Amount>
-        <Unit>원</Unit>
-      </AmountRow>
-      <MetaRow>
-        <MetaItem>
-          <MetaLabel>부가세 신고 기한</MetaLabel>
-          <MetaValue>{vat_filing_due_date}</MetaValue>
-        </MetaItem>
-        <Divider />
-        <MetaItem>
-          <MetaLabel>과세 유형</MetaLabel>
-          <MetaValue>{tax_type === "GENERAL" ? "일반과세자" : "간이과세자"}</MetaValue>
-        </MetaItem>
-      </MetaRow>
-      <BreakdownBadge>
-        ✓ 매출세액 +{vat_breakdown.sales_tax.toLocaleString()}원 − 매입세액 {vat_breakdown.purchase_tax.toLocaleString()}원 − 의제매입공제 {vat_breakdown.deemed_purchase_deduction.toLocaleString()}원
-      </BreakdownBadge>
+
+      {isUnavailable ? (
+        <UnavailableNotice>
+          과세유형이 확인되지 않아 예상 부가세를 계산할 수 없습니다. 설정 페이지에서 홈택스 동기화를 진행해주세요.
+        </UnavailableNotice>
+      ) : (
+        <>
+          <AmountRow>
+            <Amount>{vat_reserve_amount.toLocaleString()}</Amount>
+            <Unit>원</Unit>
+          </AmountRow>
+          <MetaRow>
+            <MetaItem>
+              <MetaLabel>부가세 신고 기한</MetaLabel>
+              <MetaValue>{vat_filing_due_date}</MetaValue>
+            </MetaItem>
+            <Divider />
+            <MetaItem>
+              <MetaLabel>과세 유형</MetaLabel>
+              <MetaValue>{TAX_TYPE_LABEL[tax_type] ?? "확인 필요"}</MetaValue>
+            </MetaItem>
+          </MetaRow>
+          <BreakdownBadge>
+            ✓ 매출세액 +{vat_breakdown.sales_tax.toLocaleString()}원 − 매입세액 {vat_breakdown.purchase_tax.toLocaleString()}원 − 의제매입공제 {vat_breakdown.deemed_purchase_deduction.toLocaleString()}원
+          </BreakdownBadge>
+        </>
+      )}
     </Card>
   );
 }
@@ -38,6 +56,14 @@ const Card = styled.div`
 const Label = styled.p`
   color: ${({ theme }) => theme.colors.txt_white};
   font-size: 12px; /* TODO: design token화 */
+`;
+
+const UnavailableNotice = styled.p`
+  margin-top: 14px; /* TODO: design token화 */
+  color: ${({ theme }) => theme.colors.txt_white};
+  opacity: 0.85;
+  font-size: 12.5px; /* TODO: design token화 */
+  line-height: 1.5;
 `;
 
 const AmountRow = styled.div`

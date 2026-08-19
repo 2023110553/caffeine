@@ -4,7 +4,10 @@ import MembershipCard from "./components/MembershipCard";
 import BusinessInfoForm from "./components/BusinessInfoForm";
 import Loading from "../../components/Loading";
 import { useBusiness } from "../../contexts/BusinessContext";
-import { getBusinessSettings, updateBusinessSettings, getSubscription, cancelSubscription } from "../../api/settings";
+import {
+  getBusinessSettings, updateBusinessSettings,
+  getSubscription, updatePaymentMethod, cancelSubscription,
+} from "../../api/settings";
 import { syncTaxType } from "../../api/businesses";
 
 // industry_name, benefits(혜택 목록)는 API에 없는 필드 - UI 전용으로 유지
@@ -21,6 +24,7 @@ function SettingsPage() {
   const [membership, setMembership] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSyncingTaxType, setIsSyncingTaxType] = useState(false);
+  const [isChangingPayment, setIsChangingPayment] = useState(false);
 
   const loadData = useCallback(async () => {
     const [businessRes, subscriptionRes] = await Promise.all([
@@ -64,8 +68,22 @@ function SettingsPage() {
     }
   };
 
-  const handleChangePayment = () => {
-    // TODO: 결제 수단 변경 플로우 연동 - payment_token 발급 방식(PG사 연동) 확인 필요
+  const handleChangePayment = async () => {
+    // 실제 PG사(토스페이먼츠/포트원 등)는 아직 미선정 상태 - settings/payment_gateway/real.py도
+    // NotImplementedError를 던지는 스텁이라 프론트에서 실제 SDK 연동은 불가능.
+    // 백엔드가 PAYMENT_GATEWAY_MODE=mock일 때는 payment_token 값 자체를 검증하지 않고
+    // 항상 성공 처리하므로(settings/payment_gateway/mock.py), 데모 단계에서는 mock 토큰으로 흐름만 완성한다.
+    // TODO: 실제 PG SDK 연동 확정되면, 아래 mock 토큰 생성 대신 PG SDK가 발급한 토큰으로 교체
+    setIsChangingPayment(true);
+    try {
+      const mockPaymentToken = `mock_token_${Date.now()}`;
+      await updatePaymentMethod(business.businessId, mockPaymentToken);
+      await loadData();
+    } catch (err) {
+      // TODO: 에러 처리
+    } finally {
+      setIsChangingPayment(false);
+    }
   };
 
   const handleCancelSubscription = async () => {
@@ -88,6 +106,7 @@ function SettingsPage() {
         <MembershipCard
           membership={membership}
           onChangePayment={handleChangePayment}
+          isChangingPayment={isChangingPayment}
           onCancelSubscription={handleCancelSubscription}
         />
         <BusinessInfoForm
