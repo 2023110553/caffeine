@@ -2,7 +2,10 @@ import { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import MembershipCard from "./components/MembershipCard";
 import BusinessInfoForm from "./components/BusinessInfoForm";
+import CardInputModal from "./components/CardInputModal";
+import CancelSubscriptionModal from "./components/CancelSubscriptionModal";
 import Loading from "../../components/Loading";
+import ErrorState from "../../components/ErrorState";
 import { useBusiness } from "../../contexts/BusinessContext";
 import {
   getBusinessSettings, updateBusinessSettings,
@@ -23,8 +26,10 @@ function SettingsPage() {
   const [businessForm, setBusinessForm] = useState(null);
   const [membership, setMembership] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [isSyncingTaxType, setIsSyncingTaxType] = useState(false);
-  const [isChangingPayment, setIsChangingPayment] = useState(false);
+  const [isCardModalOpen, setIsCardModalOpen] = useState(false);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
 
   const loadData = useCallback(async () => {
     const [businessRes, subscriptionRes] = await Promise.all([
@@ -37,8 +42,15 @@ function SettingsPage() {
 
   useEffect(() => {
     const load = async () => {
-      await loadData();
-      setIsLoading(false);
+      setIsLoading(true);
+      setError(null);
+      try {
+        await loadData();
+      } catch {
+        setError("설정 정보를 불러오지 못했어요. 사업장 정보를 확인해주세요.");
+      } finally {
+        setIsLoading(false);
+      }
     };
     load();
   }, [loadData]);
@@ -68,31 +80,38 @@ function SettingsPage() {
     }
   };
 
-  const handleChangePayment = async () => {
-    // 실제 PG사(토스페이먼츠/포트원 등)는 아직 미선정 상태 - settings/payment_gateway/real.py도
-    // NotImplementedError를 던지는 스텁이라 프론트에서 실제 SDK 연동은 불가능.
-    // 백엔드가 PAYMENT_GATEWAY_MODE=mock일 때는 payment_token 값 자체를 검증하지 않고
-    // 항상 성공 처리하므로(settings/payment_gateway/mock.py), 데모 단계에서는 mock 토큰으로 흐름만 완성한다.
-    // TODO: 실제 PG SDK 연동 확정되면, 아래 mock 토큰 생성 대신 PG SDK가 발급한 토큰으로 교체
-    setIsChangingPayment(true);
+  // 카드 등록 자체(가상 PG SDK 호출)는 CardInputModal이 담당하고, 여기서는 그 결과로 나온
+  // payment_token을 실제 백엔드 API로 넘기는 부분만 처리한다. 실패하면 에러를 그대로 던져서
+  // 모달이 자기 폼 안에서 에러 메시지를 보여주게 한다 (별도 토스트 없이 입력 맥락 안에서 안내).
+  const handleSubmitPaymentToken = async (paymentToken) => {
     try {
-      const mockPaymentToken = `mock_token_${Date.now()}`;
-      await updatePaymentMethod(business.businessId, mockPaymentToken);
+      await updatePaymentMethod(business.businessId, paymentToken);
       await loadData();
     } catch (err) {
-      // TODO: 에러 처리
-    } finally {
-      setIsChangingPayment(false);
+      const message = err.response?.data?.message || "결제 수단 변경에 실패했습니다. 잠시 후 다시 시도해주세요.";
+      throw new Error(message);
     }
   };
 
-  const handleCancelSubscription = async () => {
-    // TODO: 취소 확인 UX(모달 등) 필요
+  const handleConfirmCancelSubscription = async () => {
     await cancelSubscription(business.businessId);
     await loadData();
   };
 
+  const handleRetry = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await loadData();
+    } catch {
+      setError("설정 정보를 불러오지 못했어요. 사업장 정보를 확인해주세요.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (isLoading) return <Loading />;
+  if (error) return <ErrorState message={error} onRetry={handleRetry} />;
   if (!businessForm || !membership) return null;
 
   return (
@@ -105,9 +124,8 @@ function SettingsPage() {
       <ColumnGrid>
         <MembershipCard
           membership={membership}
-          onChangePayment={handleChangePayment}
-          isChangingPayment={isChangingPayment}
-          onCancelSubscription={handleCancelSubscription}
+          onChangePayment={() => setIsCardModalOpen(true)}
+          onCancelSubscription={() => setIsCancelModalOpen(true)}
         />
         <BusinessInfoForm
           form={businessForm}
@@ -117,6 +135,18 @@ function SettingsPage() {
           isSyncingTaxType={isSyncingTaxType}
         />
       </ColumnGrid>
+
+      <CardInputModal
+        open={isCardModalOpen}
+        onClose={() => setIsCardModalOpen(false)}
+        onSubmitToken={handleSubmitPaymentToken}
+      />
+      <CancelSubscriptionModal
+        open={isCancelModalOpen}
+        onClose={() => setIsCancelModalOpen(false)}
+        onConfirm={handleConfirmCancelSubscription}
+        nextBillingDate={membership.next_billing_date}
+      />
     </Wrapper>
   );
 }

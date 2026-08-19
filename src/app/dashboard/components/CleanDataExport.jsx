@@ -1,3 +1,4 @@
+import { useState } from "react";
 import styled from "styled-components";
 import { exportCleanData } from "../../../api/analytics";
 import { useBusiness } from "../../../contexts/BusinessContext";
@@ -11,9 +12,11 @@ const INCLUDED_ITEMS = [
 
 function CleanDataExport({ year, month, isClosed }) {
   const { business } = useBusiness();
+  const [downloadingFormat, setDownloadingFormat] = useState(null);
 
   const handleDownload = async (format) => {
-    if (!isClosed) return;
+    if (!isClosed || downloadingFormat) return;
+    setDownloadingFormat(format);
     try {
       const res = await exportCleanData(business.businessId, year, month, format);
       const url = URL.createObjectURL(new Blob([res.data]));
@@ -22,8 +25,15 @@ function CleanDataExport({ year, month, isClosed }) {
       link.download = `카페비서_${year}년${month}월_세무자료.${format}`;
       link.click();
       URL.revokeObjectURL(url);
-    } catch {
-      // TODO: 409(MONTHLY_CLOSE_REQUIRED) 등 에러 처리
+    } catch (err) {
+      // 마감 승인 전에 호출된 경우 서버에서 409(MONTHLY_CLOSE_REQUIRED)로 막음
+      if (err.response?.status === 409) {
+        window.alert("장부 마감 승인 이후에 다운로드할 수 있습니다.");
+      } else {
+        window.alert("자료를 다운로드하는 중 오류가 발생했습니다.");
+      }
+    } finally {
+      setDownloadingFormat(null);
     }
   };
 
@@ -51,9 +61,20 @@ function CleanDataExport({ year, month, isClosed }) {
         </IncludedGrid>
       </IncludedCard>
 
-      <DownloadButton disabled={!isClosed} onClick={() => handleDownload("csv")}>
-        ⬇ CSV/PDF 다운로드
-      </DownloadButton>
+      <ButtonRow>
+        <DownloadButton
+          disabled={!isClosed}
+          onClick={() => handleDownload("csv")}
+        >
+          ⬇ {downloadingFormat === "csv" ? "다운로드 중..." : "CSV 다운로드"}
+        </DownloadButton>
+        <DownloadButton
+          disabled={!isClosed}
+          onClick={() => handleDownload("pdf")}
+        >
+          ⬇ {downloadingFormat === "pdf" ? "다운로드 중..." : "PDF 다운로드"}
+        </DownloadButton>
+      </ButtonRow>
 
       {!isClosed && <HelperText>장부 마감 승인 이후에 다운로드 가능</HelperText>}
     </Card>
@@ -147,15 +168,20 @@ const IncludedItem = styled.p`
   font-size: 13px; /* TODO: design token화 */
 `;
 
+const ButtonRow = styled.div`
+  display: flex;
+  gap: 8px; /* TODO: design token화 */
+`;
+
 const DownloadButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px; /* TODO: design token화 */
-  width: 100%;
+  flex: 1;
   border: none;
   border-radius: ${({ theme }) => theme.radius.medium_large};
-  background-color: ${({ theme, disabled }) => (disabled ? "#A1A1AA" : theme.colors.txt_brown)}; /* TODO: theme.js에 없는 값 */
+  background-color: ${({ theme, disabled }) => (disabled ? theme.colors.bg_gray : theme.colors.txt_brown)}; /* TODO: theme.js에 없는 값 */
   color: ${({ theme }) => theme.colors.txt_white};
   padding: 12px; /* TODO: design token화 */
   font-size: 14px; /* TODO: design token화 */

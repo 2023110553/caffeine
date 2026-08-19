@@ -4,21 +4,50 @@ import lightningIcon from "../../../assets/lightningIcon.svg";
 import cardIcon from "../../../assets/cardIcon.svg";
 import checkCircleIcon from "../../../assets/checkCircleIcon.svg";
 
-function MembershipCard({ membership, onChangePayment, isChangingPayment, onCancelSubscription }) {
-  const { plan_display_name, price, next_billing_date, days_until_billing, card_company, card_last4, benefits } = membership;
+const STATUS_META = {
+  ACTIVE: { color: "#059669", bg: "#ecfdf5", label: "구독 이용 중" },
+  PAST_DUE: { color: "#dc2626", bg: "#fef2f2", label: "결제 실패" },
+  CANCELLED: { color: "#b45309", bg: "#fef3c7", label: "해지 예정" },
+  EXPIRED: { color: "#6b7280", bg: "#f3f4f6", label: "이용 종료" },
+};
+
+function MembershipCard({ membership, onChangePayment, onCancelSubscription }) {
+  const {
+    plan_display_name, price, next_billing_date, days_until_billing,
+    card_company, card_last4, benefits,
+    status, status_display, access_until, last_payment_error,
+  } = membership;
   const paymentMethodText = card_company && card_last4 ? `${card_company} (${card_last4}) · 자동 갱신` : "등록된 결제 수단 없음";
+  const statusMeta = STATUS_META[status] ?? { color: "#059669", bg: "#ecfdf5", label: status_display };
+  const canCancel = status === "ACTIVE" || status === "PAST_DUE";
 
   return (
     <Card>
       <CardHeader>
         <TitleRow>
           <Title>이용 플랜 및 멤버십</Title>
-          <StatusBadge>
-            <StatusDot />
-            구독 이용 중
+          <StatusBadge $color={statusMeta.color} $bg={statusMeta.bg}>
+            <StatusDot $color={statusMeta.color} />
+            {statusMeta.label}
           </StatusBadge>
         </TitleRow>
         <Description>현재 이용 중인 구독 요금제와 결제 정보를 관리합니다</Description>
+
+        {status === "PAST_DUE" && (
+          <StatusBanner $tone="danger">
+            ⚠️ 정기 결제에 실패했어요{last_payment_error ? ` (${last_payment_error})` : ""}. 결제 수단을 갱신해주세요.
+          </StatusBanner>
+        )}
+        {status === "CANCELLED" && access_until && (
+          <StatusBanner $tone="notice">
+            {access_until}까지는 지금처럼 계속 이용할 수 있어요. 이후 자동으로 서비스 이용이 종료됩니다.
+          </StatusBanner>
+        )}
+        {status === "EXPIRED" && (
+          <StatusBanner $tone="muted">
+            구독이 종료됐어요. 다시 이용하려면 결제 수단을 등록해주세요.
+          </StatusBanner>
+        )}
       </CardHeader>
 
       <CardBody>
@@ -77,12 +106,14 @@ function MembershipCard({ membership, onChangePayment, isChangingPayment, onCanc
         </PlanBox>
 
         <ButtonRow>
-          <Button variant="unchecked_button" onClick={onChangePayment} disabled={isChangingPayment}>
-            💳  {isChangingPayment ? "변경 중..." : "결제 수단 변경"}
+          <Button variant="unchecked_button" onClick={onChangePayment}>
+            💳  결제 수단 변경
           </Button>
-          <Button variant="unchecked_button" onClick={onCancelSubscription}>
-            구독 취소
-          </Button>
+          {canCancel && (
+            <Button variant="unchecked_button" onClick={onCancelSubscription}>
+              구독 취소
+            </Button>
+          )}
         </ButtonRow>
       </CardBody>
     </Card>
@@ -143,8 +174,8 @@ const StatusBadge = styled.span`
   align-items: center;
   gap: 5px; /* TODO: design token화 */
   flex-shrink: 0;
-  background-color: #ecfdf5; /* TODO: theme.js에 없는 값 */
-  color: #059669; /* TODO: theme.js에 없는 값 (Functional-Success) */
+  background-color: ${({ $bg }) => $bg}; /* TODO: theme.js에 없는 값 */
+  color: ${({ $color }) => $color}; /* TODO: theme.js에 없는 값 (Functional-Success) */
   border-radius: 7px; /* TODO: theme.js에 없는 값 (기존 radius 토큰과 불일치) */
   padding: 4px 10px; /* TODO: design token화 */
   font-family: var(--Font-familiy-Noto, "Noto Sans KR");
@@ -157,7 +188,24 @@ const StatusDot = styled.span`
   width: 6px;
   height: 6px;
   border-radius: 3px;
-  background-color: #059669; /* TODO: theme.js에 없는 값 (Functional-Success) */
+  background-color: ${({ $color }) => $color}; /* TODO: theme.js에 없는 값 (Functional-Success) */
+`;
+
+const BANNER_TONE = {
+  danger: { bg: "#fef2f2", color: "#b3261e" },
+  notice: { bg: "#fef3c7", color: "#b45309" },
+  muted: { bg: "#f3f4f6", color: "#6b7280" },
+};
+
+const StatusBanner = styled.p`
+  margin-top: 10px; /* TODO: design token화 */
+  padding: 8px 12px; /* TODO: design token화 */
+  border-radius: ${({ theme }) => theme.radius.small};
+  background-color: ${({ $tone }) => BANNER_TONE[$tone].bg}; /* TODO: theme.js에 없는 값 */
+  color: ${({ $tone }) => BANNER_TONE[$tone].color}; /* TODO: theme.js에 없는 값 */
+  font-size: 12px; /* TODO: design token화 */
+  line-height: 1.5;
+  align-self: stretch;
 `;
 
 const CardBody = styled.div`

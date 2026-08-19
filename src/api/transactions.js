@@ -27,3 +27,10 @@ export const getDuplicateTransactions = (businessId) =>
 // 중복 여부 확정
 export const confirmDuplicate = (businessId, duplicateId, data) =>
   client.patch(`/transactions/duplicates/${duplicateId}/`, data, { params: { business_id: businessId } });
+
+// 거래 내역 CSV 내보내기 (포맷 고정, text/csv 스트림 응답)
+export const exportTransactions = (businessId, year, month) =>
+  client.get(`/transactions/export/`, {
+    params: { business_id: businessId, year, month },
+    responseType: "blob",
+  });
