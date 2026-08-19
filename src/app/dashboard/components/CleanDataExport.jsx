@@ -63,13 +63,13 @@ function CleanDataExport({ year, month, isClosed }) {
 
       <ButtonRow>
         <DownloadButton
-          disabled={!isClosed || !!downloadingFormat}
+          disabled={!isClosed}
           onClick={() => handleDownload("csv")}
         >
           ⬇ {downloadingFormat === "csv" ? "다운로드 중..." : "CSV 다운로드"}
         </DownloadButton>
         <DownloadButton
-          disabled={!isClosed || !!downloadingFormat}
+          disabled={!isClosed}
           onClick={() => handleDownload("pdf")}
         >
           ⬇ {downloadingFormat === "pdf" ? "다운로드 중..." : "PDF 다운로드"}
@@ -181,7 +181,7 @@ const DownloadButton = styled.button`
   flex: 1;
   border: none;
   border-radius: ${({ theme }) => theme.radius.medium_large};
-  background-color: ${({ theme, disabled }) => (disabled ? "#A1A1AA" : theme.colors.txt_brown)}; /* TODO: theme.js에 없는 값 */
+  background-color: ${({ theme, disabled }) => (disabled ? theme.colors.bg_gray : theme.colors.txt_brown)}; /* TODO: theme.js에 없는 값 */
   color: ${({ theme }) => theme.colors.txt_white};
   padding: 12px; /* TODO: design token화 */
   font-size: 14px; /* TODO: design token화 */
