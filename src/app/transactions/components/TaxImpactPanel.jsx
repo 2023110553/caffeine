@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import Button from "../../../components/Button";
-import CheckIcon from "../../../assets/CheckIcon.png";
+import CheckIcon from "../../../assets/checkIcon.png";
 import { useState } from "react";
 
 const BAR_COLOR = {

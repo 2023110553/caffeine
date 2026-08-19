@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import logo from "../assets/logo.png";
+import logo from "../assets/Logo.png";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ROUTES } from "../router/paths";
 
