@@ -13,12 +13,12 @@ export const getAnalyticsSummary = (month) =>
   client.get(`/analytics/summary/`, { params: { month } });
 
 // 월별 세무 현황 결산 (홈 화면 상단부 통합)
-export const getMonthlySummary = (year, month) =>
-  client.get(`/analytics/monthly-summary/`, { params: { year, month } });
+export const getMonthlySummary = (businessId, year, month) =>
+  client.get(`/analytics/monthly-summary/`, { params: { business_id: businessId, year, month } });
 
 // 부가세 공제 구조 분석
-export const getDeductionBreakdown = (year, month) =>
-  client.get(`/analytics/deduction-breakdown/`, { params: { year, month } });
+export const getDeductionBreakdown = (businessId, year, month) =>
+  client.get(`/analytics/deduction-breakdown/`, { params: { business_id: businessId, year, month } });
 
 // 세무사 전달용 클린데이터 다운로드 (file_type 기본값 csv, pdf 선택 가능)
 export const exportCleanData = (businessId, year, month, fileType) =>
