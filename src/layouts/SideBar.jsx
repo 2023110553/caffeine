@@ -8,6 +8,7 @@ const MENU_ROUTE_MAP = {
   "지출 내역 분류": ROUTES.TRANSACTIONS_REVIEW,
   "AI 세무 챗봇": ROUTES.CHAT,
   "인건비 관리": ROUTES.PAYROLL,
+  "경영 분석 리포트": ROUTES.BENCHMARK,
   "설정": ROUTES.SETTINGS,
 };
 
@@ -15,6 +16,7 @@ const MENUS = [
   ["🏠", "홈"],
   ["📋", "지출 내역 분류"],
   ["👥", "인건비 관리"],
+  ["📊", "경영 분석 리포트"],
   ["🤖", "AI 세무 챗봇"],
   ["⚙️", "설정"],
 ];
