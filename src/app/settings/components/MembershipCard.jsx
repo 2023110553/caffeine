@@ -4,7 +4,7 @@ import lightningIcon from "../../../assets/lightningIcon.svg";
 import cardIcon from "../../../assets/cardIcon.svg";
 import checkCircleIcon from "../../../assets/checkCircleIcon.svg";
 
-function MembershipCard({ membership, onChangePayment, onCancelSubscription }) {
+function MembershipCard({ membership, onChangePayment, isChangingPayment, onCancelSubscription }) {
   const { plan_display_name, price, next_billing_date, days_until_billing, card_company, card_last4, benefits } = membership;
   const paymentMethodText = card_company && card_last4 ? `${card_company} (${card_last4}) · 자동 갱신` : "등록된 결제 수단 없음";
 
@@ -77,8 +77,8 @@ function MembershipCard({ membership, onChangePayment, onCancelSubscription }) {
         </PlanBox>
 
         <ButtonRow>
-          <Button variant="unchecked_button" onClick={onChangePayment}>
-            💳  결제 수단 변경
+          <Button variant="unchecked_button" onClick={onChangePayment} disabled={isChangingPayment}>
+            💳  {isChangingPayment ? "변경 중..." : "결제 수단 변경"}
           </Button>
           <Button variant="unchecked_button" onClick={onCancelSubscription}>
             구독 취소

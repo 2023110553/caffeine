@@ -1,8 +1,9 @@
 import styled from "styled-components";
 import Button from "../../../components/Button";
 import { useState } from "react";
+import { ITEM_CATEGORY_LABEL } from "../constants";
 
-function ExpenseListItem({ transaction, onCategoryChange }) {
+function ExpenseListItem({ transaction, onCategoryChange, onItemCategoryChange }) {
   const {
     transaction_id,
     icon,
@@ -11,21 +12,10 @@ function ExpenseListItem({ transaction, onCategoryChange }) {
     date,
     total_amount,
     category,
+    itemCategoryCode,
   } = transaction;
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState("식자재 (면세)");
-
-  const categoryOptions = [
-    "식자재 (면세)",
-    "식자재, 소모품",
-    "포장, 소모품",
-    "전기, 가스요금",
-    "통신비",
-    "원두, 재료",
-    "마케팅, 광고",
-    "사무용품",
-    "개인 지출 (비공제)",
-  ];
+  const isItemUnclassified = itemCategoryCode === "UNCLASSIFIED";
 
   return (
     <Card>
@@ -45,12 +35,10 @@ function ExpenseListItem({ transaction, onCategoryChange }) {
       </CardTop>
 
       <CategoryCard>
-        <CategoryButton onClick={() => setIsOpen(!isOpen)} $selectedItem = {selectedItem}>
+        <CategoryButton onClick={() => setIsOpen(!isOpen)} $unclassified={isItemUnclassified}>
           <span>
-            {selectedItem !== "개인 지출 (비공제)" &&
-              selectedItem !== "품목 미분류" &&
-              "✓ "}
-            {selectedItem}
+            {!isItemUnclassified && "✓ "}
+            {ITEM_CATEGORY_LABEL[itemCategoryCode]}
           </span>
 
           <Arrow $isOpen={isOpen}>▼</Arrow>
@@ -58,16 +46,16 @@ function ExpenseListItem({ transaction, onCategoryChange }) {
 
         {isOpen && (
           <DropdownMenu>
-            {categoryOptions.map((item) => (
+            {Object.entries(ITEM_CATEGORY_LABEL).map(([code, label]) => (
               <DropdownItem
-                key={item}
-                $selected={selectedItem === item}
+                key={code}
+                $selected={itemCategoryCode === code}
                 onClick={() => {
-                  setSelectedItem(item);
+                  onItemCategoryChange(transaction_id, code);
                   setIsOpen(false);
                 }}
               >
-                {item}
+                {label}
               </DropdownItem>
             ))}
           </DropdownMenu>
@@ -204,36 +192,6 @@ const Memo = styled.p`
   white-space: nowrap;
 `;
 
-const BADGE_COLOR = {
-  business: {
-    bg: "bg_brown",
-    text: "txt_white",
-  },
-  personal: {
-    bg: "bg_beige",
-    text: "txt_brown",
-  },
-};
-
-const CategoryBadge = styled.span`
-  flex-shrink: 0;
-  padding: 2px 8px;
-
-  color: ${({ theme, $variant }) => theme.colors[BADGE_COLOR[$variant].text]};
-
-  background-color: ${({ theme, $variant }) =>
-    theme.colors[BADGE_COLOR[$variant].bg]};
-
-  border-radius: 16px;
-
-  font-family: "Outfit", sans-serif;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  line-height: 1rem;
-
-  white-space: nowrap;
-`;
-
 const Amount = styled.p`
   flex-shrink: 0;
   padding-top: 12px;
@@ -304,11 +262,9 @@ const CategoryButton = styled.button`
   border: none;
   border-radius: 10px;
 
-  background-color: ${({ $selectedItem }) =>
-    ($selectedItem=="개인 지출 (비공제)") ? "#EDE8E2" : ($selectedItem=="품목 미분류")? "#FFF0E6": "#EAF4EE"};
+  background-color: ${({ $unclassified }) => ($unclassified ? "#FFF0E6" : "#EAF4EE")};
 
-  color: ${({ $selectedItem }) =>
-    ($selectedItem=="개인 지출 (비공제)") ? "#9B6E62" : ($selectedItem=="품목 미분류")? "#C05328": "#2E7D52"};
+  color: ${({ $unclassified }) => ($unclassified ? "#C05328" : "#2E7D52")};
   border-radius: 8px;
 
 
