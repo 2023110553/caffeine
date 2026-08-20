@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import IntroPage from "../app/intro/IntroPage";
 import AppLayout from "../layouts/AppLayout";
 import TransactionReviewPage from "../app/transactions/TransactionReviewPage";
 import ChatPage from "../app/chat/ChatPage";
@@ -11,6 +12,8 @@ import ComponentPreviewPage from "../dev/ComponentPreviewPage"; // ⚠️ 임시
 function Router() {
   return (
     <Routes>
+      <Route path="/" element={<IntroPage />} />
+
       {/* 카페비서 서비스: /app 하위 전부 AppLayout 공유 */}
       <Route path="/app" element={<AppLayout />}>
         {/* 아직 페이지 없음 — Phase 2~5에서 하나씩 채워질 자리 */}
