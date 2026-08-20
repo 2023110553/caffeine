@@ -1,16 +1,21 @@
 import PropTypes from "prop-types";
 import styled from "styled-components";
+import { getWithholdingTaxDueDate } from "../withholdingTaxDueDate";
 
-function PayrollHeader({ onAddClick }) {
+function PayrollHeader({ year, month, onAddClick }) {
+  const { dueMonth, dueDay } = getWithholdingTaxDueDate(year, month);
+
   return (
     <Wrapper>
       <TitleGroup>
         <Title>인건비 관리</Title>
         <SubRow>
-          <Eyebrow>2026년 8월 급여 기준</Eyebrow>
+          <Eyebrow>
+            {year}년 {month}월 급여 기준
+          </Eyebrow>
           <Badge>
             <Dot></Dot>
-            9월 10일 원천세 납부 예정
+            {dueMonth}월 {dueDay}일 원천세 납부 예정
           </Badge>
         </SubRow>
       </TitleGroup>
@@ -88,6 +93,8 @@ const Dot = styled.div`
 `;
 
 PayrollHeader.propTypes = {
+  year: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+  month: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
   onAddClick: PropTypes.func.isRequired,
 };
 

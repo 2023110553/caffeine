@@ -39,7 +39,9 @@ function ExpenseHeader({ year, month }) {
   return (
     <Wrapper>
       <TitleGroup>
-        <Eyebrow>2026년 8월 · 부가세 신고 준비</Eyebrow>
+        <Eyebrow>
+          {year}년 {month}월 · 부가세 신고 준비
+        </Eyebrow>
         <Title>지출 내역 분류</Title>
       </TitleGroup>
       <CsvArea>

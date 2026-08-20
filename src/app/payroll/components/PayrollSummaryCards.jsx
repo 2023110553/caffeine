@@ -1,6 +1,10 @@
+import PropTypes from "prop-types";
 import styled from "styled-components";
+import { getWithholdingTaxDueDate } from "../withholdingTaxDueDate";
 
-function PayrollSummaryCards({ totalExpense, totalWithholdingTax, onExport }) {
+function PayrollSummaryCards({ year, month, totalExpense, totalWithholdingTax, onExport }) {
+  const { dueMonth, dueDay } = getWithholdingTaxDueDate(year, month);
+
   return (
     <Wrapper>
       <Card>
@@ -12,7 +16,9 @@ function PayrollSummaryCards({ totalExpense, totalWithholdingTax, onExport }) {
       <Card>
         <LabelRow>
           <Dot />
-          <Label>9월 10일 납부할 원천세 합계</Label>
+          <Label>
+            {dueMonth}월 {dueDay}일 납부할 원천세 합계
+          </Label>
         </LabelRow>
         <Value>{totalWithholdingTax.toLocaleString()}원</Value>
         <NotePill $tone="warning">소득세 + 개인지방소득세</NotePill>
@@ -168,4 +174,13 @@ const ExportButton = styled.button`
 
   cursor: pointer;
 `;
+
+PayrollSummaryCards.propTypes = {
+  year: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+  month: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+  totalExpense: PropTypes.number.isRequired,
+  totalWithholdingTax: PropTypes.number.isRequired,
+  onExport: PropTypes.func.isRequired,
+};
+
 export default PayrollSummaryCards;
