@@ -1,7 +1,4 @@
-import Button from "../../../components/Button";
 import CheckIcon from "../../../assets/checkIcon.png";
-import { useState, useEffect } from "react";
-import { useToast } from "../../../contexts/ToastContext";
 import {
   Wrapper,
   PanelTitle,
@@ -24,7 +21,6 @@ import {
   Segment,
   Notice,
   Icon,
-  SavingText,
   UnselectedBox,
   UnselectedTop,
   UnselectedDot,
@@ -41,26 +37,11 @@ const BAR_COLOR = {
   unclassified: "bg_gray",
 };
 
-function TaxImpactPanel({ summary, estimatedVat, normalInputTax, deemedInputTax, transactions }) {
+function TaxImpactPanel({ summary, estimatedVat, normalInputTax, deemedInputTax }) {
   // 중복 계산 줄이기
   const isCompleted = summary.unclassified.count === 0;
 
-  const showToast = useToast();
-  const [isSaved, setIsSaved] = useState(false);
-
   const totalAmount = summary.business.total + summary.personal.total + summary.unclassified.total;
-
-  const handleButtonClick = () => {
-    if (isCompleted) {
-      setIsSaved(true);
-    } else {
-      showToast("아직 미분류된 지출이 있습니다.");
-    }
-  };
-
-  useEffect(() => {
-    setIsSaved(false);
-  }, [transactions]);
 
   return (
     <Wrapper>
@@ -179,32 +160,6 @@ function TaxImpactPanel({ summary, estimatedVat, normalInputTax, deemedInputTax,
           )}
         </span>
       </Notice>
-
-      <Button
-        variant={
-          isSaved ? "button_large_green" : isCompleted ? "button_large_brown" : "button_large_gray"
-        }
-        size="large"
-        onClick={handleButtonClick}
-      >
-        {isSaved ? (
-          "✓ 저장 완료!"
-        ) : isCompleted ? (
-          "분류 완료 및 부가세 공제 가능액 예측하기"
-        ) : (
-          <>
-            품목 분류와 지출 선택 마치고
-            <br />
-            부가세 공제 가능액 예측하기
-          </>
-        )}
-      </Button>
-      {/*절감예상 표시유무 */}
-      {isCompleted && (
-        <SavingText>
-          절감 예상: <strong>{estimatedVat.toLocaleString()}원</strong>
-        </SavingText>
-      )}
     </Wrapper>
   );
 }
