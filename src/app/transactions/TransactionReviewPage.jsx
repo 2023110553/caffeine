@@ -43,7 +43,10 @@ function TransactionReviewPage() {
   const [error, setError] = useState(null);
 
   const loadData = useCallback(async () => {
-    const res = await getTransactions(business.businessId, { start_date: `${YEAR}-${String(MONTH).padStart(2, "0")}-01` });
+      const res = await getTransactions(business.businessId, {
+    start_date: `${YEAR}-${String(MONTH).padStart(2, "0")}-01`,
+    transaction_type: "PURCHASE",
+  });
     setTransactions(res.data.data.items.map(normalizeTransaction));
   }, [business.businessId]);
 
