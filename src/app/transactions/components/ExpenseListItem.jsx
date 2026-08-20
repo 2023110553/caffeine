@@ -2,11 +2,10 @@ import styled from "styled-components";
 import Button from "../../../components/Button";
 import { useState } from "react";
 import { ITEM_CATEGORY_LABEL } from "../constants";
-
+import { ITEM_CATEGORY_ICON } from "../constants";
 function ExpenseListItem({ transaction, onCategoryChange, onItemCategoryChange }) {
   const {
     transaction_id,
-    icon,
     merchant_name,
     memo,
     date,
@@ -16,7 +15,7 @@ function ExpenseListItem({ transaction, onCategoryChange, onItemCategoryChange }
   } = transaction;
   const [isOpen, setIsOpen] = useState(false);
   const isItemUnclassified = itemCategoryCode === "UNCLASSIFIED";
-
+  const icon = ITEM_CATEGORY_ICON[itemCategoryCode] ?? "🧾";
   return (
     <Card>
       <CardTop>

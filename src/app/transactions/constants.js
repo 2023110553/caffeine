@@ -11,3 +11,16 @@ export const ITEM_CATEGORY_LABEL = {
   EQUIPMENT: "시설·장비",
   OTHER: "기타",
 };
+
+export const ITEM_CATEGORY_ICON = {
+  RAW_MATERIAL: " ☕ ",
+  RENT: "🏠",
+  UTILITIES: "⚡",
+  SUPPLIES: "📦",
+  ADVERTISING: "📢",
+  DELIVERY: "🛵",
+  FEES: "💳",
+  EQUIPMENT: "⚙️",
+  OTHER: "🏷️",
+  UNCLASSIFIED: "❓",
+};
