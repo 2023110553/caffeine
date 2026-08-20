@@ -16,11 +16,31 @@ function formatBirthDate(raw) {
   return `${digits.slice(0, 4)}-${digits.slice(4, 6)}-${digits.slice(6)}`;
 }
 
-const TAX_TYPE_OPTIONS = [
-  { value: "GENERAL", label: "일반과세자 (연 매출 1억 400만 원 이상 또는 선택)" },
-  { value: "SIMPLIFIED", label: "간이과세자 (연 매출 1억 400만 원 미만 소상공인)" },
-  { value: "EXEMPT", label: "면세사업자 (부가가치세 면제 품목 취급 사업자)" },
-];
+// 백엔드(TAX_TYPE_MAP)는 안정적인 enum 값만 내려주고, 사용자에게 보여줄 문구는 프론트에서 관리한다.
+// 키는 businesses/services/tax_type_service.py의 TAX_TYPE_MAP 값과 반드시 일치해야 함
+// (기존엔 "SIMPLIFIED"로 잘못 적혀 있어서 백엔드가 주는 "SIMPLE"과 매칭이 안 되던 버그가 있었음)
+const TAX_TYPE_INFO = {
+  GENERAL: {
+    label: "일반과세자",
+    description: "연 매출 1억 400만 원 이상이거나 간이과세 배제 업종에 해당하는 사업자",
+  },
+  SIMPLE: {
+    label: "간이과세자",
+    description: "연 매출 1억 400만 원 미만이면서 간이과세 배제 업종이 아닌 개인사업자",
+  },
+  EXEMPT: {
+    label: "면세사업자",
+    description: "부가가치세가 면제되는 재화·용역을 공급하는 사업자",
+  },
+  NONPROFIT: {
+    label: "비영리법인",
+    description: "고유목적사업 등 비영리 목적으로 운영되는 법인 사업자",
+  },
+  OTHER_CORP: {
+    label: "기타법인",
+    description: "일반법인 등 앞의 유형에 속하지 않는 법인 사업자",
+  },
+};
 
 const SAVE_BUTTON_LABEL = {
   idle: "💾 설정 저장하기",
@@ -31,9 +51,12 @@ const SAVE_BUTTON_LABEL = {
 function BusinessInfoForm({ form, onChange, onSubmit, saveStatus = "idle", onSyncTaxType, isSyncingTaxType }) {
   const {
     business_name, representative_name, birth_date, phone_number,
-    business_number, tax_type, industry_code, industry_name,
+    business_number, tax_type, industry_code, business_type, business_item,
   } = form;
-  const taxTypeLabel = TAX_TYPE_OPTIONS.find((option) => option.value === tax_type)?.label ?? tax_type;
+  // 매핑에 없는(아직 안 채워진) tax_type이 와도 화면이 깨지지 않도록 fallback 처리
+  const taxTypeInfo = TAX_TYPE_INFO[tax_type] ?? { label: tax_type, description: "" };
+  // 업태·종목을 화면 표시용으로 조합 - 백엔드는 원본 값만 주고 합치는 건 여기서 처리
+  const industryName = [business_type, business_item].filter(Boolean).join(" · ");
 
   return (
     <Card>
@@ -92,7 +115,12 @@ function BusinessInfoForm({ form, onChange, onSubmit, saveStatus = "idle", onSyn
         <FieldGroup>
           <Label>과세 유형</Label>
           <TaxTypeRow>
-            <TaxTypeValue>{taxTypeLabel}</TaxTypeValue>
+            <TaxTypeValue>
+              <TaxTypeLabel>{taxTypeInfo.label}</TaxTypeLabel>
+              {taxTypeInfo.description && (
+                <TaxTypeDescription>{taxTypeInfo.description}</TaxTypeDescription>
+              )}
+            </TaxTypeValue>
             <SyncButton type="button" onClick={onSyncTaxType} disabled={isSyncingTaxType}>
               {isSyncingTaxType ? "동기화 중…" : "🔄 홈택스 동기화"}
             </SyncButton>
@@ -102,11 +130,9 @@ function BusinessInfoForm({ form, onChange, onSubmit, saveStatus = "idle", onSyn
         <FieldGroup>
           <Label>업종 코드</Label>
           <IndustryRow>
-            <IndustryCodeInput
-              value={industry_code}
-              onChange={(e) => onChange("industry_code", e.target.value)}
-            />
-            <IndustryName>{industry_name}</IndustryName>
+            {/* business_type/business_item과 마찬가지로 CODEF 사업자등록 조회 시점에 채워지는 값이라 직접 수정 불가 */}
+            <IndustryCodeValue>{industry_code}</IndustryCodeValue>
+            <IndustryName>{industryName || "등록되지 않은 업종코드예요"}</IndustryName>
           </IndustryRow>
         </FieldGroup>
       </FormArea>
@@ -236,7 +262,7 @@ const BusinessNumberInput = styled(FieldInput)`
 
 const TaxTypeRow = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* label+description 2줄이라 위쪽 기준으로 정렬 */
   gap: 10px; /* TODO: design token화 */
   width: 100%;
 `;
@@ -244,17 +270,28 @@ const TaxTypeRow = styled.div`
 const TaxTypeValue = styled.div`
   flex: 1;
   display: flex;
-  align-items: center;
-  height: 41.85px;
-  padding: 10px 13px; /* TODO: design token화 */
+  flex-direction: column;
+  gap: 3px; /* TODO: design token화 */
+  padding: 8px 13px; /* TODO: design token화 */
   border-radius: 10px; /* TODO: theme.js에 없는 값 (기존 radius 토큰과 불일치) */
   border: 0.8px solid #e8ddd0; /* TODO: theme.js에 없는 값 */
   background-color: #f3ede3; /* TODO: theme.js에 없는 값 - 수정 불가 필드라 IndustryName과 동일 톤 */
+`;
+
+const TaxTypeLabel = styled.div`
   color: ${({ theme }) => theme.colors.txt_brown};
   font-family: var(--Font-familiy-Noto, "Noto Sans KR");
   font-size: 13.5px; /* TODO: design token화 */
-  font-weight: 400;
+  font-weight: 600;
   line-height: 20.25px; /* TODO: design token화 - 150% */
+`;
+
+const TaxTypeDescription = styled.div`
+  color: #a07860; /* TODO: theme.js에 없는 값 - Description 컴포넌트와 동일 톤 */
+  font-family: var(--Font-familiy-Noto, "Noto Sans KR");
+  font-size: 11.5px; /* TODO: design token화 */
+  font-weight: 400;
+  line-height: 16px; /* TODO: design token화 */
 `;
 
 const SyncButton = styled.button`
@@ -284,11 +321,9 @@ const IndustryRow = styled.div`
   gap: 10px; /* TODO: design token화 */
 `;
 
-const IndustryCodeInput = styled.input`
+const IndustryCodeValue = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   align-self: stretch;
   flex-shrink: 0;
   width: 100px; /* TODO: design token화 */
@@ -296,7 +331,7 @@ const IndustryCodeInput = styled.input`
   padding: 10px 13px; /* TODO: design token화 */
   border-radius: 10px; /* TODO: theme.js에 없는 값 (기존 radius 토큰과 불일치) */
   border: 0.8px solid #e8ddd0; /* TODO: theme.js에 없는 값 */
-  background-color: #f3ede3; /* TODO: theme.js에 없는 값 */
+  background-color: #f3ede3; /* TODO: theme.js에 없는 값 - 수정 불가 필드라 IndustryName과 동일 톤 */
   color: ${({ theme }) => theme.colors.txt_brown};
   font-family: "JetBrains Mono", monospace;
   font-size: 13px; /* TODO: design token화 */
