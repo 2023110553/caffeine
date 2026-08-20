@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { getMonthlySummary, getDeductionBreakdown } from "../../api/analytics";
 import { getClosingSummary, approveClosing } from "../../api/tax";
 import { useBusiness } from "../../contexts/BusinessContext";
+import { useToast } from "../../contexts/ToastContext";
+import { useAsync } from "../../hooks/useAsync";
 import SummaryHeader from "./components/SummaryHeader";
 import VatReserveCard from "./components/VatReserveCard";
 import SalesExpenseCard from "./components/SalesExpenseCard";
@@ -17,36 +19,34 @@ const YEAR_MONTH = `${YEAR}-${String(MONTH).padStart(2, "0")}`;
 
 function DashboardPage() {
   const { business } = useBusiness();
+  const showToast = useToast();
   const businessId = business.businessId;
 
   const [summary, setSummary] = useState(null);
   const [deduction, setDeduction] = useState(null);
   const [isClosed, setIsClosed] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadError, setLoadError] = useState(false);
+
+  const {
+    isLoading,
+    error: loadError,
+    run,
+  } = useAsync({
+    errorMessage: "대시보드 데이터 조회 실패:",
+  });
 
   useEffect(() => {
     if (!businessId) return;
 
-    const loadData = async () => {
-      setIsLoading(true);
-      setLoadError(false);
-      try {
-        const [summaryRes, deductionRes] = await Promise.all([
-          getMonthlySummary(businessId, YEAR, MONTH),
-          getDeductionBreakdown(businessId, YEAR, MONTH),
-        ]);
-        setSummary(summaryRes.data.data);
-        setDeduction(deductionRes.data.data);
-      } catch {
-        setLoadError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadData();
-  }, [businessId]);
+    run(async () => {
+      const [summaryRes, deductionRes] = await Promise.all([
+        getMonthlySummary(businessId, YEAR, MONTH),
+        getDeductionBreakdown(businessId, YEAR, MONTH),
+      ]);
+      setSummary(summaryRes.data);
+      setDeduction(deductionRes.data);
+    });
+  }, [businessId, run]);
 
   // 마감 상태 초기 조회: GET /tax/closing/{year_month}/ 응답의 status로 판단 (summary/deduction과 별개로 실제 연동)
   useEffect(() => {
@@ -55,9 +55,10 @@ function DashboardPage() {
     const loadClosingStatus = async () => {
       try {
         const res = await getClosingSummary(businessId, YEAR_MONTH);
-        setIsClosed(res.data.data.status === "CLOSED");
-      } catch {
+        setIsClosed(res.data.status === "CLOSED");
+      } catch (err) {
         // 조회 실패 시 마감 전 상태로 간주 (다운로드/승인 버튼은 비활성 유지)
+        console.error("마감 상태 조회 실패:", err);
       }
     };
     loadClosingStatus();
@@ -70,11 +71,11 @@ function DashboardPage() {
       setIsClosed(true);
     } catch (err) {
       if (err.response?.status === 409) {
-        window.alert("이미 마감 승인된 월입니다.");
+        showToast("이미 마감 승인된 월입니다.");
       } else if (err.response?.status === 422) {
-        window.alert("확인되지 않은 거래가 있어 마감할 수 없습니다.");
+        showToast("확인되지 않은 거래가 있어 마감할 수 없습니다.");
       } else {
-        window.alert("마감 승인 중 오류가 발생했습니다.");
+        showToast("마감 승인 중 오류가 발생했습니다.");
       }
     } finally {
       setIsApproving(false);
@@ -82,7 +83,8 @@ function DashboardPage() {
   };
 
   if (isLoading) return <Loading />;
-  if (loadError) return <ErrorMessage>데이터를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.</ErrorMessage>;
+  if (loadError)
+    return <ErrorMessage>데이터를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.</ErrorMessage>;
   if (!summary || !deduction) return null;
 
   return (

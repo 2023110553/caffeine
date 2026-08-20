@@ -1,4 +1,5 @@
 // src/components/Loading.jsx
+import PropTypes from "prop-types";
 import styled, { keyframes } from "styled-components";
 
 function Loading({ label = "불러오는 중..." }) {
@@ -9,6 +10,10 @@ function Loading({ label = "불러오는 중..." }) {
     </Wrapper>
   );
 }
+
+Loading.propTypes = {
+  label: PropTypes.string,
+};
 
 const spin = keyframes`
   to { transform: rotate(360deg); }
@@ -22,7 +27,7 @@ const Wrapper = styled.div`
   align-items: center;
   justify-content: center;
   gap: 8px; /* TODO: design token화 */
-  color: ${({ theme }) => theme.colors.muted};
+  color: ${({ theme }) => theme.colors.txt_beige};
 `;
 
 const Spinner = styled.div`

@@ -17,18 +17,17 @@ function ExpenseList({
   const totalCount = transactions.length;
   const classifiedCount = totalCount - summary.unclassified.count;
 
-  const progressPercent =
-    totalCount === 0 ? 0 : (classifiedCount / totalCount) * 100;
+  const progressPercent = totalCount === 0 ? 0 : (classifiedCount / totalCount) * 100;
 
   const filteredTransactions = transactions.filter((tx) => {
-  if (selectedFilter === "all") return true;
+    if (selectedFilter === "all") return true;
 
-  if (selectedFilter === "unclassified") {
-    return tx.category === null;
-  }
+    if (selectedFilter === "unclassified") {
+      return tx.category === null;
+    }
 
-  return tx.category === selectedFilter;
-});
+    return tx.category === selectedFilter;
+  });
   return (
     <Wrapper>
       <ListHeader>

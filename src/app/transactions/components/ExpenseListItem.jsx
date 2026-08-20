@@ -4,19 +4,12 @@ import { useState } from "react";
 import { ITEM_CATEGORY_LABEL } from "../constants";
 import { ITEM_CATEGORY_ICON } from "../constants";
 function ExpenseListItem({ transaction, onCategoryChange, onItemCategoryChange }) {
-  const {
-    transaction_id,
-    merchant_name,
-    memo,
-    date,
-    total_amount,
-    category,
-    itemCategoryCode,
-  } = transaction;
+  const { transaction_id, merchant_name, memo, date, total_amount, category, itemCategoryCode } =
+    transaction;
   const [isOpen, setIsOpen] = useState(false);
   const isItemUnclassified = itemCategoryCode === "UNCLASSIFIED";
   const icon = ITEM_CATEGORY_ICON[itemCategoryCode] ?? "🧾";
-  
+
   return (
     <Card>
       <CardTop>
@@ -66,11 +59,7 @@ function ExpenseListItem({ transaction, onCategoryChange, onItemCategoryChange }
 
       <ButtonRow>
         <Button
-          variant={
-            category === "business"
-              ? "checked_button_brown"
-              : "unchecked_button"
-          }
+          variant={category === "business" ? "checked_button_brown" : "unchecked_button"}
           size="small"
           onClick={() => onCategoryChange(transaction_id, "business")}
         >
@@ -78,11 +67,7 @@ function ExpenseListItem({ transaction, onCategoryChange, onItemCategoryChange }
         </Button>
 
         <Button
-          variant={
-            category === "personal"
-              ? "checked_button_beige"
-              : "unchecked_button"
-          }
+          variant={category === "personal" ? "checked_button_beige" : "unchecked_button"}
           size="small"
           onClick={() => onCategoryChange(transaction_id, "personal")}
         >
@@ -267,7 +252,6 @@ const CategoryButton = styled.button`
   color: ${({ $unclassified }) => ($unclassified ? "#C05328" : "#2E7D52")};
   border-radius: 8px;
 
-
   font-family: "Outfit", sans-serif;
   font-size: 0.75rem;
   font-weight: 600;
@@ -314,8 +298,7 @@ const DropdownItem = styled.button`
 
   color: ${({ theme }) => theme.colors.txt_brown};
 
-  background-color: ${({ $selected }) =>
-    $selected ? "#C99B7D" : "transparent"};
+  background-color: ${({ $selected }) => ($selected ? "#C99B7D" : "transparent")};
 
   font-family: "Outfit", sans-serif;
   font-size: 0.75rem;

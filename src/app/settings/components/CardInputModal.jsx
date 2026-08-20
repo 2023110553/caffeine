@@ -4,17 +4,7 @@ import Modal from "../../../components/Modal";
 import Input from "../../../components/Input";
 import Button from "../../../components/Button";
 import { requestBillingAuth } from "../../../lib/mockPaymentGateway";
-
-function formatCardNumber(raw) {
-  const digits = raw.replace(/\D/g, "").slice(0, 16);
-  return digits.replace(/(.{4})/g, "$1 ").trim();
-}
-
-function formatExpiry(raw) {
-  const digits = raw.replace(/\D/g, "").slice(0, 4);
-  if (digits.length <= 2) return digits;
-  return `${digits.slice(0, 2)}/${digits.slice(2)}`;
-}
+import { formatCardNumber, formatExpiry } from "../../../lib/format";
 
 // onSubmitToken(paymentToken): 실제 결제수단 변경 API 호출은 부모(SettingsPage)가 담당한다.
 // 이 모달은 "가상 PG SDK가 카드를 승인하고 토큰을 발급하는" 단계까지만 책임진다.
@@ -91,12 +81,17 @@ function CardInputModal({ open, onClose, onSubmitToken }) {
         {error && <ErrorBanner>{error}</ErrorBanner>}
 
         <TestCardHint>
-          테스트용 카드: <strong>…0002</strong>로 끝나면 등록 거절 / <strong>…0341</strong>로 끝나면 등록은 되지만
-          이후 정기 결제가 실패하는 시나리오예요.
+          테스트용 카드: <strong>…0002</strong>로 끝나면 등록 거절 / <strong>…0341</strong>로 끝나면
+          등록은 되지만 이후 정기 결제가 실패하는 시나리오예요.
         </TestCardHint>
 
         <ButtonRow>
-          <Button type="button" variant="unchecked_button" onClick={resetAndClose} disabled={isSubmitting}>
+          <Button
+            type="button"
+            variant="unchecked_button"
+            onClick={resetAndClose}
+            disabled={isSubmitting}
+          >
             취소
           </Button>
           <Button type="submit" variant="checked_button_brown" disabled={isSubmitting}>

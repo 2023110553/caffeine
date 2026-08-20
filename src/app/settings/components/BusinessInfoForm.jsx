@@ -1,20 +1,6 @@
 import styled, { css, keyframes } from "styled-components";
 import Button from "../../../components/Button";
-
-// 숫자만 입력해도 자동으로 하이픈이 들어가도록 포맷팅. CardInputModal의 formatCardNumber/formatExpiry와 동일한 패턴.
-function formatPhoneNumber(raw) {
-  const digits = raw.replace(/\D/g, "").slice(0, 11); // 010-1234-5678 (3-4-4)
-  if (digits.length <= 3) return digits;
-  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
-  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
-}
-
-function formatBirthDate(raw) {
-  const digits = raw.replace(/\D/g, "").slice(0, 8); // YYYY-MM-DD
-  if (digits.length <= 4) return digits;
-  if (digits.length <= 6) return `${digits.slice(0, 4)}-${digits.slice(4)}`;
-  return `${digits.slice(0, 4)}-${digits.slice(4, 6)}-${digits.slice(6)}`;
-}
+import { formatPhoneNumber, formatBirthDate } from "../../../lib/format";
 
 // 백엔드(TAX_TYPE_MAP)는 안정적인 enum 값만 내려주고, 사용자에게 보여줄 문구는 프론트에서 관리한다.
 // 키는 businesses/services/tax_type_service.py의 TAX_TYPE_MAP 값과 반드시 일치해야 함
@@ -48,10 +34,24 @@ const SAVE_BUTTON_LABEL = {
   success: "✅ 저장 완료",
 };
 
-function BusinessInfoForm({ form, onChange, onSubmit, saveStatus = "idle", onSyncTaxType, isSyncingTaxType }) {
+function BusinessInfoForm({
+  form,
+  onChange,
+  onSubmit,
+  saveStatus = "idle",
+  onSyncTaxType,
+  isSyncingTaxType,
+}) {
   const {
-    business_name, representative_name, birth_date, phone_number,
-    business_number, tax_type, industry_code, business_type, business_item,
+    business_name,
+    representative_name,
+    birth_date,
+    phone_number,
+    business_number,
+    tax_type,
+    industry_code,
+    business_type,
+    business_item,
   } = form;
   // 매핑에 없는(아직 안 채워진) tax_type이 와도 화면이 깨지지 않도록 fallback 처리
   const taxTypeInfo = TAX_TYPE_INFO[tax_type] ?? { label: tax_type, description: "" };
@@ -374,7 +374,9 @@ const SubmitButton = styled(Button)`
   width: 100%;
   padding: 13px 20px; /* TODO: design token화 */
   gap: 8px; /* TODO: design token화 */
-  transition: background-color 0.2s ease, transform 0.15s ease;
+  transition:
+    background-color 0.2s ease,
+    transform 0.15s ease;
 
   ${({ $status }) =>
     $status === "success" &&

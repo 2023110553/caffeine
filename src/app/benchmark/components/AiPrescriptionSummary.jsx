@@ -53,9 +53,9 @@ const DetailButton = styled.button`
   flex-shrink: 0;
   border: none;
   border-radius: 10px;
-  background: #98582A; /* TODO: theme.js에 없는 값 */
+  background: #98582a; /* TODO: theme.js에 없는 값 */
   padding: 8px 16px; /* TODO: design token화 */
-  color: #FDF9F3; /* TODO: theme.js에 없는 값 */
+  color: #fdf9f3; /* TODO: theme.js에 없는 값 */
   font-family: "Noto Sans KR", sans-serif; /* TODO: design token화 */
   font-size: 12px; /* TODO: design token화 */
   font-weight: 700;

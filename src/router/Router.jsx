@@ -7,30 +7,33 @@ import PayrollPage from "../app/payroll/PayrollPage";
 import DashboardPage from "../app/dashboard/DashboardPage";
 import SettingsPage from "../app/settings/SettingsPage";
 import BenchmarkPage from "../app/benchmark/BenchmarkPage";
-import ComponentPreviewPage from "../dev/ComponentPreviewPage"; // ⚠️ 임시 — 커밋 전 삭제
+import { ROUTES } from "./paths";
+
+// ROUTES는 "/app/xxx" 형태의 절대경로라, <Route>가 기대하는 AppLayout 기준 상대경로로 변환해서 사용
+const relativeToApp = (route) => route.replace(/^\/app\//, "");
 
 function Router() {
   return (
     <Routes>
-      <Route path="/" element={<IntroPage />} />
+      <Route path={ROUTES.HOME} element={<IntroPage />} />
 
       {/* 카페비서 서비스: /app 하위 전부 AppLayout 공유 */}
       <Route path="/app" element={<AppLayout />}>
         {/* 아직 페이지 없음 — Phase 2~5에서 하나씩 채워질 자리 */}
         {/* <Route index element={<DashboardPage />} /> */}
-        {/* <Route path="setup/business" element={<SetupBusinessPage />} /> */}
-        {/* <Route path="setup/auth" element={<AuthSetupPage />} /> */}
-        <Route path="settings" element={<SettingsPage />} />
-        <Route path="dashboard" element={<DashboardPage />} />
-        <Route path="benchmark" element={<BenchmarkPage />} />
-        <Route path="transactions/review" element={<TransactionReviewPage />} />
+        {/* <Route path={relativeToApp(ROUTES.SETUP_BUSINESS)} element={<SetupBusinessPage />} /> */}
+        {/* <Route path={relativeToApp(ROUTES.SETUP_AUTH)} element={<AuthSetupPage />} /> */}
+        <Route path={relativeToApp(ROUTES.SETTINGS)} element={<SettingsPage />} />
+        <Route path={relativeToApp(ROUTES.DASHBOARD)} element={<DashboardPage />} />
+        <Route path={relativeToApp(ROUTES.BENCHMARK)} element={<BenchmarkPage />} />
+        <Route
+          path={relativeToApp(ROUTES.TRANSACTIONS_REVIEW)}
+          element={<TransactionReviewPage />}
+        />
         {/* <Route path="closing/:month" element={<ClosingPage />} /> */}
-        <Route path="chat" element={<ChatPage />} />
-        <Route path="payroll" element={<PayrollPage />} />
+        <Route path={relativeToApp(ROUTES.CHAT)} element={<ChatPage />} />
+        <Route path={relativeToApp(ROUTES.PAYROLL)} element={<PayrollPage />} />
       </Route>
-
-      {/* ⚠️⚠️⚠️ 임시 라우트 — 컴포넌트 확인 끝나면 이 Route랑 위 import 삭제할 것 ⚠️⚠️⚠️ */}
-      <Route path="/dev/components" element={<ComponentPreviewPage />} />
     </Routes>
   );
 }

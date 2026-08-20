@@ -11,10 +11,7 @@ function ChatHeader() {
       </TitleGroup>
 
       <SearchBox>
-        <SearchInput
-          placeholder="검색 기능 준비 중이에요"
-          disabled
-        />
+        <SearchInput placeholder="검색 기능 준비 중이에요" disabled />
         <SearchIcon src={searchIcon} alt="" />
       </SearchBox>
     </Wrapper>
@@ -58,7 +55,7 @@ const SearchBox = styled.div`
   width: 288px; /* TODO: design token화 */
   padding: 10px 16px; /* TODO: design token화 */
   border-radius: 999px;
-  background-color: #F7F2EB; /* TODO: theme.js에 없는 값 */
+  background-color: #f7f2eb; /* TODO: theme.js에 없는 값 */
   border: 0.8px solid ${({ theme }) => theme.colors.bg_gray};
 `;
 
@@ -72,7 +69,7 @@ const SearchInput = styled.input`
   color: ${({ theme }) => theme.colors.txt_brown};
 
   &::placeholder {
-    color: #A88980; /* TODO: theme.js에 없는 값 */
+    color: #a88980; /* TODO: theme.js에 없는 값 */
   }
 
   &:disabled {

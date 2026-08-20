@@ -54,10 +54,14 @@ function DeductionAnalysisCard({ deduction }) {
               <LegendTop>
                 <Dot style={{ backgroundColor: COLORS[i % COLORS.length] }} />
                 <LegendText>{item.category}</LegendText>
-                <LegendPercent style={{ color: COLORS[i % COLORS.length] }}>{item.ratio}%</LegendPercent>
+                <LegendPercent style={{ color: COLORS[i % COLORS.length] }}>
+                  {item.ratio}%
+                </LegendPercent>
               </LegendTop>
               <MiniBarTrack>
-                <MiniBarFill style={{ width: `${item.ratio}%`, backgroundColor: COLORS[i % COLORS.length] }} />
+                <MiniBarFill
+                  style={{ width: `${item.ratio}%`, backgroundColor: COLORS[i % COLORS.length] }}
+                />
               </MiniBarTrack>
               <LegendAmount>{item.amount.toLocaleString()}원</LegendAmount>
             </LegendItem>
@@ -105,7 +109,7 @@ const Card = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px; /* TODO: design token화 */
-  background-color: #FFFCF8; /* TODO: theme.js에 없는 값 */
+  background-color: #fffcf8; /* TODO: theme.js에 없는 값 */
   border: 0.8px solid ${({ theme }) => theme.colors.bg_gray};
   border-radius: ${({ theme }) => theme.radius.large};
   padding: 20px; /* TODO: design token화 */
@@ -118,7 +122,7 @@ const TitleGroup = styled.div`
 `;
 
 const Label = styled.p`
-  color: #9B6E62; /* TODO: theme.js에 없는 값 */
+  color: #9b6e62; /* TODO: theme.js에 없는 값 */
   font-family: Outfit, sans-serif; /* TODO: design token화 */
   font-size: 12px; /* TODO: design token화 */
   font-weight: 500;
@@ -163,7 +167,7 @@ const RatioText = styled.span`
 `;
 
 const RatioSubText = styled.span`
-  color: #9C6E62; /* TODO: theme.js에 없는 값 */
+  color: #9c6e62; /* TODO: theme.js에 없는 값 */
   font-size: 10px; /* TODO: design token화 */
 `;
 
@@ -197,7 +201,6 @@ const LegendText = styled.span`
   flex: 1;
   color: ${({ theme }) => theme.colors.txt_brown};
   font-size: 12px; /* TODO: design token화 */
-
 `;
 
 const LegendPercent = styled.span`
@@ -217,7 +220,7 @@ const MiniBarFill = styled.div`
 `;
 
 const LegendAmount = styled.p`
-  color: #9C6E62; /* TODO: theme.js에 없는 값 */
+  color: #9c6e62; /* TODO: theme.js에 없는 값 */
   font-family: Outfit, sans-serif; /* TODO: design token화 */
   font-size: 11px; /* TODO: design token화 */
   text-align: right;
@@ -279,7 +282,7 @@ const TypeBadge = styled.span`
 `;
 
 const ItemCategory = styled.p`
-  color: #9C6E62; /* TODO: theme.js에 없는 값 */
+  color: #9c6e62; /* TODO: theme.js에 없는 값 */
   font-size: 12px; /* TODO: design token화 */
 `;
 
@@ -313,11 +316,11 @@ const TotalBox = styled.div`
   justify-content: space-between;
   align-items: center;
   padding-top: 16px; /* TODO: design token화 */
-  border-top: 0.8px solid #EDE8E2; /* TODO: theme.js에 없는 값 */
+  border-top: 0.8px solid #ede8e2; /* TODO: theme.js에 없는 값 */
 `;
 
 const TotalLabel = styled.span`
-  color: #9B6E62; /* TODO: theme.js에 없는 값 */
+  color: #9b6e62; /* TODO: theme.js에 없는 값 */
   font-family: Outfit, sans-serif; /* TODO: design token화 */
   font-size: 12px; /* TODO: design token화 */
   font-weight: 400;

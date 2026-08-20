@@ -63,16 +63,14 @@ function TrendChartCard({ monthlyTrends = [] }) {
     profitLossTrend.length === 0
       ? 0
       : Math.round(
-          profitLossTrend.reduce((sum, item) => sum + item.revenue, 0) /
-            profitLossTrend.length,
+          profitLossTrend.reduce((sum, item) => sum + item.revenue, 0) / profitLossTrend.length,
         );
 
   const avgProfit =
     profitLossTrend.length === 0
       ? "0.0"
       : (
-          profitLossTrend.reduce((sum, item) => sum + item.profit, 0) /
-          profitLossTrend.length
+          profitLossTrend.reduce((sum, item) => sum + item.profit, 0) / profitLossTrend.length
         ).toFixed(1);
 
   // 식자재 평균
@@ -80,18 +78,14 @@ function TrendChartCard({ monthlyTrends = [] }) {
     rawMaterialTrend.length === 0
       ? 0
       : (
-          rawMaterialTrend.reduce((sum, item) => sum + item.ratio, 0) /
-          rawMaterialTrend.length
+          rawMaterialTrend.reduce((sum, item) => sum + item.ratio, 0) / rawMaterialTrend.length
         ).toFixed(1);
 
   // 인건비 평균
   const avgLabor =
     laborTrend.length === 0
       ? 0
-      : (
-          laborTrend.reduce((sum, item) => sum + item.ratio, 0) /
-          laborTrend.length
-        ).toFixed(1);
+      : (laborTrend.reduce((sum, item) => sum + item.ratio, 0) / laborTrend.length).toFixed(1);
 
   // 현재 달
   const currentRawMaterial = rawMaterialTrend.at(-1)?.ratio ?? 0;
@@ -99,34 +93,20 @@ function TrendChartCard({ monthlyTrends = [] }) {
 
   // 최저 / 최고
   const rawMin =
-    rawMaterialTrend.length === 0
-      ? 0
-      : Math.min(...rawMaterialTrend.map((item) => item.ratio));
+    rawMaterialTrend.length === 0 ? 0 : Math.min(...rawMaterialTrend.map((item) => item.ratio));
 
   const rawMax =
-    rawMaterialTrend.length === 0
-      ? 0
-      : Math.max(...rawMaterialTrend.map((item) => item.ratio));
+    rawMaterialTrend.length === 0 ? 0 : Math.max(...rawMaterialTrend.map((item) => item.ratio));
 
-  const laborMin =
-    laborTrend.length === 0
-      ? 0
-      : Math.min(...laborTrend.map((item) => item.ratio));
+  const laborMin = laborTrend.length === 0 ? 0 : Math.min(...laborTrend.map((item) => item.ratio));
 
-  const laborMax =
-    laborTrend.length === 0
-      ? 0
-      : Math.max(...laborTrend.map((item) => item.ratio));
+  const laborMax = laborTrend.length === 0 ? 0 : Math.max(...laborTrend.map((item) => item.ratio));
 
   const isRawMaterial = activeTab === "RAW_MATERIAL";
 
-  const currentRatio = isRawMaterial
-    ? currentRawMaterial
-    : currentLabor;
+  const currentRatio = isRawMaterial ? currentRawMaterial : currentLabor;
 
-  const averageRatio = isRawMaterial
-    ? Number(avgRawMaterial)
-    : Number(avgLabor);
+  const averageRatio = isRawMaterial ? Number(avgRawMaterial) : Number(avgLabor);
 
   const minRatio = isRawMaterial ? rawMin : laborMin;
   const maxRatio = isRawMaterial ? rawMax : laborMax;
@@ -136,7 +116,9 @@ function TrendChartCard({ monthlyTrends = [] }) {
 
   return (
     <Card>
-      <Title>최근 6개월 매출 및 영업이익 추이 ({startMonth} ~ {endMonth})</Title>
+      <Title>
+        최근 6개월 매출 및 영업이익 추이 ({startMonth} ~ {endMonth})
+      </Title>
 
       <TabRow>
         {TABS.map((tab) => (
@@ -155,10 +137,7 @@ function TrendChartCard({ monthlyTrends = [] }) {
         <ResponsiveContainer width="100%" height={220}>
           {activeTab === "PROFIT_LOSS" ? (
             <ComposedChart data={profitLossTrend}>
-              <CartesianGrid
-                stroke="rgba(61, 37, 30, 0.08)"
-                vertical={false}
-              />
+              <CartesianGrid stroke="rgba(61, 37, 30, 0.08)" vertical={false} />
 
               <XAxis
                 dataKey="month"
@@ -199,17 +178,8 @@ function TrendChartCard({ monthlyTrends = [] }) {
               />
             </ComposedChart>
           ) : (
-            <ComposedChart
-              data={
-                activeTab === "RAW_MATERIAL"
-                  ? rawMaterialTrend
-                  : laborTrend
-              }
-            >
-              <CartesianGrid
-                stroke="rgba(61, 37, 30, 0.08)"
-                vertical={false}
-              />
+            <ComposedChart data={activeTab === "RAW_MATERIAL" ? rawMaterialTrend : laborTrend}>
+              <CartesianGrid stroke="rgba(61, 37, 30, 0.08)" vertical={false} />
 
               <XAxis
                 dataKey="month"
@@ -222,16 +192,8 @@ function TrendChartCard({ monthlyTrends = [] }) {
               />
 
               <YAxis
-                domain={
-                  activeTab === "RAW_MATERIAL"
-                    ? [0, 20]
-                    : [15, 35]
-                }
-                ticks={
-                  activeTab === "RAW_MATERIAL"
-                    ? [0, 5, 10, 15, 20]
-                    : [15, 20, 25, 30, 35]
-                }
+                domain={activeTab === "RAW_MATERIAL" ? [0, 20] : [15, 35]}
+                ticks={activeTab === "RAW_MATERIAL" ? [0, 5, 10, 15, 20] : [15, 20, 25, 30, 35]}
                 tick={{
                   fontSize: 10,
                   fill: "rgba(61, 37, 30, 0.4)",
@@ -245,16 +207,8 @@ function TrendChartCard({ monthlyTrends = [] }) {
 
               <Line
                 dataKey="ratio"
-                name={
-                  activeTab === "RAW_MATERIAL"
-                    ? "식자재 원가율"
-                    : "인건비 비중"
-                }
-                stroke={
-                  activeTab === "RAW_MATERIAL"
-                    ? "#c97b3a"
-                    : "#2E7D52"
-                }
+                name={activeTab === "RAW_MATERIAL" ? "식자재 원가율" : "인건비 비중"}
+                stroke={activeTab === "RAW_MATERIAL" ? "#c97b3a" : "#2E7D52"}
                 strokeWidth={2}
                 dot={{ r: 3 }}
               />
@@ -298,9 +252,7 @@ function TrendChartCard({ monthlyTrends = [] }) {
           <>
             <StatItem>
               <StatLabel>6개월 평균 매출</StatLabel>
-              <StatValue>
-                {avgRevenue.toLocaleString()}만 원
-              </StatValue>
+              <StatValue>{avgRevenue.toLocaleString()}만 원</StatValue>
             </StatItem>
 
             <Divider />
@@ -331,9 +283,7 @@ function TrendChartCard({ monthlyTrends = [] }) {
             <StatItem>
               <StatLabel>변동 추이</StatLabel>
               <TrendStatus $type={activeTab}>
-                {needsCheck
-                  ? "▲ 점검 필요"
-                  : "▼ 안정적 관리 중"}
+                {needsCheck ? "▲ 점검 필요" : "▼ 안정적 관리 중"}
               </TrendStatus>
             </StatItem>
           </>
@@ -378,13 +328,9 @@ const TabButton = styled.button`
 
   cursor: pointer;
 
-  background-color: ${({ theme, $active }) =>
-    $active ? theme.colors.bg_brown : "transparent"};
+  background-color: ${({ theme, $active }) => ($active ? theme.colors.bg_brown : "transparent")};
 
-  color: ${({ theme, $active }) =>
-    $active
-      ? theme.colors.txt_white
-      : "rgba(61, 37, 30, 0.55)"};
+  color: ${({ theme, $active }) => ($active ? theme.colors.txt_white : "rgba(61, 37, 30, 0.55)")};
 `;
 
 const ChartWrapper = styled.div`
@@ -517,10 +463,7 @@ const LineDot = styled.span`
 `;
 
 const TrendStatus = styled.span`
-  color: ${({ $type }) =>
-    $type === "RAW_MATERIAL"
-      ? "#C97B3A"
-      : "#2E7D52"};
+  color: ${({ $type }) => ($type === "RAW_MATERIAL" ? "#C97B3A" : "#2E7D52")};
 
   font-size: 13px;
   font-weight: 800;

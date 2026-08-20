@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { exportCleanData } from "../../../api/analytics";
 import { getClosingSummary } from "../../../api/tax";
 import { useBusiness } from "../../../contexts/BusinessContext";
+import { useToast } from "../../../contexts/ToastContext";
 import warningIcon from "../../../assets/warningIcon.svg";
 
 const INCLUDED_ITEMS = [
@@ -28,6 +29,7 @@ const getRecentMonths = (baseYear, baseMonth, count = 6) => {
 
 function CleanDataExport({ year, month }) {
   const { business } = useBusiness();
+  const showToast = useToast();
   const recentMonths = useMemo(() => getRecentMonths(year, month), [year, month]);
 
   const [selected, setSelected] = useState(recentMonths[0]);
@@ -42,8 +44,9 @@ function CleanDataExport({ year, month }) {
     const loadClosingStatus = async () => {
       try {
         const res = await getClosingSummary(business.businessId, selected.yearMonth);
-        setIsClosed(res.data.data.status === "CLOSED");
-      } catch {
+        setIsClosed(res.data.status === "CLOSED");
+      } catch (err) {
+        console.error("마감 상태 조회 실패:", err);
         setIsClosed(false);
       }
     };
@@ -81,9 +84,9 @@ function CleanDataExport({ year, month }) {
     } catch (err) {
       // 마감 승인 전에 호출된 경우 서버에서 409(MONTHLY_CLOSE_REQUIRED)로 막음
       if (err.response?.status === 409) {
-        window.alert("장부 마감 승인 이후에 다운로드할 수 있습니다.");
+        showToast("장부 마감 승인 이후에 다운로드할 수 있습니다.");
       } else {
-        window.alert("자료를 다운로드하는 중 오류가 발생했습니다.");
+        showToast("자료를 다운로드하는 중 오류가 발생했습니다.");
       }
     } finally {
       setDownloadingFormat(null);
@@ -134,16 +137,10 @@ function CleanDataExport({ year, month }) {
       </IncludedCard>
 
       <ButtonRow>
-        <DownloadButton
-          disabled={!isClosed}
-          onClick={() => handleDownload("csv")}
-        >
+        <DownloadButton disabled={!isClosed} onClick={() => handleDownload("csv")}>
           ⬇ {downloadingFormat === "csv" ? "다운로드 중..." : "CSV 다운로드"}
         </DownloadButton>
-        <DownloadButton
-          disabled={!isClosed}
-          onClick={() => handleDownload("pdf")}
-        >
+        <DownloadButton disabled={!isClosed} onClick={() => handleDownload("pdf")}>
           ⬇ {downloadingFormat === "pdf" ? "다운로드 중..." : "PDF 다운로드"}
         </DownloadButton>
       </ButtonRow>
@@ -157,7 +154,7 @@ const Card = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px; /* TODO: design token화 */
-  background-color: #FFFCF8; /* TODO: theme.js에 없는 값 */
+  background-color: #fffcf8; /* TODO: theme.js에 없는 값 */
   border: 0.8px solid ${({ theme }) => theme.colors.bg_gray};
   border-radius: ${({ theme }) => theme.radius.large};
   padding: 24px; /* TODO: design token화 */
@@ -176,7 +173,7 @@ const TextGroup = styled.div`
 `;
 
 const Label = styled.p`
-  color: #9B6E62; /* TODO: theme.js에 없는 값 */
+  color: #9b6e62; /* TODO: theme.js에 없는 값 */
   font-family: Outfit, sans-serif; /* TODO: design token화 */
   font-size: 12px; /* TODO: design token화 */
   font-weight: 500;
@@ -273,7 +270,7 @@ const IncludedCard = styled.div`
 `;
 
 const IncludedLabel = styled.p`
-  color: #9C6E62; /* TODO: theme.js에 없는 값 */
+  color: #9c6e62; /* TODO: theme.js에 없는 값 */
   font-size: 12px; /* TODO: design token화 */
   font-weight: 600;
 `;
@@ -314,7 +311,7 @@ const DownloadButton = styled.button`
 `;
 
 const HelperText = styled.p`
-  color: #9C6E62; /* TODO: theme.js에 없는 값 */
+  color: #9c6e62; /* TODO: theme.js에 없는 값 */
   font-size: 12px; /* TODO: design token화 */
   text-align: center;
 `;

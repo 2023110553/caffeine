@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import styled from "styled-components";
 
 function Input({ label, required, error, unit, ...props }) {
@@ -19,6 +20,13 @@ function Input({ label, required, error, unit, ...props }) {
     </Wrapper>
   );
 }
+
+Input.propTypes = {
+  label: PropTypes.string,
+  required: PropTypes.bool,
+  error: PropTypes.string,
+  unit: PropTypes.string,
+};
 
 const Wrapper = styled.div`
   display: flex;
@@ -49,8 +57,7 @@ const StyledInput = styled.input`
   padding: 8px 12px; /* TODO: design token화 */
   border-radius: ${({ theme }) => theme.radius.small};
   border: 1px solid
-    ${({ theme, $hasError }) =>
-      $hasError ? theme.colors.error : theme.colors.bg_gray};
+    ${({ theme, $hasError }) => ($hasError ? theme.colors.error : theme.colors.bg_gray)};
   background-color: ${({ theme }) => theme.colors.bg_white};
   color: ${({ theme }) => theme.colors.txt_brown};
   &::-webkit-inner-spin-button,

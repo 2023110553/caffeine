@@ -1,6 +1,14 @@
+import PropTypes from "prop-types";
 import styled, { css } from "styled-components";
 
 const VARIANT_STYLES = {
+  primary: css`
+    background-color: ${({ theme }) => theme.colors.bg_brown};
+    color: ${({ theme }) => theme.colors.txt_white};
+    display: flex;
+    align-items: center;
+  `,
+
   unchecked_button: css`
     background-color: ${({ theme }) => theme.colors.bg_gray};
     color: ${({ theme }) => theme.colors.txt_beige};
@@ -32,73 +40,11 @@ const VARIANT_STYLES = {
     font-size: 0.875rem;
   `,
 
-button_large_gray: css`
-  background-color: ${({ theme }) => theme.colors.bg_dark_gray};
-  color: ${({ theme }) => theme.colors.txt_white};
-  font-size: 0.75rem;
-  display: flex;
-`,
-
-  filter_unchecked: css`
-    background-color: #f2ebe4;
-    border-radius: 12px;
+  button_large_gray: css`
+    background-color: ${({ theme }) => theme.colors.bg_dark_gray};
+    color: ${({ theme }) => theme.colors.txt_white};
+    font-size: 0.75rem;
     display: flex;
-    padding: 8px 16px;
-    align-items: center;
-    gap: 8px;
-    color: #9b6e62;
-    font-family: Outfit;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 600;
-    line-height: 20px;
-  `,
-
-  filter_checked: css`
-    border-radius: 12px;
-    background: var(--primary-brand-primary-500, #3d251e);
-    display: flex;
-    padding: 8px 16px;
-    align-items: center;
-    gap: 8px;
-    color: var(--primary-brand-primary-100, #fdf9f3);
-    font-family: Outfit;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 600;
-    line-height: 20px;
-  `,
-
-  item_unclassified: css`
-    background-color: #ffe2d7;
-    border-radius: 12px;
-    display: flex;
-    padding: 8px 16px;
-    align-items: center;
-    gap: 8px;
-    color: #9b6e62;
-    text-align: center;
-    font-family: Outfit;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 600;
-    line-height: 20px;
-  `,
-
-  item_classified: css`
-    background: #7b9ec5;
-    border-radius: 12px;
-    display: flex;
-    padding: 8px 16px;
-    align-items: center;
-    gap: 8px;
-    color: var(--primary-brand-primary-100, #fdf9f3);
-    text-align: center;
-    font-family: Outfit;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 600;
-    line-height: 20px;
   `,
 };
 
@@ -116,18 +62,19 @@ const SIZE_STYLES = {
   `,
 };
 
-function Button({
-  variant = "unchecked_button",
-  size = "small",
-  children,
-  ...props
-}) {
+function Button({ variant = "unchecked_button", size = "small", children, ...props }) {
   return (
     <StyledButton $variant={variant} $size={size} {...props}>
       {children}
     </StyledButton>
   );
 }
+
+Button.propTypes = {
+  variant: PropTypes.oneOf(Object.keys(VARIANT_STYLES)),
+  size: PropTypes.oneOf(Object.keys(SIZE_STYLES)),
+  children: PropTypes.node,
+};
 
 const StyledButton = styled.button`
   border: none;
@@ -139,7 +86,6 @@ const StyledButton = styled.button`
   justify-content: center;
   align-items: center;
 
-  
   ${({ $size }) => SIZE_STYLES[$size]}
   ${({ $variant }) => VARIANT_STYLES[$variant]}
 

@@ -29,7 +29,7 @@ function ChatPage() {
   const loadHistory = useCallback(async () => {
     const res = await getChatMessages(business.businessId);
     // 서버는 최신순(-created_at) 정렬로 내려주므로 화면 표시를 위해 역순 정렬
-    const history = res.data.data.items.map(normalizeMessage).reverse();
+    const history = res.data.items.map(normalizeMessage).reverse();
     return history.length > 0 ? history : [WELCOME_MESSAGE];
   }, [business.businessId]);
 
@@ -38,7 +38,8 @@ function ChatPage() {
       try {
         const history = await loadHistory();
         setMessages(history);
-      } catch {
+      } catch (err) {
+        console.error("채팅 기록 조회 실패:", err);
         setMessages([WELCOME_MESSAGE]);
       }
     };
@@ -57,10 +58,11 @@ function ChatPage() {
       const botMessage = {
         id: Date.now() + 1,
         sender: "bot",
-        text: res.data.data.answer,
+        text: res.data.answer,
       };
       setMessages((prev) => [...prev, botMessage]);
-    } catch {
+    } catch (err) {
+      console.error("챗봇 응답 실패:", err);
       const errorMessage = {
         id: Date.now() + 1,
         sender: "bot",
@@ -97,7 +99,7 @@ const ChatCard = styled.div`
   min-height: 0;
   display: flex;
   flex-direction: column;
-  background-color: #FFFCF8; /* TODO: theme.js에 없는 값 - 인건비 관리 카드와 동일 색 */
+  background-color: #fffcf8; /* TODO: theme.js에 없는 값 - 인건비 관리 카드와 동일 색 */
   border: 0.8px solid ${({ theme }) => theme.colors.bg_gray};
   border-radius: ${({ theme }) => theme.radius.large};
 `;

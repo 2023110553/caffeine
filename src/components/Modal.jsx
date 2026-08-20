@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import styled from "styled-components";
 
 function Modal({
@@ -43,6 +44,21 @@ function Modal({
     </Overlay>
   );
 }
+
+Modal.propTypes = {
+  open: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  title: PropTypes.string,
+  children: PropTypes.node,
+  width: PropTypes.string,
+  height: PropTypes.string,
+  radius: PropTypes.string,
+  padding: PropTypes.string,
+  background: PropTypes.string,
+  boxShadow: PropTypes.string,
+  hideHeader: PropTypes.bool,
+  flexColumn: PropTypes.bool,
+};
 
 const Overlay = styled.div`
   position: fixed;
@@ -107,7 +123,6 @@ const Title = styled.h2`
   letter-spacing: -0.88px;
 `;
 
-
 const CloseButton = styled.button`
   width: 1.75rem;
   height: 1.75rem;
@@ -118,12 +133,11 @@ const CloseButton = styled.button`
 
   padding: 0;
 
-  border: 0.05rem solid #E8D9C8;
+  border: 0.05rem solid #e8d9c8;
   border-radius: 0.375rem;
 
-
-  background: #F5EDE0;
-  color: #6B3F30;
+  background: #f5ede0;
+  color: #6b3f30;
 
   font-size: 1.25rem;
   line-height: 1;
@@ -135,6 +149,5 @@ const CloseButton = styled.button`
     color: #3d251e;
   }
 `;
-
 
 export default Modal;

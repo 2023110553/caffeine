@@ -2,22 +2,21 @@
 name: "[FEAT] 기능 개발"
 about: 새로운 기능 개발 시 사용합니다.
 title: "[FEAT][BE] ~ 기능 구현"
-labels: ''
-assignees: ''
-
+labels: ""
+assignees: ""
 ---
 
 ## ✨ 기능 개요
 
 구현할 기능을 간단하게 작성해 주세요.
 
-- 
+-
 
 ## ✅ TO-DO
 
-- [ ] 
-- [ ] 
-- [ ] 
+- [ ]
+- [ ]
+- [ ]
 
 ## 📄 참고 사항
 

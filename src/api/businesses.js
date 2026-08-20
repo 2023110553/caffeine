@@ -5,8 +5,7 @@ export const getTaxTypeHistory = (businessId) =>
   client.get(`/businesses/${businessId}/tax-type-history/`);
 
 // 홈택스 조회 기반 과세유형 동기화
-export const syncTaxType = (businessId) =>
-  client.post(`/businesses/${businessId}/tax-type/sync/`);
+export const syncTaxType = (businessId) => client.post(`/businesses/${businessId}/tax-type/sync/`);
 
 // CODEF 간편인증 요청
 export const requestCodefAuth = (businessId) =>

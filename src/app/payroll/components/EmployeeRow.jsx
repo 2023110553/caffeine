@@ -25,7 +25,16 @@ function getWithholdingNote(employmentType, grossPay, withholdingTax) {
 }
 
 function EmployeeRow({ employee, onUpdate, onViewPayslip, onDelete }) {
-  const { employee_id, name, employment_type, hourly_wage, monthly_contracted_hours, grossPay, withholdingTax, paymentId } = employee;
+  const {
+    employee_id,
+    name,
+    employment_type,
+    hourly_wage,
+    monthly_contracted_hours,
+    grossPay,
+    withholdingTax,
+    paymentId,
+  } = employee;
   const hasTaxOwed = withholdingTax > 0;
   const withholdingNote = getWithholdingNote(employment_type, grossPay, withholdingTax);
 
@@ -73,7 +82,11 @@ function EmployeeRow({ employee, onUpdate, onViewPayslip, onDelete }) {
 
   return (
     <Card>
-      <DeleteButton type="button" onClick={() => setIsDeleteConfirmOpen(true)} aria-label={`${name} 퇴사 처리`}>
+      <DeleteButton
+        type="button"
+        onClick={() => setIsDeleteConfirmOpen(true)}
+        aria-label={`${name} 퇴사 처리`}
+      >
         ✕
       </DeleteButton>
 
@@ -117,16 +130,16 @@ function EmployeeRow({ employee, onUpdate, onViewPayslip, onDelete }) {
 
       <WageArea>
         <Input
-  type="text"
-  inputMode="numeric"
-  unit="원"
-  value={wageInput ? Number(wageInput).toLocaleString() : ""}
-  onChange={(e) => {
-    const onlyNumbers = e.target.value.replace(/,/g, "").replace(/\D/g, "");
-    setWageInput(onlyNumbers);
-  }}
-  onBlur={commitWage}
-/>
+          type="text"
+          inputMode="numeric"
+          unit="원"
+          value={wageInput ? Number(wageInput).toLocaleString() : ""}
+          onChange={(e) => {
+            const onlyNumbers = e.target.value.replace(/,/g, "").replace(/\D/g, "");
+            setWageInput(onlyNumbers);
+          }}
+          onBlur={commitWage}
+        />
       </WageArea>
 
       <GrossPayArea>
@@ -135,11 +148,7 @@ function EmployeeRow({ employee, onUpdate, onViewPayslip, onDelete }) {
       </GrossPayArea>
 
       <DetailButtonArea>
-        <DetailButton
-          type="button"
-          disabled={!paymentId}
-          onClick={() => onViewPayslip(paymentId)}
-        >
+        <DetailButton type="button" disabled={!paymentId} onClick={() => onViewPayslip(paymentId)}>
           📄 {DETAIL_BUTTON_LABEL[employment_type]} &gt;
         </DetailButton>
       </DetailButtonArea>
@@ -417,8 +426,7 @@ const TaxArea = styled.div`
 const TaxValue = styled.p`
   margin: 0.1875rem 0 0;
 
-  color: ${({ $hasTaxOwed }) =>
-    $hasTaxOwed ? "#6d4c9e" : "#3a7d5c"};
+  color: ${({ $hasTaxOwed }) => ($hasTaxOwed ? "#6d4c9e" : "#3a7d5c")};
 
   font-size: 0.875rem;
   font-weight: 700;

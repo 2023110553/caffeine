@@ -3,10 +3,12 @@ import styled from "styled-components";
 import Button from "../../../components/Button";
 import notice from "../../../assets/notice.png";
 import { useBusiness } from "../../../contexts/BusinessContext";
+import { useToast } from "../../../contexts/ToastContext";
 import { exportTransactions } from "../../../api/transactions";
 
 function ExpenseHeader({ year, month }) {
   const { business } = useBusiness();
+  const showToast = useToast();
   const [isDownloading, setIsDownloading] = useState(false);
 
   const handleExport = async () => {
@@ -17,13 +19,17 @@ function ExpenseHeader({ year, month }) {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", `caffeine_transactions_${year}-${String(month).padStart(2, "0")}.csv`);
+      link.setAttribute(
+        "download",
+        `caffeine_transactions_${year}-${String(month).padStart(2, "0")}.csv`,
+      );
       document.body.appendChild(link);
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
-    } catch {
-      alert("CSV 파일을 다운로드하는 중 오류가 발생했어요.");
+    } catch (err) {
+      console.error("CSV 다운로드 실패:", err);
+      showToast("CSV 파일을 다운로드하는 중 오류가 발생했어요.");
     } finally {
       setIsDownloading(false);
     }

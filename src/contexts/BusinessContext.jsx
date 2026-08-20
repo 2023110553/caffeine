@@ -13,11 +13,7 @@ export function BusinessProvider({ children }) {
 
   const value = { business, setBusiness };
 
-  return (
-    <BusinessContext.Provider value={value}>
-      {children}
-    </BusinessContext.Provider>
-  );
+  return <BusinessContext.Provider value={value}>{children}</BusinessContext.Provider>;
 }
 
 export function useBusiness() {

@@ -35,7 +35,7 @@ const SideBar = () => {
     const loadBusinessInfo = async () => {
       try {
         const res = await getBusinessSettings(business.businessId);
-        setBusinessInfo(res.data.data);
+        setBusinessInfo(res.data);
       } catch (err) {
         console.error("사업장 정보 조회 실패", err);
       }
@@ -85,13 +85,9 @@ const SideBar = () => {
 
       <UserInfoWrapper>
         <UserInfoContainer>
-          <UserIcon>
-            {businessInfo?.representative_name?.charAt(0) ?? ""}
-          </UserIcon>
+          <UserIcon>{businessInfo?.representative_name?.charAt(0) ?? ""}</UserIcon>
           <UserName>
-            {businessInfo?.representative_name
-              ? `${businessInfo.representative_name} 사장님`
-              : ""}
+            {businessInfo?.representative_name ? `${businessInfo.representative_name} 사장님` : ""}
           </UserName>
         </UserInfoContainer>
       </UserInfoWrapper>
@@ -228,8 +224,7 @@ const NavigationBtn = styled.div`
 
   border-radius: 12px;
 
-  background: ${({ $active }) =>
-    $active ? "rgba(201, 168, 130, 0.18)" : "transparent"};
+  background: ${({ $active }) => ($active ? "rgba(201, 168, 130, 0.18)" : "transparent")};
 
   cursor: ${({ $clickable }) => ($clickable ? "pointer" : "default")};
 

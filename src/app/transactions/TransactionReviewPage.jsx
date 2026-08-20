@@ -7,12 +7,14 @@ import TaxImpactPanel from "./components/TaxImpactPanel";
 import Loading from "../../components/Loading";
 import ErrorState from "../../components/ErrorState";
 import { useBusiness } from "../../contexts/BusinessContext";
+import { useAsync } from "../../hooks/useAsync";
 import {
   getTransactions,
   updateTransactionPurpose,
   updateTransactionCategory,
 } from "../../api/transactions";
 import { ITEM_CATEGORY_LABEL } from "./constants";
+import { formatDate } from "../../lib/format";
 const now = new Date();
 const YEAR = now.getFullYear();
 const MONTH = now.getMonth() + 1;
@@ -24,11 +26,6 @@ const PURPOSE_TO_CATEGORY = {
   PERSONAL: "personal",
   UNCLASSIFIED: null,
 };
-
-function formatDate(isoDate) {
-  const [, month, day] = isoDate.split("-");
-  return `${Number(month)}월 ${Number(day)}일`;
-}
 
 function normalizeTransaction(raw) {
   return {
@@ -46,107 +43,77 @@ function normalizeTransaction(raw) {
 function TransactionReviewPage() {
   const { business } = useBusiness();
   const [transactions, setTransactions] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+
+  const { isLoading, error, run } = useAsync({
+    errorMessage: "거래 내역을 불러오지 못했어요. 사업장 정보를 확인해주세요.",
+  });
 
   const loadData = useCallback(async () => {
-  const res = await getTransactions(business.businessId, {
-    start_date: `${YEAR}-${String(MONTH).padStart(2, "0")}-01`,
-    transaction_type: "PURCHASE",
-  });
-  setTransactions(res.data.data.items.map(normalizeTransaction));
-}, [business.businessId]);
+    const res = await getTransactions(business.businessId, {
+      start_date: `${YEAR}-${String(MONTH).padStart(2, "0")}-01`,
+      transaction_type: "PURCHASE",
+    });
+    setTransactions(res.data.items.map(normalizeTransaction));
+  }, [business.businessId]);
 
   useEffect(() => {
-    const load = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        await loadData();
-      } catch {
-        setError("거래 내역을 불러오지 못했어요. 사업장 정보를 확인해주세요.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    load();
-  }, [loadData]);
+    run(loadData);
+  }, [run, loadData]);
 
   const handleCategoryChange = async (id, category) => {
-  const target = transactions.find((tx) => tx.transaction_id === id);
-  if (!target) return;
+    const target = transactions.find((tx) => tx.transaction_id === id);
+    if (!target) return;
 
-  const nextCategory = target.category === category ? null : category;
+    const nextCategory = target.category === category ? null : category;
 
-  const expensePurpose =
-    nextCategory === null ? "UNCLASSIFIED" : nextCategory.toUpperCase();
+    const expensePurpose = nextCategory === null ? "UNCLASSIFIED" : nextCategory.toUpperCase();
 
-  // 1) 화면 우선 반영
-  setTransactions((prev) =>
-    prev.map((tx) =>
-      tx.transaction_id === id
-        ? { ...tx, category: nextCategory }
-        : tx,
-    ),
-  );
-
-  // 2) 서버 응답 최신 데이터(is_deemed 등)로 덮어쓰기
-  try {
-    const res = await updateTransactionPurpose(
-      business.businessId,
-      id,
-      expensePurpose,
+    // 1) 화면 우선 반영
+    setTransactions((prev) =>
+      prev.map((tx) => (tx.transaction_id === id ? { ...tx, category: nextCategory } : tx)),
     );
 
-    if (res.data?.data) {
-      setTransactions((prev) =>
-        prev.map((tx) =>
-          tx.transaction_id === id
-            ? normalizeTransaction(res.data.data)
-            : tx,
-        ),
-      );
+    // 2) 서버 응답 최신 데이터(is_deemed 등)로 덮어쓰기
+    try {
+      const res = await updateTransactionPurpose(business.businessId, id, expensePurpose);
+
+      if (res.data) {
+        setTransactions((prev) =>
+          prev.map((tx) => (tx.transaction_id === id ? normalizeTransaction(res.data) : tx)),
+        );
+      }
+    } catch (err) {
+      console.error("지출 구분 수정 실패", err);
     }
-  } catch (err) {
-    console.error("지출 구분 수정 실패", err);
-  }
-};
+  };
 
-const handleItemCategoryChange = async (id, categoryCode) => {
-  // 1) 화면 우선 반영
-  setTransactions((prev) =>
-    prev.map((tx) =>
-      tx.transaction_id === id
-        ? {
-            ...tx,
-            itemCategoryCode: categoryCode,
-            memo: ITEM_CATEGORY_LABEL[categoryCode],
-          }
-        : tx,
-    ),
-  );
-
-  // 2) 서버 응답 최신 데이터(is_deemed 등)로 덮어쓰기
-  try {
-    const res = await updateTransactionCategory(
-      business.businessId,
-      id,
-      categoryCode,
+  const handleItemCategoryChange = async (id, categoryCode) => {
+    // 1) 화면 우선 반영
+    setTransactions((prev) =>
+      prev.map((tx) =>
+        tx.transaction_id === id
+          ? {
+              ...tx,
+              itemCategoryCode: categoryCode,
+              memo: ITEM_CATEGORY_LABEL[categoryCode],
+            }
+          : tx,
+      ),
     );
 
-    if (res.data?.data) {
-      setTransactions((prev) =>
-        prev.map((tx) =>
-          tx.transaction_id === id
-            ? normalizeTransaction(res.data.data)
-            : tx,
-        ),
-      );
+    // 2) 서버 응답 최신 데이터(is_deemed 등)로 덮어쓰기
+    try {
+      const res = await updateTransactionCategory(business.businessId, id, categoryCode);
+
+      if (res.data) {
+        setTransactions((prev) =>
+          prev.map((tx) => (tx.transaction_id === id ? normalizeTransaction(res.data) : tx)),
+        );
+      }
+    } catch (err) {
+      console.error("품목 카테고리 수정 실패", err);
     }
-  } catch (err) {
-    console.error("품목 카테고리 수정 실패", err);
-  }
-};
+  };
   const summary = useMemo(() => {
     const result = {
       business: { count: 0, total: 0 },
@@ -167,9 +134,7 @@ const handleItemCategoryChange = async (id, categoryCode) => {
 
   // 사업/개인 미분류(category)와 품목 미분류(itemCategoryCode)는 서로 다른 개념이라 별도로 카운트
   const itemUnclassifiedCount = useMemo(
-    () =>
-      transactions.filter((tx) => tx.itemCategoryCode === "UNCLASSIFIED")
-        .length,
+    () => transactions.filter((tx) => tx.itemCategoryCode === "UNCLASSIFIED").length,
     [transactions],
   );
 
@@ -197,17 +162,7 @@ const handleItemCategoryChange = async (id, categoryCode) => {
 
   const [selectedFilter, setSelectedFilter] = useState("all");
 
-  const handleRetry = async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      await loadData();
-    } catch {
-      setError("거래 내역을 불러오지 못했어요. 사업장 정보를 확인해주세요.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const handleRetry = () => run(loadData);
 
   if (isLoading) return <Loading />;
   if (error) return <ErrorState message={error} onRetry={handleRetry} />;

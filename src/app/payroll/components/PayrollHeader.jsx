@@ -47,14 +47,14 @@ const SubRow = styled.div`
 `;
 
 const Eyebrow = styled.p`
-  color: #8C6B5A; /* TODO: theme.js에 없는 값 */
+  color: #8c6b5a; /* TODO: theme.js에 없는 값 */
   font-size: 13.5px; /* TODO: design token화 */
 `;
 
 const Badge = styled.span`
-  background-color: #FEF6EC; /* TODO: theme.js에 없는 값 - 요약카드 warning 배지와 동일 */
-  border: 0.8px solid #F3D9AB; /* TODO: theme.js에 없는 값 - 동일 */
-  color: #B45309; /* TODO: theme.js에 없는 값 - 동일 */
+  background-color: #fef6ec; /* TODO: theme.js에 없는 값 - 요약카드 warning 배지와 동일 */
+  border: 0.8px solid #f3d9ab; /* TODO: theme.js에 없는 값 - 동일 */
+  color: #b45309; /* TODO: theme.js에 없는 값 - 동일 */
   border-radius: 999px;
   padding: 2px 8px; /* TODO: design token화 */
   font-size: 12px; /* TODO: design token화 */
@@ -79,10 +79,11 @@ const AddButton = styled.button`
 `;
 
 const Dot = styled.div`
-border-radius: 2.5px;
-opacity: 0.6041;
-background: #B45309;
-width: 5px;
-height: 5px;`;
+  border-radius: 2.5px;
+  opacity: 0.6041;
+  background: #b45309;
+  width: 5px;
+  height: 5px;
+`;
 
 export default PayrollHeader;

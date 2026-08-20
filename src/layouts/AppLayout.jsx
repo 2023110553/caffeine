@@ -34,7 +34,6 @@ const Content = styled.main`
   display: flex;
   flex-direction: column;
   overflow: hidden;
-
 `;
 
 export default AppLayout;

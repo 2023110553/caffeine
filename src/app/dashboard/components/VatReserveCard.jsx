@@ -19,7 +19,8 @@ function VatReserveCard({ summary }) {
 
       {isUnavailable ? (
         <UnavailableNotice>
-          과세유형이 확인되지 않아 예상 부가세를 계산할 수 없습니다. 설정 페이지에서 홈택스 동기화를 진행해주세요.
+          과세유형이 확인되지 않아 예상 부가세를 계산할 수 없습니다. 설정 페이지에서 홈택스 동기화를
+          진행해주세요.
         </UnavailableNotice>
       ) : (
         <>
@@ -28,7 +29,9 @@ function VatReserveCard({ summary }) {
             <Unit>원</Unit>
           </AmountRow>
           <BreakdownBadge>
-            ✓ 매출세액 +{vat_breakdown.sales_tax.toLocaleString()}원 − 매입세액 {vat_breakdown.purchase_tax.toLocaleString()}원 − 의제매입공제 {vat_breakdown.deemed_purchase_deduction.toLocaleString()}원
+            ✓ 매출세액 +{vat_breakdown.sales_tax.toLocaleString()}원 − 매입세액{" "}
+            {vat_breakdown.purchase_tax.toLocaleString()}원 − 의제매입공제{" "}
+            {vat_breakdown.deemed_purchase_deduction.toLocaleString()}원
           </BreakdownBadge>
           <MetaRow>
             <MetaItem>
@@ -123,7 +126,7 @@ const MetaRow = styled.div`
   display: flex;
   align-items: center;
   padding-top: 14px; /* TODO: design token화 */
-  border-top: 1px solid rgba(255,255,255,0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
 `;
 
 const MetaItem = styled.div`
@@ -151,7 +154,7 @@ const MetaValue = styled.span`
 const Divider = styled.div`
   width: 1px;
   height: 30px; /* TODO: design token화 */
-  background-color: rgba(255,255,255,0.3);
+  background-color: rgba(255, 255, 255, 0.3);
   margin: 0 16px; /* TODO: design token화 */
 `;
 

@@ -36,10 +36,20 @@ function DeleteConfirmModal({ open, onClose, onConfirm, employeeName }) {
       <Description>퇴사 처리하면 이번 달 인건비 계산 및 세무 리포트에서 제외됩니다.</Description>
 
       <ButtonRow>
-        <Button type="button" variant="unchecked_button" onClick={handleClose} disabled={isSubmitting}>
+        <Button
+          type="button"
+          variant="unchecked_button"
+          onClick={handleClose}
+          disabled={isSubmitting}
+        >
           취소
         </Button>
-        <Button type="button" variant="button_large_gray" onClick={handleConfirm} disabled={isSubmitting}>
+        <Button
+          type="button"
+          variant="button_large_gray"
+          onClick={handleConfirm}
+          disabled={isSubmitting}
+        >
           {isSubmitting ? "처리 중..." : "퇴사 처리하기"}
         </Button>
       </ButtonRow>
@@ -48,7 +58,12 @@ function DeleteConfirmModal({ open, onClose, onConfirm, employeeName }) {
 }
 
 const Description = styled.p`
-  color: rgba(61, 37, 30, 0.6); /* TODO: theme.js에 없는 값 - CancelSubscriptionModal Description과 동일 톤 */
+  color: rgba(
+    61,
+    37,
+    30,
+    0.6
+  ); /* TODO: theme.js에 없는 값 - CancelSubscriptionModal Description과 동일 톤 */
   font-size: 13px; /* TODO: design token화 */
   line-height: 1.5;
   margin-top: 8px; /* TODO: design token화 */

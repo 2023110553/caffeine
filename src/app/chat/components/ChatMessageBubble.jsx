@@ -8,9 +8,7 @@ function ChatMessageBubble({ sender, text }) {
     <Row $isBot={isBot}>
       {isBot && <AvatarCircle>🤖</AvatarCircle>}
 
-      <Bubble $isBot={isBot}>
-        {isBot ? <ReactMarkdown>{text}</ReactMarkdown> : text}
-      </Bubble>
+      <Bubble $isBot={isBot}>{isBot ? <ReactMarkdown>{text}</ReactMarkdown> : text}</Bubble>
     </Row>
   );
 }
@@ -41,8 +39,7 @@ const Bubble = styled.div`
   background-color: ${({ theme, $isBot }) =>
     $isBot ? theme.colors.bg_gray : theme.colors.bg_brown};
 
-  color: ${({ theme, $isBot }) =>
-    $isBot ? theme.colors.txt_brown : theme.colors.txt_white};
+  color: ${({ theme, $isBot }) => ($isBot ? theme.colors.txt_brown : theme.colors.txt_white)};
 
   font-size: 14px; /* TODO: design token화 */
   line-height: 1.5;
