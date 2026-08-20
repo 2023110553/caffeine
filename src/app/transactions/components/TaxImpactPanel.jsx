@@ -43,7 +43,7 @@ function TaxImpactPanel({
       <PanelTitle>실시간 세금 영향</PanelTitle>
 
       <VatBox $completed={isCompleted}>
-        <Label>현재 반영된 예상 부가세</Label>
+        <Label>예상 부가세 공제 가능액</Label>
         <VatAmount>{estimatedVat.toLocaleString()}원</VatAmount>
         <SubLabel>일반 매입세액 10% + 의제매입세액 공제 포함</SubLabel>
         {/*로직 추가 미분류에따른*/}

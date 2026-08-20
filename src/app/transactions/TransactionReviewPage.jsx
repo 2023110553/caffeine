@@ -33,7 +33,6 @@ function formatDate(isoDate) {
 function normalizeTransaction(raw) {
   return {
     transaction_id: raw.transaction_id,
-    icon: "🧾",
     merchant_name: raw.merchant_name || "상호명 미확인",
     memo: raw.category?.label ?? "미분류",
     date: formatDate(raw.date),
@@ -51,13 +50,13 @@ function TransactionReviewPage() {
   const [error, setError] = useState(null);
 
   const loadData = useCallback(async () => {
-  const res = await getTransactions(business.businessId, {
-    start_date: `${YEAR}-${String(MONTH).padStart(2, "0")}-01`,
-    transaction_type: "PURCHASE",
-  });
+    const res = await getTransactions(business.businessId, {
+  start_date: `${YEAR}-${String(MONTH).padStart(2, "0")}-01`,
+  transaction_type: "PURCHASE",
+});
+    setTransactions(res.data.data.items.map(normalizeTransaction));
+  }, [business.businessId]);
 
-  setTransactions(res.data.data.items.map(normalizeTransaction));
-}, [business.businessId]);
   useEffect(() => {
     const load = async () => {
       setIsLoading(true);
@@ -90,20 +89,33 @@ function TransactionReviewPage() {
   };
 
   const handleItemCategoryChange = async (id, categoryCode) => {
+  try {
+    const res = await updateTransactionCategory(
+      business.businessId,
+      id,
+      categoryCode,
+    );
+
+    const updated = res.data.data;
+
     setTransactions((prev) =>
       prev.map((tx) =>
         tx.transaction_id === id
           ? {
               ...tx,
-              itemCategoryCode: categoryCode,
-              memo: ITEM_CATEGORY_LABEL[categoryCode],
+              itemCategoryCode: updated.category?.code ?? categoryCode,
+              memo:
+                updated.category?.label ??
+                ITEM_CATEGORY_LABEL[categoryCode],
+              is_deemed: updated.is_deemed,
             }
           : tx,
       ),
     );
-
-    await updateTransactionCategory(business.businessId, id, categoryCode);
-  };
+  } catch (err) {
+    console.error("품목 카테고리 수정 실패", err);
+  }
+};
 
   const summary = useMemo(() => {
     const result = {
