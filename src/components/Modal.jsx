@@ -20,6 +20,9 @@ function Modal({
   return (
     <Overlay onClick={onClose}>
       <Content
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={title ? "modal-title" : undefined}
         $width={width}
         $height={height}
         $radius={radius}
@@ -31,9 +34,9 @@ function Modal({
       >
         {!hideHeader && (
           <Header>
-            {title && <Title>{title}</Title>}
+            {title && <Title id="modal-title">{title}</Title>}
 
-            <CloseButton type="button" onClick={onClose}>
+            <CloseButton type="button" onClick={onClose} aria-label="닫기">
               ×
             </CloseButton>
           </Header>
@@ -146,7 +149,7 @@ const CloseButton = styled.button`
 
   &:hover {
     background: #e8d9c8;
-    color: #3d251e;
+    color: ${({ theme }) => theme.colors.txt_brown};
   }
 `;
 

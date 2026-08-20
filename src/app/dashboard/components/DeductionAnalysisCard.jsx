@@ -15,7 +15,7 @@ const BADGE_TONE = {
 
 function DeductionAnalysisCard({ deduction }) {
   const theme = useTheme();
-  const { deduction_grade, total_deductible_amount, structure, item_details } = deduction;
+  const { total_deductible_amount, structure, item_details } = deduction;
   const COLORS = ["#059669", theme.colors.bg_beige, theme.colors.bg_gray]; // TODO: 첫번째 값 theme.js에 없는 초록
 
   return (

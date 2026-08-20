@@ -207,7 +207,7 @@ const Amount = styled.span`
 `;
 
 const Ratio = styled.span`
-  color: #8c6b5a; /* TODO: theme.js에 없는 값 */
+  color: ${({ theme }) => theme.colors.txt_muted};
   font-size: 10px; /* TODO: design token화 */
   text-align: right;
 `;

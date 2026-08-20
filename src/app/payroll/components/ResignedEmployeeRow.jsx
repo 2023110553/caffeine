@@ -85,7 +85,7 @@ const NameGroup = styled.div`
 const Name = styled.p`
   margin: 0;
 
-  color: #8c6b5a; /* TODO: theme.js에 없는 값 - 퇴사자는 텍스트도 톤 다운 */
+  color: ${({ theme }) => theme.colors.txt_muted};
   text-decoration: line-through;
 
   font-size: 0.875rem;
@@ -105,7 +105,7 @@ const EmployeeNumber = styled.p`
 const TypeArea = styled.p`
   margin: 0;
 
-  color: #8c6b5a; /* TODO: theme.js에 없는 값 */
+  color: ${({ theme }) => theme.colors.txt_muted};
 
   font-size: 0.75rem;
 `;
@@ -113,7 +113,7 @@ const TypeArea = styled.p`
 const WageArea = styled.p`
   margin: 0;
 
-  color: #8c6b5a; /* TODO: theme.js에 없는 값 */
+  color: ${({ theme }) => theme.colors.txt_muted};
 
   font-size: 0.8125rem;
 `;

@@ -80,7 +80,7 @@ const Dot = styled.span`
 const Label = styled.p`
   margin: 0;
 
-  color: #8c6b5a;
+  color: ${({ theme }) => theme.colors.txt_muted};
 
   font-size: 0.75rem;
   font-weight: 600;
@@ -102,7 +102,7 @@ const Value = styled.p`
 const Description = styled.p`
   margin: 0.5rem 0 0;
 
-  color: #8c6b5a;
+  color: ${({ theme }) => theme.colors.txt_muted};
 
   font-size: 0.78125rem;
   font-weight: 400;

@@ -5,12 +5,12 @@ import styled, { css } from "styled-components";
 const VARIANT_STYLES = {
   unchecked: css`
     background-color: #f2ebe4;
-    color: #9b6e62;
+    color: ${({ theme }) => theme.colors.txt_beige};
   `,
 
   checked: css`
-    background: var(--primary-brand-primary-500, #3d251e);
-    color: var(--primary-brand-primary-100, #fdf9f3);
+    background: ${({ theme }) => theme.colors.bg_brown};
+    color: ${({ theme }) => theme.colors.txt_white};
   `,
 };
 

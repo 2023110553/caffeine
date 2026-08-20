@@ -1,4 +1,5 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
 import styled from "styled-components";
 import Button from "../../../components/Button";
 import notice from "../../../assets/notice.png";
@@ -122,5 +123,10 @@ const CsvButton = styled(Button)`
     flex-shrink: 0;
   }
 `;
+
+ExpenseHeader.propTypes = {
+  year: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+  month: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+};
 
 export default ExpenseHeader;

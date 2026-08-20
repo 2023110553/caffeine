@@ -117,7 +117,7 @@ function SettingsPage() {
     } catch (err) {
       const message =
         err.response?.data?.message || "결제 수단 변경에 실패했습니다. 잠시 후 다시 시도해주세요.";
-      throw new Error(message);
+      throw new Error(message, { cause: err });
     }
   };
 
