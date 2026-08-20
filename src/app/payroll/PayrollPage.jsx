@@ -21,8 +21,9 @@ import {
   getPayslip,
 } from "../../api/payroll";
 
-const YEAR = 2026;
-const MONTH = 8; // TODO: 실제로는 현재 월 기준 동적 계산 필요
+const now = new Date();
+const YEAR = now.getFullYear();
+const MONTH = now.getMonth() + 1;
 
 // 한글 파일명이 섞이면 서버가 Content-Disposition 자체를 RFC 2047(=?utf-8?b?...?=)로 인코딩해서 내려줌
 function decodeRfc2047(value) {

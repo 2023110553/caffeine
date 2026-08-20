@@ -37,6 +37,19 @@ const TABS = [
   { key: "PAYROLL", label: "인건비 추이" },
 ];
 
+const TICK_STEP = 5;
+
+// "정상 범위"를 하한선으로 유지하되, 실제 데이터가 벗어나면 5% 단위로 넓혀서 잘림을 방지
+function buildRatioDomain(baseMin, baseMax, dataMin, dataMax) {
+  const min = Math.min(baseMin, Math.floor(dataMin / TICK_STEP) * TICK_STEP);
+  const max = Math.max(baseMax, Math.ceil(dataMax / TICK_STEP) * TICK_STEP);
+  const ticks = [];
+  for (let tick = min; tick <= max; tick += TICK_STEP) {
+    ticks.push(tick);
+  }
+  return { domain: [min, max], ticks };
+}
+
 function ChartTooltip({ active, payload, label }) {
   if (!active || !payload || !payload.length) return null;
 
@@ -121,6 +134,10 @@ function TrendChartCard({ monthlyTrends = [] }) {
   const laborMin = laborTrend.length === 0 ? 0 : Math.min(...laborTrend.map((item) => item.ratio));
 
   const laborMax = laborTrend.length === 0 ? 0 : Math.max(...laborTrend.map((item) => item.ratio));
+
+  // 기본 정상 범위(식자재 0~20%, 인건비 15~35%)를 하한선으로, 실제 데이터가 벗어나면 축을 넓힘
+  const rawAxis = buildRatioDomain(0, 20, rawMin, rawMax);
+  const laborAxis = buildRatioDomain(15, 35, laborMin, laborMax);
 
   const isRawMaterial = activeTab === "RAW_MATERIAL";
 
@@ -212,8 +229,8 @@ function TrendChartCard({ monthlyTrends = [] }) {
               />
 
               <YAxis
-                domain={activeTab === "RAW_MATERIAL" ? [0, 20] : [15, 35]}
-                ticks={activeTab === "RAW_MATERIAL" ? [0, 5, 10, 15, 20] : [15, 20, 25, 30, 35]}
+                domain={isRawMaterial ? rawAxis.domain : laborAxis.domain}
+                ticks={isRawMaterial ? rawAxis.ticks : laborAxis.ticks}
                 tick={{
                   fontSize: 10,
                   fill: "rgba(61, 37, 30, 0.4)",
