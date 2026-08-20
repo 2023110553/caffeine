@@ -9,8 +9,9 @@ import Loading from "../../components/Loading";
 import { useBusiness } from "../../contexts/BusinessContext";
 import { getBenchmarkDashboard } from "../../api/benchmark";
 
-const YEAR = 2026;
-const MONTH = 8; // TODO: 실제로는 현재 월 기준 동적 계산 필요
+const now = new Date();
+const YEAR = now.getFullYear();
+const MONTH = now.getMonth() + 1;
 
 function BenchmarkPage() {
   const { business } = useBusiness();
