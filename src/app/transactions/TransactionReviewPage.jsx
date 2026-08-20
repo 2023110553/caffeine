@@ -79,12 +79,13 @@ function TransactionReviewPage() {
     const expensePurpose =
       nextCategory === null ? "UNCLASSIFIED" : nextCategory.toUpperCase();
 
-    setTransactions((prev) =>
-      prev.map((tx) =>
-        tx.transaction_id === id ? { ...tx, category: nextCategory } : tx,
-      ),
-    );
-
+   setTransactions((prev) =>
+    prev.map((tx) => {
+      if (tx.transaction_id !== id) return tx;
+      const nextIsDeemed = nextCategory === "business" && tx.itemCategoryCode === "RAW_MATERIAL";
+      return { ...tx, category: nextCategory, is_deemed: nextIsDeemed };
+    }),
+  );
     await updateTransactionPurpose(business.businessId, id, expensePurpose);
   };
 
