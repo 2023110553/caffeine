@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import Button from "../../../components/Button";
 import lightningIcon from "../../../assets/lightningIcon.svg";
 import cardIcon from "../../../assets/cardIcon.svg";
@@ -170,5 +171,23 @@ function MembershipCard({ membership, onChangePayment, onCancelSubscription }) {
     </Card>
   );
 }
+
+MembershipCard.propTypes = {
+  membership: PropTypes.shape({
+    plan_display_name: PropTypes.string,
+    price: PropTypes.number,
+    next_billing_date: PropTypes.string,
+    days_until_billing: PropTypes.number,
+    card_company: PropTypes.string,
+    card_last4: PropTypes.string,
+    benefits: PropTypes.arrayOf(PropTypes.string),
+    status: PropTypes.string,
+    status_display: PropTypes.string,
+    access_until: PropTypes.string,
+    last_payment_error: PropTypes.string,
+  }).isRequired,
+  onChangePayment: PropTypes.func.isRequired,
+  onCancelSubscription: PropTypes.func.isRequired,
+};
 
 export default MembershipCard;

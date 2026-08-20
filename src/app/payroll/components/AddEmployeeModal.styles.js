@@ -10,7 +10,7 @@ export const Description = styled.p`
   margin: 0;
   padding-top: 0.375rem;
 
-  color: #8c6b5a;
+  color: ${({ theme }) => theme.colors.txt_muted};
 
   font-size: 0.8125rem;
   font-weight: 400;
@@ -147,7 +147,8 @@ export const TypeCardLabel = styled.p`
 export const TypeCardDesc = styled.p`
   margin: 0.125rem 0 0;
 
-  color: ${({ $selected }) => ($selected ? "rgba(253, 249, 243, 0.7)" : "#8c6b5a")};
+  color: ${({ $selected, theme }) =>
+    $selected ? "rgba(253, 249, 243, 0.7)" : theme.colors.txt_muted};
 
   font-size: 0.71875rem;
   font-weight: 400;
@@ -170,7 +171,7 @@ export const InputBox = styled.div`
 export const HelperText = styled.p`
   margin: 0.3125rem 0 0;
 
-  color: #8c6b5a;
+  color: ${({ theme }) => theme.colors.txt_muted};
 
   font-size: 0.6875rem;
   font-weight: 400;
@@ -204,7 +205,7 @@ export const OptionalBadge = styled.span`
   border-radius: 1.25rem;
 
   background-color: #f5ede0;
-  color: #8c6b5a;
+  color: ${({ theme }) => theme.colors.txt_muted};
 
   font-size: 0.625rem;
   font-weight: 600;

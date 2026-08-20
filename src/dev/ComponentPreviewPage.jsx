@@ -4,7 +4,6 @@ import { useState } from "react";
 import styled from "styled-components";
 import Button from "../components/Button";
 import Chip from "../components/Chip";
-import Badge from "../components/Badge";
 import Input from "../components/Input";
 import Modal from "../components/Modal";
 import Loading from "../components/Loading";
@@ -38,14 +37,6 @@ function ComponentPreviewPage() {
         <Row>
           <Chip variant="unchecked">전체</Chip>
           <Chip variant="checked">전체</Chip>
-        </Row>
-      </Section>
-
-      <Section>
-        <h3>Badge</h3>
-        <Row>
-          <Badge variant="unclassified">미분류</Badge>
-          <Badge variant="classified">분류 완료</Badge>
         </Row>
       </Section>
 

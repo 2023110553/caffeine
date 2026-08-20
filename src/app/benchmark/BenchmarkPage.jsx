@@ -7,7 +7,9 @@ import AiDeepDiagnosisModal from "./components/AiDeepDiagnosisModal";
 import CategoryComparisonCard from "./components/CategoryComparisonCard";
 import TrendChartCard from "./components/TrendChartCard";
 import Loading from "../../components/Loading";
+import ErrorState from "../../components/ErrorState";
 import { useBusiness } from "../../contexts/BusinessContext";
+import { useAsync } from "../../hooks/useAsync";
 import { getBenchmarkDashboard } from "../../api/benchmark";
 
 const now = new Date();
@@ -17,8 +19,11 @@ const MONTH = now.getMonth() + 1;
 function BenchmarkPage() {
   const { business } = useBusiness();
   const [dashboard, setDashboard] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [isDiagnosisModalOpen, setIsDiagnosisModalOpen] = useState(false);
+
+  const { isLoading, error, run } = useAsync({
+    errorMessage: "벤치마크 데이터 조회 실패:",
+  });
 
   const loadData = useCallback(async () => {
     const res = await getBenchmarkDashboard(business.businessId, YEAR, MONTH);
@@ -26,14 +31,14 @@ function BenchmarkPage() {
   }, [business.businessId]);
 
   useEffect(() => {
-    const load = async () => {
-      await loadData();
-      setIsLoading(false);
-    };
-    load();
-  }, [loadData]);
+    run(loadData);
+  }, [run, loadData]);
 
   if (isLoading) return <Loading />;
+  if (error)
+    return (
+      <ErrorState message="경영 분석 데이터를 불러오지 못했어요." onRetry={() => run(loadData)} />
+    );
   if (!dashboard) return null;
 
   const { overview, ai_prescriptions, category_comparison, monthly_trends } = dashboard;

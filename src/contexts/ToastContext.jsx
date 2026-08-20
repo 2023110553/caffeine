@@ -31,7 +31,7 @@ export function ToastProvider({ children }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <Viewport>
+      <Viewport role="status" aria-live="polite" aria-atomic="true">
         {toasts.map((toast) => (
           <ToastItem key={toast.id} onClick={() => dismiss(toast.id)}>
             {toast.message}

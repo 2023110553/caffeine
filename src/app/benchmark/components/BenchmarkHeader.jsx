@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import styled from "styled-components";
 
 function BenchmarkHeader({ year, month }) {
@@ -50,5 +51,10 @@ const Badge = styled.span`
   color: ${({ theme }) => theme.colors.txt_brown};
   flex-shrink: 0;
 `;
+
+BenchmarkHeader.propTypes = {
+  year: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+  month: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+};
 
 export default BenchmarkHeader;

@@ -7,7 +7,6 @@ function ExpenseSummaryBanner({
   estimatedDeduction,
   summary,
   totalCount,
-  itemUnclassifiedCount,
   selectedFilter,
   onFilterChange,
 }) {

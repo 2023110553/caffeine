@@ -12,6 +12,7 @@ export const theme = {
     txt_beige: "#9B6E62",
     txt_white: "#FDF9F3",
     txt_brown: "#3D251E",
+    txt_muted: "#8C6B5A",
     card_white: "#FFFCF8",
   },
   radius: {

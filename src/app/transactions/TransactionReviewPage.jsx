@@ -132,12 +132,6 @@ function TransactionReviewPage() {
     return result;
   }, [transactions]);
 
-  // 사업/개인 미분류(category)와 품목 미분류(itemCategoryCode)는 서로 다른 개념이라 별도로 카운트
-  const itemUnclassifiedCount = useMemo(
-    () => transactions.filter((tx) => tx.itemCategoryCode === "UNCLASSIFIED").length,
-    [transactions],
-  );
-
   // 배너 + 우측 패널 양쪽에서 쓰는 값이라 페이지 레벨에서 한 번만 계산
   const taxSummary = useMemo(() => {
     let normalInputTax = 0;

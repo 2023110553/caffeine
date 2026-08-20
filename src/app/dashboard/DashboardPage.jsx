@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import { getMonthlySummary, getDeductionBreakdown } from "../../api/analytics";
 import { getClosingSummary, approveClosing } from "../../api/tax";
@@ -11,6 +11,7 @@ import SalesExpenseCard from "./components/SalesExpenseCard";
 import CleanDataExport from "./components/CleanDataExport";
 import DeductionAnalysisCard from "./components/DeductionAnalysisCard";
 import Loading from "../../components/Loading";
+import ErrorState from "../../components/ErrorState";
 
 const now = new Date();
 const YEAR = now.getFullYear();
@@ -35,18 +36,19 @@ function DashboardPage() {
     errorMessage: "대시보드 데이터 조회 실패:",
   });
 
+  const loadData = useCallback(async () => {
+    const [summaryRes, deductionRes] = await Promise.all([
+      getMonthlySummary(businessId, YEAR, MONTH),
+      getDeductionBreakdown(businessId, YEAR, MONTH),
+    ]);
+    setSummary(summaryRes.data);
+    setDeduction(deductionRes.data);
+  }, [businessId]);
+
   useEffect(() => {
     if (!businessId) return;
-
-    run(async () => {
-      const [summaryRes, deductionRes] = await Promise.all([
-        getMonthlySummary(businessId, YEAR, MONTH),
-        getDeductionBreakdown(businessId, YEAR, MONTH),
-      ]);
-      setSummary(summaryRes.data);
-      setDeduction(deductionRes.data);
-    });
-  }, [businessId, run]);
+    run(loadData);
+  }, [businessId, run, loadData]);
 
   // 마감 상태 초기 조회: GET /tax/closing/{year_month}/ 응답의 status로 판단 (summary/deduction과 별개로 실제 연동)
   useEffect(() => {
@@ -83,14 +85,12 @@ function DashboardPage() {
   };
 
   if (isLoading) return <Loading />;
-  if (loadError)
-    return <ErrorMessage>데이터를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.</ErrorMessage>;
+  if (loadError) return <ErrorState message={loadError} onRetry={() => run(loadData)} />;
   if (!summary || !deduction) return null;
 
   return (
     <Wrapper>
       <SummaryHeader
-        year={summary.year}
         month={summary.month}
         isClosed={isClosed}
         isApproving={isApproving}
@@ -140,15 +140,6 @@ const RightColumn = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px; /* TODO: design token화 */
-`;
-
-const ErrorMessage = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: ${({ theme }) => theme.colors.txt_brown};
-  font-size: 14px;
 `;
 
 export default DashboardPage;

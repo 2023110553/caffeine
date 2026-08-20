@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import styled from "styled-components";
 
 function PayrollHeader({ onAddClick }) {
@@ -47,7 +48,7 @@ const SubRow = styled.div`
 `;
 
 const Eyebrow = styled.p`
-  color: #8c6b5a; /* TODO: theme.js에 없는 값 */
+  color: ${({ theme }) => theme.colors.txt_muted};
   font-size: 13.5px; /* TODO: design token화 */
 `;
 
@@ -85,5 +86,9 @@ const Dot = styled.div`
   width: 5px;
   height: 5px;
 `;
+
+PayrollHeader.propTypes = {
+  onAddClick: PropTypes.func.isRequired,
+};
 
 export default PayrollHeader;

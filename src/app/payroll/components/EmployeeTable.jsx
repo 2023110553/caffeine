@@ -133,7 +133,7 @@ const CountBadge = styled.span`
 const HelperText = styled.p`
   margin: 0;
 
-  color: #8c6b5a;
+  color: ${({ theme }) => theme.colors.txt_muted};
 
   font-size: 0.75rem;
   font-weight: 400;
@@ -192,7 +192,7 @@ const TableHeader = styled.div`
 
   padding: 0 1.5rem;
 
-  color: #8c6b5a;
+  color: ${({ theme }) => theme.colors.txt_muted};
 
   font-size: 0.6875rem;
   font-weight: 600;
