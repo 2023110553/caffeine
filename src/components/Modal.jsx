@@ -1,11 +1,11 @@
 import styled from "styled-components";
 
-function Modal({ open, onClose, title, children }) {
+function Modal({ open, onClose, title, children, width = "640px", height = "612px" }) {
   if (!open) return null;
 
   return (
     <Overlay onClick={onClose}>
-      <Content onClick={(e) => e.stopPropagation()}>
+      <Content $width={width} $height={height} onClick={(e) => e.stopPropagation()}>
         <Header>
           {title && <Title>{title}</Title>}
 
@@ -36,8 +36,8 @@ const Overlay = styled.div`
 const Content = styled.div`
   box-sizing: border-box;
 
-  width: 640px;
-  height: 612px;
+  width: ${({ $width }) => $width};
+  height: ${({ $height }) => $height};
 
   padding: 32px;
 
