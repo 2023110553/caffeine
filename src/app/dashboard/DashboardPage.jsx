@@ -101,7 +101,7 @@ function DashboardPage() {
           <SalesExpenseCard summary={summary} />
         </LeftColumn>
         <RightColumn>
-          <CleanDataExport year={YEAR} month={MONTH} isClosed={isClosed} />
+          <CleanDataExport year={YEAR} month={MONTH} />
           <DeductionAnalysisCard deduction={deduction} />
         </RightColumn>
       </ColumnGrid>
