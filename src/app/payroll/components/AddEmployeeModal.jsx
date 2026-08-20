@@ -82,6 +82,7 @@ function AddEmployeeModal({ open, onClose, onSubmit }) {
       hourly_wage: form.hourly_wage,
       monthly_contracted_hours: form.monthly_contracted_hours,
       work_started_at: form.work_started_at || new Date().toISOString().slice(0, 10),
+      is_long_term_contract: form.is_employment_insured,
     });
 
     setForm(INITIAL_FORM);
