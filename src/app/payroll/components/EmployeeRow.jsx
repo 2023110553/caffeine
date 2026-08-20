@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import Input from "../../../components/Input";
+import DeleteConfirmModal from "./DeleteConfirmModal";
 
 const EMPLOYMENT_TYPE_LABEL = {
   FULL_TIME: "4대보험 정직원",
@@ -28,11 +29,12 @@ function EmployeeRow({ employee, onUpdate, onViewPayslip, onDelete }) {
   const hasTaxOwed = withholdingTax > 0;
   const withholdingNote = getWithholdingNote(employment_type, grossPay, withholdingTax);
 
-  // 실제로는 완전 삭제가 아니라 퇴사 처리(soft delete) - status만 INACTIVE로 바뀌고 목록에서만 숨겨짐
-  const handleDelete = () => {
-    if (window.confirm(`${name} 직원을 퇴사 처리하시겠습니까?`)) {
-      onDelete(employee_id);
-    }
+  // 실제로는 완전 삭제가 아니라 퇴사 처리(soft delete) - status만 INACTIVE로 바뀌고 목록에서만 숨겨짐.
+  // 브라우저 기본 window.confirm 대신 피그마에 디자인된 확인 모달(DeleteConfirmModal)을 사용한다.
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+
+  const handleConfirmDelete = async () => {
+    await onDelete(employee_id);
   };
 
   // 타이핑 중엔 문자열 그대로 보여주고(빈 값·선행 0 자유롭게 편집), blur 시에만 숫자로 변환해 저장
@@ -71,9 +73,16 @@ function EmployeeRow({ employee, onUpdate, onViewPayslip, onDelete }) {
 
   return (
     <Card>
-      <DeleteButton type="button" onClick={handleDelete} aria-label={`${name} 퇴사 처리`}>
+      <DeleteButton type="button" onClick={() => setIsDeleteConfirmOpen(true)} aria-label={`${name} 퇴사 처리`}>
         ✕
       </DeleteButton>
+
+      <DeleteConfirmModal
+        open={isDeleteConfirmOpen}
+        onClose={() => setIsDeleteConfirmOpen(false)}
+        onConfirm={handleConfirmDelete}
+        employeeName={name}
+      />
 
       <NameArea>
         <Avatar>{name[0]}</Avatar>

@@ -66,6 +66,7 @@ function mergeEmployeesWithPayments(employees, payments) {
 function PayrollPage() {
   const { business } = useBusiness();
   const [employees, setEmployees] = useState([]);
+  const [resignedEmployees, setResignedEmployees] = useState([]);
   const [summary, setSummary] = useState({ total_labor_cost: 0, withholding_tax: 0 });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -78,9 +79,10 @@ function PayrollPage() {
       getPayrollSummary(business.businessId, YEAR, MONTH),
     ]);
     // 퇴사 처리(soft delete)된 직원은 status가 INACTIVE로 바뀔 뿐 서버에서 계속 내려오므로,
-    // 화면에는 재직 중인 직원만 보이도록 걸러낸다.
-    const activeEmployees = employeesRes.data.data.filter((emp) => emp.status !== "INACTIVE");
-    setEmployees(mergeEmployeesWithPayments(activeEmployees, paymentsRes.data.data));
+    // 재직자 목록과 퇴사자 목록으로 나눠서 각각 보여준다 (퇴사자 탭에서 조회 가능해야 함).
+    const merged = mergeEmployeesWithPayments(employeesRes.data.data, paymentsRes.data.data);
+    setEmployees(merged.filter((emp) => emp.status !== "INACTIVE"));
+    setResignedEmployees(merged.filter((emp) => emp.status === "INACTIVE"));
     setSummary(summaryRes.data.data);
   }, [business.businessId]);
 
@@ -196,6 +198,7 @@ function PayrollPage() {
       />
       <EmployeeTable
         employees={employees}
+        resignedEmployees={resignedEmployees}
         onUpdateEmployee={handleUpdateEmployee}
         onViewPayslip={handleViewPayslip}
         onDeleteEmployee={handleDeleteEmployee}
