@@ -11,7 +11,8 @@ export const Card = styled.div`
   grid-template-columns: 200fr 220fr 130fr 130fr 160fr;
   grid-template-areas:
     "name type hours wage gross"
-    "detail . . . tax";
+    "detail . . . tax"
+    "breakdown breakdown breakdown breakdown breakdown";
 
   row-gap: 0.75rem;
   column-gap: 0.75rem;
@@ -277,4 +278,38 @@ export const TaxNote = styled.span`
   font-size: 0.625rem;
   font-weight: 500;
   line-height: 0.9375rem;
+`;
+
+export const BreakdownArea = styled.div`
+  grid-area: breakdown;
+
+  display: flex;
+  align-items: center;
+
+  gap: 1rem;
+
+  padding-top: 0.75rem;
+
+  border-top: 0.05rem solid #f0e6da;
+`;
+
+export const BreakdownItem = styled.div`
+  display: flex;
+  align-items: baseline;
+
+  gap: 0.3125rem;
+`;
+
+export const BreakdownLabel = styled.span`
+  color: ${({ theme }) => theme.colors.txt_muted};
+
+  font-size: 0.6875rem;
+  font-weight: 500;
+`;
+
+export const BreakdownValue = styled.span`
+  color: ${({ theme }) => theme.colors.txt_brown};
+
+  font-size: 0.75rem;
+  font-weight: 700;
 `;

@@ -2,37 +2,77 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import { getWithholdingTaxDueDate } from "../withholdingTaxDueDate";
 
-function PayrollSummaryCards({ year, month, totalExpense, totalWithholdingTax, onExport }) {
+function PayrollSummaryCards({
+  year,
+  month,
+  totalExpense,
+  totalWithholdingTax,
+  totalGrossPay,
+  employeeInsuranceTotal,
+  deductionsTotal,
+  netPayTotal,
+  onExport,
+}) {
   const { dueMonth, dueDay } = getWithholdingTaxDueDate(year, month);
 
   return (
     <Wrapper>
-      <Card>
-        <Label>이번 달 총 인건비 지출</Label>
-        <Value>{totalExpense.toLocaleString()}원</Value>
-        <NotePill $tone="warning">💡 세전 급여 + 사장님 부담 4대보험료</NotePill>
-      </Card>
+      <Cards>
+        <Card>
+          <Label>이번 달 총 인건비 지출</Label>
+          <Value>{totalExpense.toLocaleString()}원</Value>
+          <NotePill $tone="warning">💡 세전 급여 + 사장님 부담 4대보험료</NotePill>
+        </Card>
 
-      <Card>
-        <LabelRow>
-          <Dot />
-          <Label>
-            {dueMonth}월 {dueDay}일 납부할 원천세 합계
-          </Label>
-        </LabelRow>
-        <Value>{totalWithholdingTax.toLocaleString()}원</Value>
-        <NotePill $tone="warning">소득세 + 개인지방소득세</NotePill>
-      </Card>
+        <Card>
+          <LabelRow>
+            <Dot />
+            <Label>
+              {dueMonth}월 {dueDay}일 납부할 원천세 합계
+            </Label>
+          </LabelRow>
+          <Value>{totalWithholdingTax.toLocaleString()}원</Value>
+          <NotePill $tone="warning">소득세 + 개인지방소득세</NotePill>
+        </Card>
 
-      <Card>
-        <Label>임금명세서 파일 내보내기</Label>
-        <Description>
-          전 직원의 임금명세서를 PDF 또는 엑셀 파일로 일괄 내보낼 수 있습니다.
-        </Description>
-        <ExportButton type="button" onClick={onExport}>
-          ⬇ 급여명세서 일괄 내보내기
-        </ExportButton>
-      </Card>
+        <Card>
+          <Label>임금명세서 파일 내보내기</Label>
+          <Description>
+            전 직원의 임금명세서를 PDF 또는 엑셀 파일로 일괄 내보낼 수 있습니다.
+          </Description>
+          <ExportButton type="button" onClick={onExport}>
+            ⬇ 급여명세서 일괄 내보내기
+          </ExportButton>
+        </Card>
+      </Cards>
+
+      <MiniBar>
+        <MiniItem>
+          <MiniLabel>세전 급여 합계</MiniLabel>
+          <MiniValue>{totalGrossPay.toLocaleString()}원</MiniValue>
+        </MiniItem>
+
+        <MiniDivider />
+
+        <MiniItem>
+          <MiniLabel>직원 부담 4대보험 합계</MiniLabel>
+          <MiniValue>{employeeInsuranceTotal.toLocaleString()}원</MiniValue>
+        </MiniItem>
+
+        <MiniDivider />
+
+        <MiniItem>
+          <MiniLabel>총공제액 합계</MiniLabel>
+          <MiniValue>{deductionsTotal.toLocaleString()}원</MiniValue>
+        </MiniItem>
+
+        <MiniDivider />
+
+        <MiniItem>
+          <MiniLabel>실수령액 합계</MiniLabel>
+          <MiniValue $emphasis>{netPayTotal.toLocaleString()}원</MiniValue>
+        </MiniItem>
+      </MiniBar>
     </Wrapper>
   );
 }
@@ -40,13 +80,17 @@ function PayrollSummaryCards({ year, month, totalExpense, totalWithholdingTax, o
 const Wrapper = styled.div`
   flex-shrink: 0;
 
+  width: 100%;
+  margin-bottom: 1.75rem;
+`;
+
+const Cards = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
 
   gap: 1rem;
 
   width: 100%;
-  margin-bottom: 1.75rem;
 `;
 
 const Card = styled.div`
@@ -175,11 +219,64 @@ const ExportButton = styled.button`
   cursor: pointer;
 `;
 
+const MiniBar = styled.div`
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  margin-top: 0.75rem;
+
+  background-color: #ffffff;
+  border: 0.05rem solid #e8d9c8;
+  border-radius: 0.75rem;
+
+  padding: 0.75rem 1.25rem;
+`;
+
+const MiniItem = styled.div`
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+`;
+
+const MiniDivider = styled.div`
+  width: 0.05rem;
+  height: 1.5rem;
+
+  margin: 0 1rem;
+
+  background-color: #e8d9c8;
+
+  flex-shrink: 0;
+`;
+
+const MiniLabel = styled.span`
+  color: ${({ theme }) => theme.colors.txt_muted};
+
+  font-size: 0.6875rem;
+  font-weight: 500;
+`;
+
+const MiniValue = styled.span`
+  color: ${({ $emphasis, theme }) => ($emphasis ? theme.colors.txt_brown : "#6b4a3a")};
+
+  font-size: 1rem;
+  font-weight: 700;
+`;
+
 PayrollSummaryCards.propTypes = {
   year: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
   month: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
   totalExpense: PropTypes.number.isRequired,
   totalWithholdingTax: PropTypes.number.isRequired,
+  totalGrossPay: PropTypes.number.isRequired,
+  employeeInsuranceTotal: PropTypes.number.isRequired,
+  deductionsTotal: PropTypes.number.isRequired,
+  netPayTotal: PropTypes.number.isRequired,
   onExport: PropTypes.func.isRequired,
 };
 

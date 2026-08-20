@@ -1,5 +1,6 @@
 import styled, { useTheme } from "styled-components";
 import { PieChart, Pie, Cell } from "recharts";
+import { ITEM_CATEGORY_ICON } from "../../transactions/constants";
 
 const ITEM_ICON = {
   "우유·유제품": "🥛",
@@ -16,7 +17,8 @@ const BADGE_TONE = {
 function DeductionAnalysisCard({ deduction }) {
   const theme = useTheme();
   const { total_deductible_amount, structure, item_details } = deduction;
-  const COLORS = ["#059669", theme.colors.bg_beige, theme.colors.bg_gray]; // TODO: 첫번째 값 theme.js에 없는 초록
+  // structure는 백엔드에서 3~4개 항목(과세매입 공제 가능/의제매입 후보/비공제 지출/검토 필요)까지 내려올 수 있어 항목 수만큼 색상을 준비해둔다.
+  const COLORS = ["#059669", theme.colors.bg_beige, theme.colors.bg_gray, "#9C6E62"]; // TODO: 첫번째·네번째 값 theme.js에 없는 색
 
   return (
     <Card>
@@ -77,15 +79,15 @@ function DeductionAnalysisCard({ deduction }) {
           const isTaxFree = item.deduction_type === "면세공제";
           const tone = isTaxFree ? "free" : "taxed";
           return (
-            <ItemCard key={item.item_name}>
+            <ItemCard key={`${item.category}-${item.deduction_type}`}>
               <ItemTopRow>
                 <ItemNameGroup>
-                  <span>{ITEM_ICON[item.item_name] ?? "📎"}</span>
+                  <span>{ITEM_ICON[item.item_name] ?? ITEM_CATEGORY_ICON[item.category] ?? "📎"}</span>
                   <ItemName>{item.item_name}</ItemName>
                 </ItemNameGroup>
                 <TypeBadge $tone={tone}>{item.deduction_type}</TypeBadge>
               </ItemTopRow>
-              <ItemCategory>{item.category}</ItemCategory>
+              <ItemCategory>{Number(item.amount ?? 0).toLocaleString()}원</ItemCategory>
               <ItemBarRow>
                 <ItemBarTrack>
                   <ItemBarFill $tone={tone} style={{ width: `${item.rate}%` }} />
