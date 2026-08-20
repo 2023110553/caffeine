@@ -1,18 +1,42 @@
 import styled from "styled-components";
 
-function Modal({ open, onClose, title, children, width = "640px", height = "612px" }) {
+function Modal({
+  open,
+  onClose,
+  title,
+  children,
+  width = "640px",
+  height = "612px",
+  radius = "20px",
+  padding = "32px",
+  background,
+  boxShadow = "0 24px 64px rgba(61, 37, 30, 0.22), 0 4px 16px rgba(61, 37, 30, 0.1)",
+  hideHeader = false,
+  flexColumn = false,
+}) {
   if (!open) return null;
 
   return (
     <Overlay onClick={onClose}>
-      <Content $width={width} $height={height} onClick={(e) => e.stopPropagation()}>
-        <Header>
-          {title && <Title>{title}</Title>}
+      <Content
+        $width={width}
+        $height={height}
+        $radius={radius}
+        $padding={padding}
+        $background={background}
+        $boxShadow={boxShadow}
+        $flexColumn={flexColumn}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {!hideHeader && (
+          <Header>
+            {title && <Title>{title}</Title>}
 
-          <CloseButton type="button" onClick={onClose}>
-            ×
-          </CloseButton>
-        </Header>
+            <CloseButton type="button" onClick={onClose}>
+              ×
+            </CloseButton>
+          </Header>
+        )}
 
         {children}
       </Content>
@@ -39,15 +63,21 @@ const Content = styled.div`
   width: ${({ $width }) => $width};
   height: ${({ $height }) => $height};
 
-  padding: 32px;
+  padding: ${({ $padding }) => $padding};
 
-  background-color: ${({ theme }) => theme.colors.bg_white};
+  background-color: ${({ $background, theme }) => $background ?? theme.colors.bg_white};
 
-  border-radius: 20px;
+  border-radius: ${({ $radius }) => $radius};
 
-  box-shadow:
-    0 24px 64px rgba(61, 37, 30, 0.22),
-    0 4px 16px rgba(61, 37, 30, 0.1);
+  box-shadow: ${({ $boxShadow }) => $boxShadow};
+
+  ${({ $flexColumn }) =>
+    $flexColumn &&
+    `
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  `}
 
   overflow-y: auto;
 

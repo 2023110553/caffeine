@@ -3,6 +3,7 @@ import styled from "styled-components";
 import BenchmarkHeader from "./components/BenchmarkHeader";
 import BenchmarkStatCards from "./components/BenchmarkStatCards";
 import AiPrescriptionSummary from "./components/AiPrescriptionSummary";
+import AiDeepDiagnosisModal from "./components/AiDeepDiagnosisModal";
 import CategoryComparisonCard from "./components/CategoryComparisonCard";
 import TrendChartCard from "./components/TrendChartCard";
 import Loading from "../../components/Loading";
@@ -17,6 +18,7 @@ function BenchmarkPage() {
   const { business } = useBusiness();
   const [dashboard, setDashboard] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDiagnosisModalOpen, setIsDiagnosisModalOpen] = useState(false);
 
   const loadData = useCallback(async () => {
     const res = await getBenchmarkDashboard(business.businessId, YEAR, MONTH);
@@ -42,12 +44,23 @@ function BenchmarkPage() {
 
       <BenchmarkStatCards overview={overview} monthlyTrends={monthly_trends} />
 
-      <AiPrescriptionSummary prescriptions={ai_prescriptions} />
+      <AiPrescriptionSummary
+        prescriptions={ai_prescriptions}
+        onDetailClick={() => setIsDiagnosisModalOpen(true)}
+      />
 
       <ColumnGrid>
         <CategoryComparisonCard categoryComparison={category_comparison} totalRevenue={overview.total_revenue} />
         <TrendChartCard monthlyTrends={monthly_trends} />
       </ColumnGrid>
+
+      <AiDeepDiagnosisModal
+        open={isDiagnosisModalOpen}
+        onClose={() => setIsDiagnosisModalOpen(false)}
+        businessId={business.businessId}
+        year={YEAR}
+        month={MONTH}
+      />
     </Wrapper>
   );
 }
