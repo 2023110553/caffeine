@@ -15,3 +15,7 @@ export const getBenchmarkTrend = (businessId, year, month, region) =>
 // AI 경영 진단 새로고침 (OpenAI 강제 재실행)
 export const refreshBenchmarkAiDiagnosis = (businessId, year, month) =>
   client.post(`/businesses/${businessId}/benchmark/ai-diagnosis/`, { year, month });
+
+// AI 심층 경영진단 리포트 (비용 구조 정밀 진단 + 절감 시뮬레이션 + 우선 실행 과제)
+export const getBenchmarkDeepDiagnosis = (businessId, year, month) =>
+  client.get(`/businesses/${businessId}/benchmark/deep-diagnosis/`, { params: { year, month } });

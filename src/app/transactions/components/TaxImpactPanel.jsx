@@ -43,9 +43,9 @@ function TaxImpactPanel({
       <PanelTitle>실시간 세금 영향</PanelTitle>
 
       <VatBox $completed={isCompleted}>
-        <Label>현재 반영된 예상 부가세</Label>
+        <Label>예상 부가세 공제 가능액</Label>
         <VatAmount>{estimatedVat.toLocaleString()}원</VatAmount>
-        <SubLabel>일반 매입세액 10% + 의제매입세액 공제 포함</SubLabel>
+        <SubLabel>일반 매입세액 공제액 + 의제매입세액 공제액</SubLabel>
         {/*로직 추가 미분류에따른*/}
         {isCompleted && (
           <StatGrid>
@@ -189,12 +189,12 @@ function TaxImpactPanel({
         {isSaved ? (
           "✓ 저장 완료!"
         ) : isCompleted ? (
-          "분류 완료 및 부가세 예측 반영하기"
+          "분류 완료 및 부가세 공제 가능액 예측하기"
         ) : (
           <>
             품목 분류와 지출 선택 마치고
             <br />
-            부가세 예측하기
+            부가세 공제 가능액 예측하기
           </>
         )}
       </Button>
