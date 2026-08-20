@@ -63,6 +63,13 @@ function mergeEmployeesWithPayments(employees, payments) {
       paymentId: payment?.payment_id ?? null,
       grossPay: payment?.gross_pay ?? 0,
       withholdingTax: payment?.withholding_tax ?? 0,
+      incomeTax: payment?.income_tax ?? 0,
+      localIncomeTax: payment?.local_income_tax ?? 0,
+      employmentInsurance: payment?.employment_insurance ?? 0,
+      insuranceTotal: payment?.insurance_total ?? 0,
+      deductionsTotal: payment?.deductions_total ?? 0,
+      netPay: payment?.net_pay ?? 0,
+      isLongTermContract: payment?.is_long_term_contract ?? false,
     };
   });
 }
@@ -72,7 +79,14 @@ function PayrollPage() {
   const showToast = useToast();
   const [employees, setEmployees] = useState([]);
   const [resignedEmployees, setResignedEmployees] = useState([]);
-  const [summary, setSummary] = useState({ total_labor_cost: 0, withholding_tax: 0 });
+  const [summary, setSummary] = useState({
+    total_labor_cost: 0,
+    withholding_tax: 0,
+    total_gross_pay: 0,
+    employee_insurance_total: 0,
+    deductions_total: 0,
+    net_pay_total: 0,
+  });
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { isLoading, error, run } = useAsync({
@@ -181,6 +195,10 @@ function PayrollPage() {
         month={MONTH}
         totalExpense={summary.total_labor_cost}
         totalWithholdingTax={summary.withholding_tax}
+        totalGrossPay={summary.total_gross_pay}
+        employeeInsuranceTotal={summary.employee_insurance_total}
+        deductionsTotal={summary.deductions_total}
+        netPayTotal={summary.net_pay_total}
         onExport={handleExport}
       />
       <EmployeeTable

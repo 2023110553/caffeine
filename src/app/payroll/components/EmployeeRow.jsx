@@ -21,6 +21,10 @@ import {
   TaxArea,
   TaxValue,
   TaxNote,
+  BreakdownArea,
+  BreakdownItem,
+  BreakdownLabel,
+  BreakdownValue,
 } from "./EmployeeRow.styles";
 
 const EMPLOYMENT_TYPE_LABEL = {
@@ -53,6 +57,9 @@ function EmployeeRow({ employee, onUpdate, onViewPayslip, onDelete }) {
     monthly_contracted_hours,
     grossPay,
     withholdingTax,
+    employmentInsurance,
+    deductionsTotal,
+    netPay,
     paymentId,
   } = employee;
   const hasTaxOwed = withholdingTax > 0;
@@ -180,6 +187,23 @@ function EmployeeRow({ employee, onUpdate, onViewPayslip, onDelete }) {
           {withholdingNote && <TaxNote> ({withholdingNote})</TaxNote>}
         </TaxValue>
       </TaxArea>
+
+      <BreakdownArea>
+        <BreakdownItem>
+          <BreakdownLabel>고용보험</BreakdownLabel>
+          <BreakdownValue>{employmentInsurance.toLocaleString()}원</BreakdownValue>
+        </BreakdownItem>
+
+        <BreakdownItem>
+          <BreakdownLabel>총공제액</BreakdownLabel>
+          <BreakdownValue>{deductionsTotal.toLocaleString()}원</BreakdownValue>
+        </BreakdownItem>
+
+        <BreakdownItem>
+          <BreakdownLabel>실수령액</BreakdownLabel>
+          <BreakdownValue>{netPay.toLocaleString()}원</BreakdownValue>
+        </BreakdownItem>
+      </BreakdownArea>
     </Card>
   );
 }
