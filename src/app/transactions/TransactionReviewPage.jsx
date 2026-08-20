@@ -80,12 +80,17 @@ function TransactionReviewPage() {
     const expensePurpose =
       nextCategory === null ? "UNCLASSIFIED" : nextCategory.toUpperCase();
 
+    // 1) 즉각 반응: 버튼 누르자마자 뱃지 상태 실시간 낙관적 반영
     setTransactions((prev) =>
-      prev.map((tx) =>
-        tx.transaction_id === id ? { ...tx, category: nextCategory } : tx,
-      ),
+      prev.map((tx) => {
+        if (tx.transaction_id !== id) return tx;
+        const nextIsDeemed =
+          nextCategory === "business" && tx.itemCategoryCode === "RAW_MATERIAL";
+        return { ...tx, category: nextCategory, is_deemed: nextIsDeemed };
+      }),
     );
 
+    // 2) 서버 API 반영 및 최신 서버 응답 상태 동기화
     try {
       const res = await updateTransactionPurpose(business.businessId, id, expensePurpose);
       if (res.data?.data) {
@@ -96,23 +101,27 @@ function TransactionReviewPage() {
         );
       }
     } catch (err) {
-      console.error(err);
+      console.error("지출 구분 수정 실패:", err);
     }
   };
 
   const handleItemCategoryChange = async (id, categoryCode) => {
+    // 1) 즉각 반응: 카테고리 바꿀 때도 뱃지 상태 실시간 낙관적 반영
     setTransactions((prev) =>
-      prev.map((tx) =>
-        tx.transaction_id === id
-          ? {
-              ...tx,
-              itemCategoryCode: categoryCode,
-              memo: ITEM_CATEGORY_LABEL[categoryCode],
-            }
-          : tx,
-      ),
+      prev.map((tx) => {
+        if (tx.transaction_id !== id) return tx;
+        const nextIsDeemed =
+          tx.category === "business" && categoryCode === "RAW_MATERIAL";
+        return {
+          ...tx,
+          itemCategoryCode: categoryCode,
+          memo: ITEM_CATEGORY_LABEL[categoryCode] || tx.memo,
+          is_deemed: nextIsDeemed,
+        };
+      }),
     );
 
+    // 2) 서버 API 반영 및 최신 서버 응답 상태 동기화
     try {
       const res = await updateTransactionCategory(business.businessId, id, categoryCode);
       if (res.data?.data) {
@@ -123,7 +132,7 @@ function TransactionReviewPage() {
         );
       }
     } catch (err) {
-      console.error(err);
+      console.error("품목 카테고리 수정 실패:", err);
     }
   };
 
