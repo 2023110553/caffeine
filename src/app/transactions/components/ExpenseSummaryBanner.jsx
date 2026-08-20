@@ -64,7 +64,7 @@ function ExpenseSummaryBanner({
           $hasUnclassified={summary.unclassified.count > 0}
           onClick={() => onFilterChange("unclassified")}
         >
-          품목 미분류
+          미선택
           <ItemCount
             $active={selectedFilter === "unclassified"}
             $hasUnclassified={summary.unclassified.count > 0}

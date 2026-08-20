@@ -58,7 +58,7 @@ const INITIAL_FORM = {
   monthly_contracted_hours: "",
   work_started_at: "", // TODO: 폼에 입사일 입력 필드(date input) 추가 필요 - 현재 UI엔 없음
   resident_id_front: "", // TODO: employees 응답에 필드가 없음 - 서버가 저장/사용하는지 백엔드 확인 필요
-  is_employment_insured: false, // TODO: employees 응답에 필드가 없음 - 서버가 저장/사용하는지 백엔드 확인 필요
+  is_employment_insured: false,
 };
 
 function AddEmployeeModal({ open, onClose, onSubmit }) {
