@@ -35,7 +35,6 @@ const SideBar = () => {
     const loadBusinessInfo = async () => {
       try {
         const res = await getBusinessSettings(business.businessId);
-        console.log(res);
         setBusinessInfo(res.data.data);
       } catch (err) {
         console.error("사업장 정보 조회 실패", err);
