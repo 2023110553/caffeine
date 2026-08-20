@@ -31,10 +31,12 @@ function SalesExpenseCard({ summary }) {
           <ProfitLabel>순 영업 이익</ProfitLabel>
           <ProfitMargin>영업이익률 {profit_margin}%</ProfitMargin>
         </ProfitLeft>
-        <ProfitValue>{net_profit.toLocaleString()}원</ProfitValue>
+        <ProfitValue>
+          {net_profit.toLocaleString()}
+          <ProfitUnit>원</ProfitUnit>
+        </ProfitValue>
       </ProfitBox>
 
-      <Divider />
       <SectionTitle>지출 항목 분류</SectionTitle>
       <ExpenseList>
         {expense_breakdown.map((item, i) => (
@@ -53,23 +55,29 @@ function SalesExpenseCard({ summary }) {
 const Card = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 14px; /* TODO: design token화 */
   background-color: #FFFCF8; /* TODO: theme.js에 없는 값 */
-  border: 0.8px solid ${({ theme }) => theme.colors.bg_gray};
+  border: 0.8px solid #E4D9CC; /* TODO: theme.js에 없는 값 */
   border-radius: ${({ theme }) => theme.radius.large};
   padding: 22px 26px; /* TODO: design token화 */
 `;
 
 const Label = styled.p`
   color: ${({ theme }) => theme.colors.txt_brown};
+  font-family: "Noto Sans KR", sans-serif; /* TODO: design token화 */
   font-size: 13px; /* TODO: design token화 */
   font-weight: 700;
+  line-height: 19.5px; /* TODO: design token화 */
+  padding-bottom: 18px; /* TODO: design token화 */
 `;
 
 const StatBlock = styled.div`
   display: flex;
   flex-direction: column;
   gap: 6px; /* TODO: design token화 */
+
+  & + & {
+    margin-top: 12px; /* TODO: design token화 */
+  }
 `;
 
 const StatRow = styled.div`
@@ -79,18 +87,23 @@ const StatRow = styled.div`
 
 const StatLabel = styled.span`
   color: #5C3D33; /* TODO: theme.js에 없는 값 */
+  font-family: "Noto Sans KR", sans-serif; /* TODO: design token화 */
   font-size: 12px; /* TODO: design token화 */
+  font-weight: 500;
+  line-height: 18px; /* TODO: design token화 */
 `;
 
 const StatValue = styled.span`
   color: ${({ theme }) => theme.colors.txt_brown};
+  font-family: Outfit, sans-serif; /* TODO: design token화 */
   font-size: 14px; /* TODO: design token화 */
   font-weight: 700;
+  line-height: 21px; /* TODO: design token화 */
 `;
 
 const GaugeTrack = styled.div`
   height: 9px; /* TODO: design token화 */
-  border-radius: 999px;
+  border-radius: 5px; /* TODO: design token화 */
   background-color: #F0E8DC; /* TODO: theme.js에 없는 값 */
   overflow: hidden;
 `;
@@ -103,8 +116,9 @@ const GaugeFill = styled.div`
 const ProfitBox = styled.div`
   background-color: #ECFDF5; /* TODO: theme.js에 없는 값 */
   border: 0.8px solid #A7F3D0; /* TODO: theme.js에 없는 값 */
-  border-radius: ${({ theme }) => theme.radius.medium_large};
+  border-radius: 11px; /* TODO: design token화 */
   padding: 13px 15px; /* TODO: design token화 */
+  margin-top: 16px; /* TODO: design token화 */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -118,39 +132,48 @@ const ProfitLeft = styled.div`
 
 const ProfitLabel = styled.p`
   color: #059669; /* TODO: theme.js에 없는 값 */
+  font-family: "Noto Sans KR", sans-serif; /* TODO: design token화 */
   font-size: 11px; /* TODO: design token화 */
   font-weight: 700;
+  line-height: 16.5px; /* TODO: design token화 */
 `;
 
 const ProfitMargin = styled.p`
   color: #34D399; /* TODO: theme.js에 없는 값 */
+  font-family: "Noto Sans KR", sans-serif; /* TODO: design token화 */
   font-size: 10px; /* TODO: design token화 */
+  font-weight: 400;
+  line-height: 15px; /* TODO: design token화 */
 `;
 
 const ProfitValue = styled.p`
   color: #059669; /* TODO: theme.js에 없는 값 */
+  font-family: Outfit, sans-serif; /* TODO: design token화 */
   font-size: 20px; /* TODO: design token화 */
-  font-weight: 700;
-  margin-top: 4px; /* TODO: design token화 */
-  font-family: Outfit;
+  font-weight: 800;
+  line-height: 30px; /* TODO: design token화 */
 `;
 
-const Divider = styled.hr`
-  border: none;
-  border-top: 1px solid ${({ theme }) => theme.colors.bg_gray};
-  margin: 2px 0; /* TODO: design token화 */
+const ProfitUnit = styled.span`
+  font-size: 12px; /* TODO: design token화 */
+  font-weight: 600;
+  line-height: 18px; /* TODO: design token화 */
 `;
 
 const SectionTitle = styled.p`
-  color: #8C6B5A; /* TODO: theme.js에 없는 값 */
+  color: #8B6E60; /* TODO: theme.js에 없는 값 */
+  font-family: "Noto Sans KR", sans-serif; /* TODO: design token화 */
   font-size: 11px; /* TODO: design token화 */
   font-weight: 600;
+  line-height: 16.5px; /* TODO: design token화 */
+  padding-top: 16px; /* TODO: design token화 */
 `;
 
 const ExpenseList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px; /* TODO: design token화 */
+  gap: 8px; /* TODO: design token화 */
+  padding-top: 10px; /* TODO: design token화 */
 `;
 
 const ExpenseRow = styled.div`

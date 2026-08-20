@@ -20,7 +20,10 @@ function DeductionAnalysisCard({ deduction }) {
 
   return (
     <Card>
-      <Title>부가세 공제 구조 분석</Title>
+      <TitleGroup>
+        <Label>공제 가능 매입 및 면세 재료 비율</Label>
+        <Title>부가세 공제 구조 분석</Title>
+      </TitleGroup>
 
       <ChartRow>
         <ChartWrapper>
@@ -91,7 +94,8 @@ function DeductionAnalysisCard({ deduction }) {
       </ItemGrid>
 
       <TotalBox>
-        총 공제 가능액 (과세 + 의제매입) <strong>{total_deductible_amount.toLocaleString()}원</strong>
+        <TotalLabel>총 공제 가능액 (과세 + 의제매입)</TotalLabel>
+        <TotalValue>{total_deductible_amount.toLocaleString()}원</TotalValue>
       </TotalBox>
     </Card>
   );
@@ -107,9 +111,26 @@ const Card = styled.div`
   padding: 20px; /* TODO: design token화 */
 `;
 
+const TitleGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px; /* TODO: design token화 */
+`;
+
+const Label = styled.p`
+  color: #9B6E62; /* TODO: theme.js에 없는 값 */
+  font-family: Outfit, sans-serif; /* TODO: design token화 */
+  font-size: 12px; /* TODO: design token화 */
+  font-weight: 500;
+  line-height: 16px; /* TODO: design token화 */
+`;
+
 const Title = styled.p`
   color: ${({ theme }) => theme.colors.txt_brown};
-  font-weight: 700;
+  font-family: Outfit, sans-serif; /* TODO: design token화 */
+  font-size: 14px; /* TODO: design token화 */
+  font-weight: 600;
+  line-height: 20px; /* TODO: design token화 */
 `;
 
 const ChartRow = styled.div`
@@ -197,6 +218,7 @@ const MiniBarFill = styled.div`
 
 const LegendAmount = styled.p`
   color: #9C6E62; /* TODO: theme.js에 없는 값 */
+  font-family: Outfit, sans-serif; /* TODO: design token화 */
   font-size: 11px; /* TODO: design token화 */
   text-align: right;
 `;
@@ -209,7 +231,10 @@ const Divider = styled.hr`
 
 const SectionTitle = styled.p`
   color: ${({ theme }) => theme.colors.txt_brown};
-  font-weight: 700;
+  font-family: Outfit, sans-serif; /* TODO: design token화 */
+  font-size: 14px; /* TODO: design token화 */
+  font-weight: 600;
+  line-height: 20px; /* TODO: design token화 */
 `;
 
 const ItemGrid = styled.div`
@@ -284,17 +309,27 @@ const ItemRate = styled.span`
 `;
 
 const TotalBox = styled.div`
-  background-color: ${({ theme }) => theme.colors.bg_beige};
-  border-radius: ${({ theme }) => theme.radius.medium_large};
-  padding: 10px 14px; /* TODO: design token화 */
-  font-size: 12px; /* TODO: design token화 */
-  color: ${({ theme }) => theme.colors.txt_brown};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px; /* TODO: design token화 */
+  border-top: 0.8px solid #EDE8E2; /* TODO: theme.js에 없는 값 */
+`;
 
-  strong {
-    display: block;
-    font-size: 16px; /* TODO: design token화 */
-    margin-top: 2px; /* TODO: design token화 */
-  }
+const TotalLabel = styled.span`
+  color: #9B6E62; /* TODO: theme.js에 없는 값 */
+  font-family: Outfit, sans-serif; /* TODO: design token화 */
+  font-size: 12px; /* TODO: design token화 */
+  font-weight: 400;
+  line-height: 16px;
+`;
+
+const TotalValue = styled.span`
+  color: #059669; /* TODO: theme.js에 없는 값 */
+  font-family: "DM Mono", monospace; /* TODO: design token화 */
+  font-size: 16px; /* TODO: design token화 */
+  font-weight: 500;
+  line-height: 24px;
 `;
 
 export default DeductionAnalysisCard;

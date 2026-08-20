@@ -2,6 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { exportCleanData } from "../../../api/analytics";
 import { useBusiness } from "../../../contexts/BusinessContext";
+import warningIcon from "../../../assets/warningIcon.svg";
 
 const INCLUDED_ITEMS = [
   { icon: "📋", label: "매출·매입 세금계산서" },
@@ -44,6 +45,7 @@ function CleanDataExport({ year, month, isClosed }) {
           <Label>세무사 전달용 클린 데이터</Label>
           <Title>자료 내보내기</Title>
           <StatusBadge $closed={isClosed}>
+            {!isClosed && <StatusIcon src={warningIcon} alt="" />}
             {isClosed ? "장부 마감 승인 완료" : "장부 마감 승인 대기"}
           </StatusBadge>
         </TextGroup>
@@ -104,26 +106,39 @@ const TextGroup = styled.div`
 `;
 
 const Label = styled.p`
-  color: #9C6E62; /* TODO: theme.js에 없는 값 */
+  color: #9B6E62; /* TODO: theme.js에 없는 값 */
+  font-family: Outfit, sans-serif; /* TODO: design token화 */
   font-size: 12px; /* TODO: design token화 */
   font-weight: 500;
+  line-height: 16px; /* TODO: design token화 */
 `;
 
 const Title = styled.p`
   color: ${({ theme }) => theme.colors.txt_brown};
   font-size: 20px; /* TODO: design token화 */
   font-weight: 700;
+  line-height: 28px; /* TODO: design token화 */
 `;
 
 const StatusBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px; /* TODO: design token화 */
   align-self: flex-start;
   background-color: ${({ $closed }) => ($closed ? "#F0E8DC" : "#FFFBEB")}; /* TODO: theme.js에 없는 값 */
   border: 0.8px solid ${({ $closed }) => ($closed ? "#E4D9CC" : "#FDE68A")}; /* TODO: theme.js에 없는 값 */
   color: ${({ $closed, theme }) => ($closed ? theme.colors.txt_brown : "#D97706")}; /* TODO: theme.js에 없는 값 */
-  border-radius: 999px;
+  border-radius: 20px; /* TODO: design token화 */
   padding: 4px 11px; /* TODO: design token화 */
+  font-family: "Noto Sans KR", sans-serif; /* TODO: design token화 */
   font-size: 11px; /* TODO: design token화 */
   font-weight: 600;
+  line-height: 16.5px; /* TODO: design token화 */
+`;
+
+const StatusIcon = styled.img`
+  width: 8px;
+  height: 8px;
 `;
 
 const IconCircle = styled.div`
