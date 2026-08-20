@@ -19,6 +19,12 @@ export function formatPhoneNumber(raw) {
   return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
 }
 
+export function formatResidentIdFront(raw) {
+  const digits = raw.replace(/\D/g, "").slice(0, 7); // 생년월일 6자리 + 성별 구분 1자리
+  if (digits.length <= 6) return digits;
+  return `${digits.slice(0, 6)}-${digits.slice(6)}`;
+}
+
 export function formatBirthDate(raw) {
   const digits = raw.replace(/\D/g, "").slice(0, 8); // YYYY-MM-DD
   if (digits.length <= 4) return digits;

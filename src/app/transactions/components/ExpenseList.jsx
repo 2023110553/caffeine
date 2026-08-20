@@ -17,8 +17,6 @@ function ExpenseList({
   const totalCount = transactions.length;
   const classifiedCount = totalCount - summary.unclassified.count;
 
-  const progressPercent = totalCount === 0 ? 0 : (classifiedCount / totalCount) * 100;
-
   const filteredTransactions = transactions.filter((tx) => {
     if (selectedFilter === "all") return true;
 
@@ -50,7 +48,13 @@ function ExpenseList({
         </HeaderRow>
 
         <ProgressTrack>
-          <ProgressFill style={{ width: `${progressPercent}%` }} />
+          {LEGEND.map(({ key, color }) => {
+            const ratio = totalCount === 0 ? 0 : (summary[key].count / totalCount) * 100;
+
+            if (ratio === 0) return null;
+
+            return <ProgressSegment key={key} $color={color} style={{ width: `${ratio}%` }} />;
+          })}
         </ProgressTrack>
       </ListHeader>
 
@@ -158,6 +162,8 @@ const ProgressTrack = styled.div`
   width: 100%;
   height: 6px; /* TODO: design token화 */
 
+  display: flex;
+
   border-radius: 999px;
   background-color: ${({ theme }) => theme.colors.bg_gray};
   overflow: hidden;
@@ -165,9 +171,9 @@ const ProgressTrack = styled.div`
   margin-top: 8px; /* TODO: design token화 */
 `;
 
-const ProgressFill = styled.div`
+const ProgressSegment = styled.div`
   height: 100%;
-  background-color: #5c3327;
+  background-color: ${({ theme, $color }) => theme.colors[$color]};
   transition: width 0.2s ease;
 `;
 

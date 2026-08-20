@@ -175,8 +175,10 @@ function PayrollPage() {
 
   return (
     <Wrapper>
-      <PayrollHeader onAddClick={() => setIsModalOpen(true)} />
+      <PayrollHeader year={YEAR} month={MONTH} onAddClick={() => setIsModalOpen(true)} />
       <PayrollSummaryCards
+        year={YEAR}
+        month={MONTH}
         totalExpense={summary.total_labor_cost}
         totalWithholdingTax={summary.withholding_tax}
         onExport={handleExport}

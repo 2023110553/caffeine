@@ -2,6 +2,7 @@ import { useState } from "react";
 import Modal from "../../../components/Modal";
 import Input from "../../../components/Input";
 import Button from "../../../components/Button";
+import { formatResidentIdFront } from "../../../lib/format";
 import {
   Content,
   Description,
@@ -33,6 +34,10 @@ import {
   SmallCheck,
 } from "./AddEmployeeModal.styles";
 
+// 법정 최저시급은 매년 바뀌므로 연도와 함께 갱신 필요
+const MINIMUM_WAGE_YEAR = 2026;
+const MINIMUM_HOURLY_WAGE = 10320;
+
 const EMPLOYMENT_TYPES = [
   {
     value: "FULL_TIME",
@@ -54,7 +59,7 @@ const EMPLOYMENT_TYPES = [
 const INITIAL_FORM = {
   name: "",
   employment_type: "FULL_TIME",
-  hourly_wage: 10320,
+  hourly_wage: MINIMUM_HOURLY_WAGE,
   monthly_contracted_hours: "",
   work_started_at: "", // TODO: 폼에 입사일 입력 필드(date input) 추가 필요 - 현재 UI엔 없음
   resident_id_front: "", // TODO: employees 응답에 필드가 없음 - 서버가 저장/사용하는지 백엔드 확인 필요
@@ -174,7 +179,9 @@ function AddEmployeeModal({ open, onClose, onSubmit }) {
                 onChange={(e) => handleChange("hourly_wage", Number(e.target.value))}
               />
 
-              <HelperText>2026년 최저시급 10,320원</HelperText>
+              <HelperText>
+                {MINIMUM_WAGE_YEAR}년 최저시급 {MINIMUM_HOURLY_WAGE.toLocaleString()}원
+              </HelperText>
             </InputBox>
 
             <InputBox>
@@ -199,9 +206,9 @@ function AddEmployeeModal({ open, onClose, onSubmit }) {
             </ResidentLabel>
 
             <Input
-              placeholder="990101-1******"
+              placeholder="990101-1"
               value={form.resident_id_front}
-              onChange={(e) => handleChange("resident_id_front", e.target.value)}
+              onChange={(e) => handleChange("resident_id_front", formatResidentIdFront(e.target.value))}
             />
 
             <HelperText>간이세액표 적용 시 필요합니다. 저장 후 암호화됩니다.</HelperText>
