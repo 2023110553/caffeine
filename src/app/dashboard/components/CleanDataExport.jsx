@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import styled from "styled-components";
 import { exportCleanData } from "../../../api/analytics";
+import { getClosingSummary } from "../../../api/tax";
 import { useBusiness } from "../../../contexts/BusinessContext";
 import warningIcon from "../../../assets/warningIcon.svg";
 
@@ -11,19 +12,70 @@ const INCLUDED_ITEMS = [
   { icon: "📊", label: "월별 부가세 추이 그래프" },
 ];
 
-function CleanDataExport({ year, month, isClosed }) {
+const getRecentMonths = (baseYear, baseMonth, count = 6) => {
+  return Array.from({ length: count }, (_, i) => {
+    const date = new Date(baseYear, baseMonth - 1 - i, 1);
+    const y = date.getFullYear();
+    const m = date.getMonth() + 1;
+    return {
+      label: `${y}년 ${m}월`,
+      year: y,
+      month: m,
+      yearMonth: `${y}-${String(m).padStart(2, "0")}`,
+    };
+  });
+};
+
+function CleanDataExport({ year, month }) {
   const { business } = useBusiness();
+  const recentMonths = useMemo(() => getRecentMonths(year, month), [year, month]);
+
+  const [selected, setSelected] = useState(recentMonths[0]);
+  const [isClosed, setIsClosed] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [downloadingFormat, setDownloadingFormat] = useState(null);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    if (!business.businessId) return;
+
+    const loadClosingStatus = async () => {
+      try {
+        const res = await getClosingSummary(business.businessId, selected.yearMonth);
+        setIsClosed(res.data.data.status === "CLOSED");
+      } catch {
+        setIsClosed(false);
+      }
+    };
+    loadClosingStatus();
+  }, [business.businessId, selected.yearMonth]);
+
+  useEffect(() => {
+    if (!isDropdownOpen) return;
+
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isDropdownOpen]);
+
+  const handleSelectMonth = (item) => {
+    setSelected(item);
+    setIsDropdownOpen(false);
+  };
 
   const handleDownload = async (format) => {
     if (!isClosed || downloadingFormat) return;
     setDownloadingFormat(format);
     try {
-      const res = await exportCleanData(business.businessId, year, month, format);
+      const res = await exportCleanData(business.businessId, selected.year, selected.month, format);
       const url = URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.download = `카페비서_${year}년${month}월_세무자료.${format}`;
+      link.download = `카페비서_${selected.year}년${selected.month}월_세무자료.${format}`;
       link.click();
       URL.revokeObjectURL(url);
     } catch (err) {
@@ -49,7 +101,25 @@ function CleanDataExport({ year, month, isClosed }) {
             {isClosed ? "장부 마감 승인 완료" : "장부 마감 승인 대기"}
           </StatusBadge>
         </TextGroup>
-        <IconCircle>📤</IconCircle>
+
+        <DropdownWrapper ref={dropdownRef}>
+          <DropdownTrigger onClick={() => setIsDropdownOpen((prev) => !prev)}>
+            {selected.label} <Chevron $open={isDropdownOpen}>▾</Chevron>
+          </DropdownTrigger>
+          {isDropdownOpen && (
+            <DropdownList>
+              {recentMonths.map((item) => (
+                <DropdownItem
+                  key={item.yearMonth}
+                  $active={item.yearMonth === selected.yearMonth}
+                  onClick={() => handleSelectMonth(item)}
+                >
+                  {item.label}
+                </DropdownItem>
+              ))}
+            </DropdownList>
+          )}
+        </DropdownWrapper>
       </TopRow>
 
       <IncludedCard>
@@ -141,16 +211,55 @@ const StatusIcon = styled.img`
   height: 8px;
 `;
 
-const IconCircle = styled.div`
-  width: 44px; /* TODO: design token화 */
-  height: 44px;
+const DropdownWrapper = styled.div`
+  position: relative;
   flex-shrink: 0;
+`;
+
+const DropdownTrigger = styled.button`
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 8px; /* TODO: design token화 */
+  border: none;
   border-radius: ${({ theme }) => theme.radius.medium_large};
-  background-color: ${({ theme }) => theme.colors.bg_gray};
-  font-size: 20px; /* TODO: design token화 */
+  background-color: ${({ theme }) => theme.colors.txt_brown};
+  color: ${({ theme }) => theme.colors.txt_white};
+  padding: 12px 16px; /* TODO: design token화 */
+  font-size: 16px; /* TODO: design token화 */
+  font-weight: 700;
+  cursor: pointer;
+`;
+
+const Chevron = styled.span`
+  display: inline-block;
+  transition: transform 0.15s ease;
+  transform: rotate(${({ $open }) => ($open ? "180deg" : "0deg")});
+`;
+
+const DropdownList = styled.ul`
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  left: 0;
+  z-index: 10;
+  overflow: hidden;
+  border-radius: ${({ theme }) => theme.radius.medium_large};
+  background-color: ${({ theme }) => theme.colors.bg_white};
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12); /* TODO: theme.js에 없는 값 */
+`;
+
+const DropdownItem = styled.li`
+  padding: 12px 16px; /* TODO: design token화 */
+  font-size: 15px; /* TODO: design token화 */
+  font-weight: ${({ $active }) => ($active ? 700 : 500)};
+  text-align: center;
+  cursor: pointer;
+  background-color: ${({ $active, theme }) => ($active ? theme.colors.txt_brown : "transparent")};
+  color: ${({ $active, theme }) => ($active ? theme.colors.txt_white : theme.colors.txt_brown)};
+
+  &:hover {
+    background-color: ${({ $active, theme }) => ($active ? theme.colors.txt_brown : theme.colors.bg_gray)};
+  }
 `;
 
 const IncludedCard = styled.div`
