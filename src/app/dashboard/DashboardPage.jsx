@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import styled from "styled-components";
 import { getMonthlySummary, getDeductionBreakdown } from "../../api/analytics";
-import { getClosingSummary, approveClosing } from "../../api/tax";
+import { approveClosing } from "../../api/tax";
 import { useBusiness } from "../../contexts/BusinessContext";
 import { useToast } from "../../contexts/ToastContext";
 import { useAsync } from "../../hooks/useAsync";
@@ -25,8 +25,15 @@ function DashboardPage() {
 
   const [summary, setSummary] = useState(null);
   const [deduction, setDeduction] = useState(null);
-  const [isClosed, setIsClosed] = useState(false);
-  const [isApproving, setIsApproving] = useState(false);
+  // idle | approving | success - 승인 버튼 피드백 상태. 실패는 토스트로 안내하고 idle로 되돌린다.
+  const [approveStatus, setApproveStatus] = useState("idle");
+  const approveStatusTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (approveStatusTimeoutRef.current) clearTimeout(approveStatusTimeoutRef.current);
+    };
+  }, []);
 
   const {
     isLoading,
@@ -50,28 +57,15 @@ function DashboardPage() {
     run(loadData);
   }, [businessId, run, loadData]);
 
-  // 마감 상태 초기 조회: GET /tax/closing/{year_month}/ 응답의 status로 판단 (summary/deduction과 별개로 실제 연동)
-  useEffect(() => {
-    if (!businessId) return;
-
-    const loadClosingStatus = async () => {
-      try {
-        const res = await getClosingSummary(businessId, YEAR_MONTH);
-        setIsClosed(res.data.status === "CLOSED");
-      } catch (err) {
-        // 조회 실패 시 마감 전 상태로 간주 (다운로드/승인 버튼은 비활성 유지)
-        console.error("마감 상태 조회 실패:", err);
-      }
-    };
-    loadClosingStatus();
-  }, [businessId]);
-
   const handleApprove = async () => {
-    setIsApproving(true);
+    if (approveStatusTimeoutRef.current) clearTimeout(approveStatusTimeoutRef.current);
+    setApproveStatus("approving");
     try {
       await approveClosing(businessId, YEAR_MONTH);
-      setIsClosed(true);
+      setApproveStatus("success");
+      approveStatusTimeoutRef.current = setTimeout(() => setApproveStatus("idle"), 1600);
     } catch (err) {
+      setApproveStatus("idle");
       if (err.response?.status === 409) {
         showToast("이미 마감 승인된 월입니다.");
       } else if (err.response?.status === 422) {
@@ -79,8 +73,6 @@ function DashboardPage() {
       } else {
         showToast("마감 승인 중 오류가 발생했습니다.");
       }
-    } finally {
-      setIsApproving(false);
     }
   };
 
@@ -92,8 +84,7 @@ function DashboardPage() {
     <Wrapper>
       <SummaryHeader
         month={summary.month}
-        isClosed={isClosed}
-        isApproving={isApproving}
+        approveStatus={approveStatus}
         onApprove={handleApprove}
       />
 
@@ -115,10 +106,15 @@ const Wrapper = styled.div`
   height: 100%;
   min-height: 0;
   overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
   display: flex;
   flex-direction: column;
   gap: 20px; /* TODO: design token화 */
   padding: 24px 32px;
+
+  &::-webkit-scrollbar {
+    display: none; /* Chrome/Safari - 스크롤바 숨김, BusinessInfoForm FormArea와 동일 패턴 */
+  }
 `;
 
 const ColumnGrid = styled.div`

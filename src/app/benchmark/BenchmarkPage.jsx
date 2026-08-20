@@ -77,10 +77,15 @@ const Wrapper = styled.div`
   height: 100%;
   min-height: 0;
   overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
   display: flex;
   flex-direction: column;
   gap: 16px; /* TODO: design token화 */
   padding: 20px 28px;
+
+  &::-webkit-scrollbar {
+    display: none; /* Chrome/Safari - 스크롤바 숨김, BusinessInfoForm FormArea와 동일 패턴 */
+  }
 `;
 
 const ColumnGrid = styled.div`
