@@ -14,7 +14,9 @@ export const getSubscription = (businessId) =>
 
 // 결제 수단 변경
 export const updatePaymentMethod = (businessId, paymentToken) =>
-  client.patch(`/businesses/${businessId}/settings/subscription/payment-method/`, { payment_token: paymentToken });
+  client.patch(`/businesses/${businessId}/settings/subscription/payment-method/`, {
+    payment_token: paymentToken,
+  });
 
 // 구독 취소
 export const cancelSubscription = (businessId) =>

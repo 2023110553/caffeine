@@ -1,4 +1,5 @@
 // src/components/ErrorState.jsx
+import PropTypes from "prop-types";
 import styled from "styled-components";
 
 function ErrorState({ message = "데이터를 불러오지 못했어요.", onRetry }) {
@@ -9,6 +10,11 @@ function ErrorState({ message = "데이터를 불러오지 못했어요.", onRet
     </Wrapper>
   );
 }
+
+ErrorState.propTypes = {
+  message: PropTypes.string,
+  onRetry: PropTypes.func,
+};
 
 const Wrapper = styled.div`
   flex: 1;

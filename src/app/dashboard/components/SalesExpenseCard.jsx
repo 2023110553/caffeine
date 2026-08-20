@@ -1,7 +1,8 @@
 import styled from "styled-components";
 
 function SalesExpenseCard({ summary }) {
-  const { month, total_sales, total_expense, net_profit, profit_margin, expense_breakdown } = summary;
+  const { month, total_sales, total_expense, net_profit, profit_margin, expense_breakdown } =
+    summary;
   const expenseRatio = (total_expense / total_sales) * 100;
 
   const DOT_COLORS = ["#8B6E60", "#A08070", "#C8A882", "#DDD0C4"]; // TODO: theme.js에 없는 값들, 진→연 브라운 그라데이션
@@ -15,7 +16,9 @@ function SalesExpenseCard({ summary }) {
           <StatLabel>총 매출</StatLabel>
           <StatValue>{total_sales.toLocaleString()}원</StatValue>
         </StatRow>
-        <GaugeTrack><GaugeFill $color="dark" style={{ width: "100%" }} /></GaugeTrack>
+        <GaugeTrack>
+          <GaugeFill $color="dark" style={{ width: "100%" }} />
+        </GaugeTrack>
       </StatBlock>
 
       <StatBlock>
@@ -23,7 +26,9 @@ function SalesExpenseCard({ summary }) {
           <StatLabel>총 지출</StatLabel>
           <StatValue>{total_expense.toLocaleString()}원</StatValue>
         </StatRow>
-        <GaugeTrack><GaugeFill $color="beige" style={{ width: `${expenseRatio}%` }} /></GaugeTrack>
+        <GaugeTrack>
+          <GaugeFill $color="beige" style={{ width: `${expenseRatio}%` }} />
+        </GaugeTrack>
       </StatBlock>
 
       <ProfitBox>
@@ -55,8 +60,8 @@ function SalesExpenseCard({ summary }) {
 const Card = styled.div`
   display: flex;
   flex-direction: column;
-  background-color: #FFFCF8; /* TODO: theme.js에 없는 값 */
-  border: 0.8px solid #E4D9CC; /* TODO: theme.js에 없는 값 */
+  background-color: #fffcf8; /* TODO: theme.js에 없는 값 */
+  border: 0.8px solid #e4d9cc; /* TODO: theme.js에 없는 값 */
   border-radius: ${({ theme }) => theme.radius.large};
   padding: 22px 26px; /* TODO: design token화 */
 `;
@@ -86,7 +91,7 @@ const StatRow = styled.div`
 `;
 
 const StatLabel = styled.span`
-  color: #5C3D33; /* TODO: theme.js에 없는 값 */
+  color: #5c3d33; /* TODO: theme.js에 없는 값 */
   font-family: "Noto Sans KR", sans-serif; /* TODO: design token화 */
   font-size: 12px; /* TODO: design token화 */
   font-weight: 500;
@@ -104,7 +109,7 @@ const StatValue = styled.span`
 const GaugeTrack = styled.div`
   height: 9px; /* TODO: design token화 */
   border-radius: 5px; /* TODO: design token화 */
-  background-color: #F0E8DC; /* TODO: theme.js에 없는 값 */
+  background-color: #f0e8dc; /* TODO: theme.js에 없는 값 */
   overflow: hidden;
 `;
 
@@ -114,8 +119,8 @@ const GaugeFill = styled.div`
 `;
 
 const ProfitBox = styled.div`
-  background-color: #ECFDF5; /* TODO: theme.js에 없는 값 */
-  border: 0.8px solid #A7F3D0; /* TODO: theme.js에 없는 값 */
+  background-color: #ecfdf5; /* TODO: theme.js에 없는 값 */
+  border: 0.8px solid #a7f3d0; /* TODO: theme.js에 없는 값 */
   border-radius: 11px; /* TODO: design token화 */
   padding: 13px 15px; /* TODO: design token화 */
   margin-top: 16px; /* TODO: design token화 */
@@ -139,7 +144,7 @@ const ProfitLabel = styled.p`
 `;
 
 const ProfitMargin = styled.p`
-  color: #34D399; /* TODO: theme.js에 없는 값 */
+  color: #34d399; /* TODO: theme.js에 없는 값 */
   font-family: "Noto Sans KR", sans-serif; /* TODO: design token화 */
   font-size: 10px; /* TODO: design token화 */
   font-weight: 400;
@@ -161,7 +166,7 @@ const ProfitUnit = styled.span`
 `;
 
 const SectionTitle = styled.p`
-  color: #8B6E60; /* TODO: theme.js에 없는 값 */
+  color: #8b6e60; /* TODO: theme.js에 없는 값 */
   font-family: "Noto Sans KR", sans-serif; /* TODO: design token화 */
   font-size: 11px; /* TODO: design token화 */
   font-weight: 600;
@@ -190,7 +195,7 @@ const Dot = styled.span`
 `;
 
 const CategoryName = styled.span`
-  color: #5C3D33; /* TODO: theme.js에 없는 값 */
+  color: #5c3d33; /* TODO: theme.js에 없는 값 */
   font-size: 11px; /* TODO: design token화 */
 `;
 
@@ -202,7 +207,7 @@ const Amount = styled.span`
 `;
 
 const Ratio = styled.span`
-  color: #8C6B5A; /* TODO: theme.js에 없는 값 */
+  color: #8c6b5a; /* TODO: theme.js에 없는 값 */
   font-size: 10px; /* TODO: design token화 */
   text-align: right;
 `;

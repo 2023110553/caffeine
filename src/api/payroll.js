@@ -43,5 +43,5 @@ export const exportPayslips = (businessId, year, month, format) =>
   client.post(
     `/businesses/${businessId}/payroll/payments/export/`,
     { year, month, format },
-    { responseType: "blob" }
+    { responseType: "blob" },
   );

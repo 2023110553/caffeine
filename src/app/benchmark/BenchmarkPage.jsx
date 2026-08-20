@@ -22,7 +22,7 @@ function BenchmarkPage() {
 
   const loadData = useCallback(async () => {
     const res = await getBenchmarkDashboard(business.businessId, YEAR, MONTH);
-    setDashboard(res.data.data);
+    setDashboard(res.data);
   }, [business.businessId]);
 
   useEffect(() => {
@@ -50,7 +50,10 @@ function BenchmarkPage() {
       />
 
       <ColumnGrid>
-        <CategoryComparisonCard categoryComparison={category_comparison} totalRevenue={overview.total_revenue} />
+        <CategoryComparisonCard
+          categoryComparison={category_comparison}
+          totalRevenue={overview.total_revenue}
+        />
         <TrendChartCard monthlyTrends={monthly_trends} />
       </ColumnGrid>
 

@@ -1,8 +1,7 @@
 import client from "./client";
 
 // 공제 애매 거래 목록 (status=pending 등 쿼리)
-export const getDeductions = (params) =>
-  client.get(`/tax/deductions/`, { params });
+export const getDeductions = (params) => client.get(`/tax/deductions/`, { params });
 
 // 특정 거래 AI 공제 추천
 export const getAiSuggestDeduction = (transactionId) =>

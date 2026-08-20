@@ -62,7 +62,10 @@ const PageWrapper = styled.div`
   height: 100vh;
   overflow: hidden;
   position: relative;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
 
   /* 실제 이미지 배경 적용 */
   background-image: url(${({ $bg }) => $bg});
@@ -110,8 +113,9 @@ const HomeButton = styled.button`
   cursor: pointer;
 
   /* 3D 느낌을 주는 입체적 그림자 */
-  box-shadow: 0 8px 16px rgba(93, 64, 55, 0.15),
-              0 2px 2px rgba(93, 64, 55, 0.1) inset;
+  box-shadow:
+    0 8px 16px rgba(93, 64, 55, 0.15),
+    0 2px 2px rgba(93, 64, 55, 0.1) inset;
 
   transition: all 0.2s ease;
 

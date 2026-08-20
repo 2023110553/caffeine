@@ -3,10 +3,11 @@
 import { useState } from "react";
 import styled from "styled-components";
 import Button from "../components/Button";
+import Chip from "../components/Chip";
+import Badge from "../components/Badge";
 import Input from "../components/Input";
 import Modal from "../components/Modal";
 import Loading from "../components/Loading";
-
 
 function ComponentPreviewPage() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -20,11 +21,31 @@ function ComponentPreviewPage() {
           <Button variant="unchecked_button">👤 개인 지출</Button>
           <Button variant="checked_button_brown">✓ 사업 지출</Button>
           <Button variant="checked_button_beige">✓ 개인 지출</Button>
-          <Button variant="button_large_brown" size="large">분류 완료 및 부가세 예측하기</Button>
-          <Button variant="button_large_green" size="large">✓ 저장 완료!</Button>
+          <Button variant="button_large_brown" size="large">
+            분류 완료 및 부가세 예측하기
+          </Button>
+          <Button variant="button_large_green" size="large">
+            ✓ 저장 완료!
+          </Button>
           <Button variant="primary" disabled>
             Disabled
           </Button>
+        </Row>
+      </Section>
+
+      <Section>
+        <h3>Chip</h3>
+        <Row>
+          <Chip variant="unchecked">전체</Chip>
+          <Chip variant="checked">전체</Chip>
+        </Row>
+      </Section>
+
+      <Section>
+        <h3>Badge</h3>
+        <Row>
+          <Badge variant="unclassified">미분류</Badge>
+          <Badge variant="classified">분류 완료</Badge>
         </Row>
       </Section>
 
@@ -44,11 +65,7 @@ function ComponentPreviewPage() {
       <Section>
         <h3>Modal</h3>
         <Button onClick={() => setModalOpen(true)}>모달 열기</Button>
-        <Modal
-          open={modalOpen}
-          onClose={() => setModalOpen(false)}
-          title="테스트 모달"
-        >
+        <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="테스트 모달">
           <p>모달 내용이 여기 들어가요.</p>
           <Button onClick={() => setModalOpen(false)}>닫기</Button>
         </Modal>

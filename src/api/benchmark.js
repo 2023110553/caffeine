@@ -6,7 +6,9 @@ export const getBenchmarkDashboard = (businessId, year, month, region) =>
 
 // 카테고리별 비용 비교만 단독 조회
 export const getBenchmarkCategories = (businessId, year, month, region) =>
-  client.get(`/businesses/${businessId}/benchmark/categories/`, { params: { year, month, region } });
+  client.get(`/businesses/${businessId}/benchmark/categories/`, {
+    params: { year, month, region },
+  });
 
 // 월별 벤치마크 추이만 단독 조회
 export const getBenchmarkTrend = (businessId, year, month, region) =>

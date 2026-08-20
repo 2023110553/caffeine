@@ -6,7 +6,13 @@ import ResignedEmployeeRow from "./ResignedEmployeeRow";
 const ACTIVE_COLUMNS = ["직원", "고용 형태", "월 근무시간", "시급", "세전 급여"];
 const RESIGNED_COLUMNS = ["직원", "고용 형태", "시급"];
 
-function EmployeeTable({ employees, resignedEmployees, onUpdateEmployee, onViewPayslip, onDeleteEmployee }) {
+function EmployeeTable({
+  employees,
+  resignedEmployees,
+  onUpdateEmployee,
+  onViewPayslip,
+  onDeleteEmployee,
+}) {
   // 재직자/퇴사자 탭 - 퇴사 처리(soft delete)된 직원도 기록은 남아있어야 하므로 탭으로 구분해 보여준다
   const [tab, setTab] = useState("active");
   const isActiveTab = tab === "active";
@@ -62,10 +68,9 @@ function EmployeeTable({ employees, resignedEmployees, onUpdateEmployee, onViewP
         <NoticeBox>
           <span>📋</span>
           <p>
-            <strong>원천세 납부 안내:</strong> 3.3% 프리랜서 원천세는 매월
-            10일까지 납부하셔야 합니다. 4대보험 정직원의 경우 근로소득 간이세액표
-            기준으로 자동 계산되며, 소액부징수(월 1,000원 미만) 시 징수하지
-            않습니다.
+            <strong>원천세 납부 안내:</strong> 3.3% 프리랜서 원천세는 매월 10일까지 납부하셔야
+            합니다. 4대보험 정직원의 경우 근로소득 간이세액표 기준으로 자동 계산되며, 소액부징수(월
+            1,000원 미만) 시 징수하지 않습니다.
           </p>
         </NoticeBox>
       )}
@@ -194,7 +199,6 @@ const TableHeader = styled.div`
   line-height: 1.03125rem;
 
   letter-spacing: 0.0275rem;
-
 `;
 
 const RowList = styled.div`

@@ -15,9 +15,7 @@ function CategoryComparisonCard({ categoryComparison, totalRevenue }) {
       <List>
         {categoryComparison.map((item) => {
           const color = STATUS_COLOR[item.status_type] ?? "#8a8078";
-          const amount = Math.round(
-  ((totalRevenue * item.my_ratio) / 100) / 10000,
-);
+          const amount = Math.round((totalRevenue * item.my_ratio) / 100 / 10000);
 
           return (
             <Row key={item.category}>
@@ -32,7 +30,9 @@ function CategoryComparisonCard({ categoryComparison, totalRevenue }) {
                 </ValueGroup>
               </RowTop>
               <BarTrack>
-                <BarFill style={{ width: `${Math.min(item.my_ratio, 100)}%`, backgroundColor: color }} />
+                <BarFill
+                  style={{ width: `${Math.min(item.my_ratio, 100)}%`, backgroundColor: color }}
+                />
               </BarTrack>
             </Row>
           );

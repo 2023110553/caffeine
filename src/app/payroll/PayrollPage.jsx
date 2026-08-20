@@ -7,6 +7,8 @@ import AddEmployeeModal from "./components/AddEmployeeModal";
 import Loading from "../../components/Loading";
 import ErrorState from "../../components/ErrorState";
 import { useBusiness } from "../../contexts/BusinessContext";
+import { useToast } from "../../contexts/ToastContext";
+import { useAsync } from "../../hooks/useAsync";
 import {
   getEmployees,
   createEmployee,
@@ -30,7 +32,7 @@ function decodeRfc2047(value) {
     atob(match[1])
       .split("")
       .map((c) => "%" + c.charCodeAt(0).toString(16).padStart(2, "0"))
-      .join("")
+      .join(""),
   );
 }
 
@@ -55,7 +57,8 @@ function mergeEmployeesWithPayments(employees, payments) {
     const payment = paymentByEmployeeId.get(emp.employee_id);
     return {
       ...emp,
-      monthly_contracted_hours: emp.monthly_contracted_hours === null ? "" : Number(emp.monthly_contracted_hours),
+      monthly_contracted_hours:
+        emp.monthly_contracted_hours === null ? "" : Number(emp.monthly_contracted_hours),
       paymentId: payment?.payment_id ?? null,
       grossPay: payment?.gross_pay ?? 0,
       withholdingTax: payment?.withholding_tax ?? 0,
@@ -65,12 +68,15 @@ function mergeEmployeesWithPayments(employees, payments) {
 
 function PayrollPage() {
   const { business } = useBusiness();
+  const showToast = useToast();
   const [employees, setEmployees] = useState([]);
   const [resignedEmployees, setResignedEmployees] = useState([]);
   const [summary, setSummary] = useState({ total_labor_cost: 0, withholding_tax: 0 });
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+
+  const { isLoading, error, run } = useAsync({
+    errorMessage: "급여 정보를 불러오지 못했어요. 사업장 정보를 확인해주세요.",
+  });
 
   const loadData = useCallback(async () => {
     const [employeesRes, paymentsRes, summaryRes] = await Promise.all([
@@ -80,26 +86,15 @@ function PayrollPage() {
     ]);
     // 퇴사 처리(soft delete)된 직원은 status가 INACTIVE로 바뀔 뿐 서버에서 계속 내려오므로,
     // 재직자 목록과 퇴사자 목록으로 나눠서 각각 보여준다 (퇴사자 탭에서 조회 가능해야 함).
-    const merged = mergeEmployeesWithPayments(employeesRes.data.data, paymentsRes.data.data);
+    const merged = mergeEmployeesWithPayments(employeesRes.data, paymentsRes.data);
     setEmployees(merged.filter((emp) => emp.status !== "INACTIVE"));
     setResignedEmployees(merged.filter((emp) => emp.status === "INACTIVE"));
-    setSummary(summaryRes.data.data);
+    setSummary(summaryRes.data);
   }, [business.businessId]);
 
   useEffect(() => {
-    const load = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        await loadData();
-      } catch {
-        setError("급여 정보를 불러오지 못했어요. 사업장 정보를 확인해주세요.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    load();
-  }, [loadData]);
+    run(loadData);
+  }, [run, loadData]);
 
   // 시급·근무시간이 바뀌면 급여도 다시 계산되어야 하므로 payments를 함께 갱신
   const syncPayment = async (employee) => {
@@ -124,9 +119,7 @@ function PayrollPage() {
     if (!target) return;
     const updated = { ...target, [field]: value };
 
-    setEmployees((prev) =>
-      prev.map((emp) => (emp.employee_id === employeeId ? updated : emp))
-    );
+    setEmployees((prev) => prev.map((emp) => (emp.employee_id === employeeId ? updated : emp)));
 
     await updateEmployee(business.businessId, employeeId, { [field]: value });
 
@@ -137,7 +130,7 @@ function PayrollPage() {
 
   const handleAddEmployee = async (newEmployeeData) => {
     const res = await createEmployee(business.businessId, newEmployeeData);
-    const { employee_id } = res.data.data;
+    const { employee_id } = res.data;
 
     if (newEmployeeData.monthly_contracted_hours) {
       await createPayment(business.businessId, {
@@ -168,22 +161,13 @@ function PayrollPage() {
     try {
       await updateEmployee(business.businessId, employeeId, { status: "INACTIVE" });
       await loadData();
-    } catch {
-      window.alert("퇴사 처리에 실패했습니다. 잠시 후 다시 시도해주세요.");
+    } catch (err) {
+      console.error("퇴사 처리 실패:", err);
+      showToast("퇴사 처리에 실패했습니다. 잠시 후 다시 시도해주세요.");
     }
   };
 
-  const handleRetry = async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      await loadData();
-    } catch {
-      setError("급여 정보를 불러오지 못했어요. 사업장 정보를 확인해주세요.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const handleRetry = () => run(loadData);
 
   if (isLoading) return <Loading />;
   if (error) return <ErrorState message={error} onRetry={handleRetry} />;
@@ -203,7 +187,11 @@ function PayrollPage() {
         onViewPayslip={handleViewPayslip}
         onDeleteEmployee={handleDeleteEmployee}
       />
-      <AddEmployeeModal open={isModalOpen} onClose={() => setIsModalOpen(false)} onSubmit={handleAddEmployee} />
+      <AddEmployeeModal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleAddEmployee}
+      />
     </Wrapper>
   );
 }

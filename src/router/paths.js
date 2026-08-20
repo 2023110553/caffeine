@@ -11,4 +11,4 @@ export const ROUTES = {
   CLOSING_EXPORT: (month) => `/app/closing/${month}/export`,
   CHAT: "/app/chat",
   PAYROLL: "/app/payroll",
-}; 
+};

@@ -7,9 +7,14 @@ import CancelSubscriptionModal from "./components/CancelSubscriptionModal";
 import Loading from "../../components/Loading";
 import ErrorState from "../../components/ErrorState";
 import { useBusiness } from "../../contexts/BusinessContext";
+import { useToast } from "../../contexts/ToastContext";
+import { useAsync } from "../../hooks/useAsync";
 import {
-  getBusinessSettings, updateBusinessSettings,
-  getSubscription, updatePaymentMethod, cancelSubscription,
+  getBusinessSettings,
+  updateBusinessSettings,
+  getSubscription,
+  updatePaymentMethod,
+  cancelSubscription,
 } from "../../api/settings";
 import { syncTaxType } from "../../api/businesses";
 
@@ -25,14 +30,13 @@ const BENEFITS = [
 
 function SettingsPage() {
   const { business } = useBusiness();
+  const showToast = useToast();
   const [businessForm, setBusinessForm] = useState(null);
   const [membership, setMembership] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [isSyncingTaxType, setIsSyncingTaxType] = useState(false);
   const [isCardModalOpen, setIsCardModalOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
-  // idle | saving | success - 저장 버튼 피드백 상태. 실패는 기존 프로젝트 컨벤션(PayrollPage)대로 alert로 안내하고 idle로 되돌린다.
+  // idle | saving | success - 저장 버튼 피드백 상태. 실패는 토스트로 안내하고 idle로 되돌린다.
   const [saveStatus, setSaveStatus] = useState("idle");
   const saveStatusTimeoutRef = useRef(null);
 
@@ -42,29 +46,22 @@ function SettingsPage() {
     };
   }, []);
 
+  const { isLoading, error, run } = useAsync({
+    errorMessage: "설정 정보를 불러오지 못했어요. 사업장 정보를 확인해주세요.",
+  });
+
   const loadData = useCallback(async () => {
     const [businessRes, subscriptionRes] = await Promise.all([
       getBusinessSettings(business.businessId),
       getSubscription(business.businessId),
     ]);
-    setBusinessForm(businessRes.data.data);
-    setMembership({ ...subscriptionRes.data.data, benefits: BENEFITS });
+    setBusinessForm(businessRes.data);
+    setMembership({ ...subscriptionRes.data, benefits: BENEFITS });
   }, [business.businessId]);
 
   useEffect(() => {
-    const load = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        await loadData();
-      } catch {
-        setError("설정 정보를 불러오지 못했어요. 사업장 정보를 확인해주세요.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    load();
-  }, [loadData]);
+    run(loadData);
+  }, [run, loadData]);
 
   const handleChangeBusinessForm = (field, value) => {
     setBusinessForm((prev) => ({ ...prev, [field]: value }));
@@ -72,7 +69,8 @@ function SettingsPage() {
 
   const handleSaveBusinessForm = async () => {
     // tax_type, industry_code는 이 API로 수정 불가 - CODEF가 채워주는 값(tax_type은 syncTaxType으로 별도 처리)
-    const { business_name, representative_name, birth_date, phone_number, business_number } = businessForm;
+    const { business_name, representative_name, birth_date, phone_number, business_number } =
+      businessForm;
 
     if (saveStatusTimeoutRef.current) clearTimeout(saveStatusTimeoutRef.current);
     setSaveStatus("saving");
@@ -86,9 +84,10 @@ function SettingsPage() {
       });
       setSaveStatus("success");
       saveStatusTimeoutRef.current = setTimeout(() => setSaveStatus("idle"), 1600);
-    } catch {
+    } catch (err) {
+      console.error("설정 저장 실패:", err);
       setSaveStatus("idle");
-      window.alert("설정 저장에 실패했습니다. 잠시 후 다시 시도해주세요.");
+      showToast("설정 저장에 실패했습니다. 잠시 후 다시 시도해주세요.");
     }
   };
 
@@ -100,8 +99,9 @@ function SettingsPage() {
     } catch (err) {
       // CODEF 조회 실패(사업자번호 불일치, 응답 실패 등) 시 기존 값은 그대로 유지되므로
       // 화면이 "동기화 안 됨"인지 "실패해서 옛날 값 그대로"인지 구분되도록 반드시 알려준다.
-      const message = err.response?.data?.message || "과세유형 동기화에 실패했습니다. 잠시 후 다시 시도해주세요.";
-      window.alert(message);
+      const message =
+        err.response?.data?.message || "과세유형 동기화에 실패했습니다. 잠시 후 다시 시도해주세요.";
+      showToast(message);
     } finally {
       setIsSyncingTaxType(false);
     }
@@ -115,7 +115,8 @@ function SettingsPage() {
       await updatePaymentMethod(business.businessId, paymentToken);
       await loadData();
     } catch (err) {
-      const message = err.response?.data?.message || "결제 수단 변경에 실패했습니다. 잠시 후 다시 시도해주세요.";
+      const message =
+        err.response?.data?.message || "결제 수단 변경에 실패했습니다. 잠시 후 다시 시도해주세요.";
       throw new Error(message);
     }
   };
@@ -125,17 +126,7 @@ function SettingsPage() {
     await loadData();
   };
 
-  const handleRetry = async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      await loadData();
-    } catch {
-      setError("설정 정보를 불러오지 못했어요. 사업장 정보를 확인해주세요.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const handleRetry = () => run(loadData);
 
   if (isLoading) return <Loading />;
   if (error) return <ErrorState message={error} onRetry={handleRetry} />;

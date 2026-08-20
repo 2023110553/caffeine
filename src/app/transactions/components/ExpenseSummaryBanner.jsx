@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import expenseIcon from "../../../assets/coffee.png";
-import Button from "../../../components/Button";
+import Chip from "../../../components/Chip";
 
 function ExpenseSummaryBanner({
   unclassifiedCount,
@@ -20,13 +20,9 @@ function ExpenseSummaryBanner({
           </IconCircle>
           <TextGroup>
             <Title>
-              지출을 분류하고{" "}
-              <span style={{ color: "#C9A882" }}>부가세 공제</span> 혜택을
-              받으세요
+              지출을 분류하고 <span style={{ color: "#C9A882" }}>부가세 공제</span> 혜택을 받으세요
             </Title>
-            <Subtitle>
-              품목과 지출 구분을 완료하면 공제액이 최대로 반영됩니다
-            </Subtitle>
+            <Subtitle>품목과 지출 구분을 완료하면 공제액이 최대로 반영됩니다</Subtitle>
           </TextGroup>
         </Left>
         <Right>
@@ -44,47 +40,24 @@ function ExpenseSummaryBanner({
 
       <FilterRow>
         <FilterButton onClick={() => onFilterChange("all")}>
-          <Button
-            variant={
-              selectedFilter === "all" ? "filter_checked" : "filter_unchecked"
-            }
-            size="filter"
-          >
+          <Chip variant={selectedFilter === "all" ? "checked" : "unchecked"}>
             전체
             <Count $active={selectedFilter === "all"}>{totalCount}</Count>
-          </Button>
+          </Chip>
         </FilterButton>
 
         <FilterButton onClick={() => onFilterChange("business")}>
-          <Button
-            variant={
-              selectedFilter === "business"
-                ? "filter_checked"
-                : "filter_unchecked"
-            }
-            size="filter"
-          >
+          <Chip variant={selectedFilter === "business" ? "checked" : "unchecked"}>
             사업 지출
-            <Count $active={selectedFilter === "business"}>
-              {summary.business.count}
-            </Count>
-          </Button>
+            <Count $active={selectedFilter === "business"}>{summary.business.count}</Count>
+          </Chip>
         </FilterButton>
 
         <FilterButton onClick={() => onFilterChange("personal")}>
-          <Button
-            variant={
-              selectedFilter === "personal"
-                ? "filter_checked"
-                : "filter_unchecked"
-            }
-            size="filter"
-          >
+          <Chip variant={selectedFilter === "personal" ? "checked" : "unchecked"}>
             개인 지출{" "}
-            <Count $active={selectedFilter === "personal"}>
-              {summary.personal.count}
-            </Count>
-          </Button>
+            <Count $active={selectedFilter === "personal"}>{summary.personal.count}</Count>
+          </Chip>
         </FilterButton>
 
         <ItemFilterButton

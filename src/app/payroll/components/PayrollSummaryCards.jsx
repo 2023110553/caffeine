@@ -6,9 +6,7 @@ function PayrollSummaryCards({ totalExpense, totalWithholdingTax, onExport }) {
       <Card>
         <Label>이번 달 총 인건비 지출</Label>
         <Value>{totalExpense.toLocaleString()}원</Value>
-        <NotePill $tone="warning">
-          💡 세전 급여 + 사장님 부담 4대보험료
-        </NotePill>
+        <NotePill $tone="warning">💡 세전 급여 + 사장님 부담 4대보험료</NotePill>
       </Card>
 
       <Card>

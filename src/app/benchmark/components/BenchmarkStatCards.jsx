@@ -9,7 +9,8 @@ function BenchmarkStatCards({ overview, monthlyTrends }) {
 
   // 최근 2개월 영업이익률 차이로 "%p" 증감 표시 (benchmark API의 monthly_trends 기반)
   const lastTwo = monthlyTrends.slice(-2);
-  const profitDeltaP = lastTwo.length === 2 ? lastTwo[1].my_profit_ratio - lastTwo[0].my_profit_ratio : null;
+  const profitDeltaP =
+    lastTwo.length === 2 ? lastTwo[1].my_profit_ratio - lastTwo[0].my_profit_ratio : null;
 
   return (
     <Grid>
@@ -17,7 +18,8 @@ function BenchmarkStatCards({ overview, monthlyTrends }) {
         <Label>총 매출</Label>
         <Value>{toManwon(total_revenue)}만 원</Value>
         <DeltaBadge $positive={revenue_diff_pct >= 0}>
-          {revenue_diff_pct >= 0 ? "+" : ""}{revenue_diff_pct}% {revenue_diff_pct >= 0 ? "▲" : "▼"}
+          {revenue_diff_pct >= 0 ? "+" : ""}
+          {revenue_diff_pct}% {revenue_diff_pct >= 0 ? "▲" : "▼"}
         </DeltaBadge>
       </Card>
 

@@ -90,8 +90,8 @@ export function requestBillingAuth({ cardNumber, expiry, cvc }) {
         reject(
           new PaymentGatewayError(
             "카드사 승인이 거절되었습니다. 카드 정보를 다시 확인하거나 다른 카드로 시도해주세요.",
-            "CARD_DECLINED"
-          )
+            "CARD_DECLINED",
+          ),
         );
         return;
       }

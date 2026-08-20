@@ -23,7 +23,11 @@ function ResignedEmployeeRow({ employee }) {
 
       <TypeArea>{EMPLOYMENT_TYPE_LABEL[employment_type] ?? employment_type}</TypeArea>
 
-      <WageArea>{hourly_wage != null && hourly_wage !== "" ? `${Number(hourly_wage).toLocaleString()}원` : "-"}</WageArea>
+      <WageArea>
+        {hourly_wage != null && hourly_wage !== ""
+          ? `${Number(hourly_wage).toLocaleString()}원`
+          : "-"}
+      </WageArea>
     </Card>
   );
 }

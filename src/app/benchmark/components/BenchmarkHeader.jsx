@@ -8,7 +8,9 @@ function BenchmarkHeader({ year, month }) {
         <Subtitle>내 매장의 매출·지출 데이터 기반 손익 진단 및 전월 대비 경영 리포트</Subtitle>
       </TitleGroup>
 
-      <Badge>📅 {year}년 {month}월 기준</Badge>
+      <Badge>
+        📅 {year}년 {month}월 기준
+      </Badge>
     </Wrapper>
   );
 }
