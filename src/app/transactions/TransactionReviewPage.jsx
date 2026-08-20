@@ -86,18 +86,7 @@ function TransactionReviewPage() {
       ),
     );
 
-    try {
-      const res = await updateTransactionPurpose(business.businessId, id, expensePurpose);
-      if (res.data?.data) {
-        setTransactions((prev) =>
-          prev.map((tx) =>
-            tx.transaction_id === id ? normalizeTransaction(res.data.data) : tx,
-          ),
-        );
-      }
-    } catch (err) {
-      console.error(err);
-    }
+    await updateTransactionPurpose(business.businessId, id, expensePurpose);
   };
 
   const handleItemCategoryChange = async (id, categoryCode) => {
@@ -113,18 +102,7 @@ function TransactionReviewPage() {
       ),
     );
 
-    try {
-      const res = await updateTransactionCategory(business.businessId, id, categoryCode);
-      if (res.data?.data) {
-        setTransactions((prev) =>
-          prev.map((tx) =>
-            tx.transaction_id === id ? normalizeTransaction(res.data.data) : tx,
-          ),
-        );
-      }
-    } catch (err) {
-      console.error(err);
-    }
+    await updateTransactionCategory(business.businessId, id, categoryCode);
   };
 
   const summary = useMemo(() => {
