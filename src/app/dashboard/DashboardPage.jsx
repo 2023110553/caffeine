@@ -124,20 +124,20 @@ const ColumnGrid = styled.div`
   min-height: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px; /* TODO: design token화 */
+  gap: 20px; /* TODO: design token화 */
   align-items: start;
 `;
 
 const LeftColumn = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 16px; /* TODO: design token화 */
+  gap: 20px; /* TODO: design token화 */
 `;
 
 const RightColumn = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 16px; /* TODO: design token화 */
+  gap: 20px; /* TODO: design token화 */
 `;
 
 const ErrorMessage = styled.div`

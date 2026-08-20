@@ -13,6 +13,8 @@ function VatReserveCard({ summary }) {
 
   return (
     <Card>
+      <DecoCircleLarge />
+      <DecoCircleSmall />
       <Label>{month}월 최종 예상 부가세 적립금</Label>
 
       {isUnavailable ? (
@@ -25,6 +27,9 @@ function VatReserveCard({ summary }) {
             <Amount>{vat_reserve_amount.toLocaleString()}</Amount>
             <Unit>원</Unit>
           </AmountRow>
+          <BreakdownBadge>
+            ✓ 매출세액 +{vat_breakdown.sales_tax.toLocaleString()}원 − 매입세액 {vat_breakdown.purchase_tax.toLocaleString()}원 − 의제매입공제 {vat_breakdown.deemed_purchase_deduction.toLocaleString()}원
+          </BreakdownBadge>
           <MetaRow>
             <MetaItem>
               <MetaLabel>부가세 신고 기한</MetaLabel>
@@ -36,9 +41,6 @@ function VatReserveCard({ summary }) {
               <MetaValue>{TAX_TYPE_LABEL[tax_type] ?? "확인 필요"}</MetaValue>
             </MetaItem>
           </MetaRow>
-          <BreakdownBadge>
-            ✓ 매출세액 +{vat_breakdown.sales_tax.toLocaleString()}원 − 매입세액 {vat_breakdown.purchase_tax.toLocaleString()}원 − 의제매입공제 {vat_breakdown.deemed_purchase_deduction.toLocaleString()}원
-          </BreakdownBadge>
         </>
       )}
     </Card>
@@ -46,6 +48,8 @@ function VatReserveCard({ summary }) {
 }
 
 const Card = styled.div`
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   background-color: ${({ theme }) => theme.colors.txt_brown};
@@ -53,9 +57,34 @@ const Card = styled.div`
   padding: 24px 26px; /* TODO: design token화 */
 `;
 
+const DecoCircleLarge = styled.div`
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 180px;
+  height: 180px;
+  border-radius: 90px;
+  background: rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+`;
+
+const DecoCircleSmall = styled.div`
+  position: absolute;
+  bottom: -30px;
+  right: 40px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50px;
+  background: rgba(255, 255, 255, 0.03);
+  pointer-events: none;
+`;
+
 const Label = styled.p`
-  color: ${({ theme }) => theme.colors.txt_white};
+  color: rgba(253, 249, 243, 0.55); /* TODO: theme.js에 없는 값 */
+  font-family: "Noto Sans KR", sans-serif; /* TODO: design token화 */
   font-size: 12px; /* TODO: design token화 */
+  font-weight: 500;
+  line-height: 18px; /* TODO: design token화 */
 `;
 
 const UnavailableNotice = styled.p`
@@ -74,14 +103,19 @@ const AmountRow = styled.div`
 
 const Amount = styled.span`
   color: ${({ theme }) => theme.colors.txt_white};
+  font-family: Outfit, sans-serif; /* TODO: design token화 */
   font-size: 44px; /* TODO: design token화 */
   font-weight: 800;
+  line-height: 44px; /* TODO: design token화 */
+  letter-spacing: -1.5px; /* TODO: design token화 */
 `;
 
 const Unit = styled.span`
-  color: ${({ theme }) => theme.colors.txt_white};
+  color: rgba(253, 249, 243, 0.8); /* TODO: theme.js에 없는 값 */
+  font-family: Outfit, sans-serif; /* TODO: design token화 */
   font-size: 20px; /* TODO: design token화 */
   font-weight: 600;
+  line-height: 30px; /* TODO: design token화 */
   margin-left: 4px; /* TODO: design token화 */
 `;
 
@@ -99,15 +133,19 @@ const MetaItem = styled.div`
 `;
 
 const MetaLabel = styled.span`
-  color: ${({ theme }) => theme.colors.txt_white};
-  opacity: 0.7;
+  color: rgba(253, 249, 243, 0.4); /* TODO: theme.js에 없는 값 */
+  font-family: "Noto Sans KR", sans-serif; /* TODO: design token화 */
   font-size: 10px; /* TODO: design token화 */
+  font-weight: 400;
+  line-height: 15px; /* TODO: design token화 */
 `;
 
 const MetaValue = styled.span`
-  color: ${({ theme }) => theme.colors.txt_white};
+  color: rgba(253, 249, 243, 0.85); /* TODO: theme.js에 없는 값 */
+  font-family: "Noto Sans KR", sans-serif; /* TODO: design token화 */
   font-size: 12px; /* TODO: design token화 */
   font-weight: 600;
+  line-height: 18px; /* TODO: design token화 */
 `;
 
 const Divider = styled.div`
@@ -118,13 +156,15 @@ const Divider = styled.div`
 `;
 
 const BreakdownBadge = styled.div`
-  margin-top: 20px; /* TODO: design token화 */
-  background-color: #059669; /* TODO: theme.js에 없는 값 (성공/초록) */
-  border-radius: ${({ theme }) => theme.radius.medium};
+  background-color: rgba(5, 150, 105, 0.16); /* TODO: theme.js에 없는 값 (성공/초록) */
+  border: 0.8px solid rgba(5, 150, 105, 0.94); /* TODO: theme.js에 없는 값 */
+  border-radius: 9px; /* TODO: design token화 */
   padding: 8px 12px; /* TODO: design token화 */
-  color: #6EE7B7; /* TODO: theme.js에 없는 값 */
+  color: #059669; /* TODO: theme.js에 없는 값 */
   font-size: 11px; /* TODO: design token화 */
   font-weight: 600;
+  line-height: 16.5px; /* TODO: design token화 */
+  margin-bottom: 20px;
 `;
 
 export default VatReserveCard;
