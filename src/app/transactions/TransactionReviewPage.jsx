@@ -13,9 +13,9 @@ import {
   updateTransactionCategory,
 } from "../../api/transactions";
 import { ITEM_CATEGORY_LABEL } from "./constants";
-
-const YEAR = 2026;
-const MONTH = 8; // TODO: 실제로는 현재 월 기준 동적 계산 필요
+const now = new Date();
+const YEAR = now.getFullYear();
+const MONTH = now.getMonth() + 1;
 
 // expense_purpose.code(BUSINESS/PERSONAL/UNCLASSIFIED)를 mock 시절 category 값(business/personal/null)으로,
 // 나머지 필드(total_amount 문자열→숫자, date 포맷, icon/memo 등 API에 없는 표시용 값)를 컴포넌트가 기대하는 형태로 변환
@@ -50,12 +50,12 @@ function TransactionReviewPage() {
   const [error, setError] = useState(null);
 
   const loadData = useCallback(async () => {
-    const res = await getTransactions(business.businessId, {
-  start_date: `${YEAR}-${String(MONTH).padStart(2, "0")}-01`,
-  transaction_type: "PURCHASE",
-});
-    setTransactions(res.data.data.items.map(normalizeTransaction));
-  }, [business.businessId]);
+  const res = await getTransactions(business.businessId, {
+    start_date: `${YEAR}-${String(MONTH).padStart(2, "0")}-01`,
+    transaction_type: "PURCHASE",
+  });
+  setTransactions(res.data.data.items.map(normalizeTransaction));
+}, [business.businessId]);
 
   useEffect(() => {
     const load = async () => {
@@ -73,23 +73,60 @@ function TransactionReviewPage() {
   }, [loadData]);
 
   const handleCategoryChange = async (id, category) => {
-    const target = transactions.find((tx) => tx.transaction_id === id);
-    if (!target) return;
-    const nextCategory = target.category === category ? null : category;
-    const expensePurpose =
-      nextCategory === null ? "UNCLASSIFIED" : nextCategory.toUpperCase();
+  const target = transactions.find((tx) => tx.transaction_id === id);
+  if (!target) return;
 
-   setTransactions((prev) =>
-    prev.map((tx) => {
-      if (tx.transaction_id !== id) return tx;
-      const nextIsDeemed = nextCategory === "business" && tx.itemCategoryCode === "RAW_MATERIAL";
-      return { ...tx, category: nextCategory, is_deemed: nextIsDeemed };
-    }),
+  const nextCategory = target.category === category ? null : category;
+
+  const expensePurpose =
+    nextCategory === null ? "UNCLASSIFIED" : nextCategory.toUpperCase();
+
+  // 1) 화면 우선 반영
+  setTransactions((prev) =>
+    prev.map((tx) =>
+      tx.transaction_id === id
+        ? { ...tx, category: nextCategory }
+        : tx,
+    ),
   );
-    await updateTransactionPurpose(business.businessId, id, expensePurpose);
-  };
 
-  const handleItemCategoryChange = async (id, categoryCode) => {
+  // 2) 서버 응답 최신 데이터(is_deemed 등)로 덮어쓰기
+  try {
+    const res = await updateTransactionPurpose(
+      business.businessId,
+      id,
+      expensePurpose,
+    );
+
+    if (res.data?.data) {
+      setTransactions((prev) =>
+        prev.map((tx) =>
+          tx.transaction_id === id
+            ? normalizeTransaction(res.data.data)
+            : tx,
+        ),
+      );
+    }
+  } catch (err) {
+    console.error("지출 구분 수정 실패", err);
+  }
+};
+
+const handleItemCategoryChange = async (id, categoryCode) => {
+  // 1) 화면 우선 반영
+  setTransactions((prev) =>
+    prev.map((tx) =>
+      tx.transaction_id === id
+        ? {
+            ...tx,
+            itemCategoryCode: categoryCode,
+            memo: ITEM_CATEGORY_LABEL[categoryCode],
+          }
+        : tx,
+    ),
+  );
+
+  // 2) 서버 응답 최신 데이터(is_deemed 등)로 덮어쓰기
   try {
     const res = await updateTransactionCategory(
       business.businessId,
@@ -97,27 +134,19 @@ function TransactionReviewPage() {
       categoryCode,
     );
 
-    const updated = res.data.data;
-
-    setTransactions((prev) =>
-      prev.map((tx) =>
-        tx.transaction_id === id
-          ? {
-              ...tx,
-              itemCategoryCode: updated.category?.code ?? categoryCode,
-              memo:
-                updated.category?.label ??
-                ITEM_CATEGORY_LABEL[categoryCode],
-              is_deemed: updated.is_deemed,
-            }
-          : tx,
-      ),
-    );
+    if (res.data?.data) {
+      setTransactions((prev) =>
+        prev.map((tx) =>
+          tx.transaction_id === id
+            ? normalizeTransaction(res.data.data)
+            : tx,
+        ),
+      );
+    }
   } catch (err) {
     console.error("품목 카테고리 수정 실패", err);
   }
 };
-
   const summary = useMemo(() => {
     const result = {
       business: { count: 0, total: 0 },
@@ -155,7 +184,7 @@ function TransactionReviewPage() {
       if (tx.is_deemed) {
         deemedInputTax += Math.round(tx.total_amount * (9 / 109));
       } else {
-        normalInputTax += Math.round(tx.total_amount * 0.1);
+        normalInputTax += Math.round(tx.total_amount / 11);
       }
     });
 

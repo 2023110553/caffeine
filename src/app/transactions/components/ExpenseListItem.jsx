@@ -16,6 +16,7 @@ function ExpenseListItem({ transaction, onCategoryChange, onItemCategoryChange }
   const [isOpen, setIsOpen] = useState(false);
   const isItemUnclassified = itemCategoryCode === "UNCLASSIFIED";
   const icon = ITEM_CATEGORY_ICON[itemCategoryCode] ?? "🧾";
+  
   return (
     <Card>
       <CardTop>
