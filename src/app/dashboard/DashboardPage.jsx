@@ -33,7 +33,7 @@ function DashboardPage() {
     error: loadError,
     run,
   } = useAsync({
-    errorMessage: "대시보드 데이터 조회 실패:",
+    errorMessage: "대시보드 데이터를 불러오지 못했어요. 사업장 정보를 확인해주세요.",
   });
 
   const loadData = useCallback(async () => {

@@ -1,15 +1,8 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import styled from "styled-components";
-import { useBusiness } from "../contexts/BusinessContext";
 import SideBar from "./SideBar";
 
 function AppLayout() {
-  const { business } = useBusiness();
-
-  if (!business.isSetupComplete && window.location.pathname !== "/app/setup/business") {
-    return <Navigate to="/app/setup/business" replace />;
-  }
-
   return (
     <Container>
       <SideBar />
