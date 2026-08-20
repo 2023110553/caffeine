@@ -117,12 +117,16 @@ function EmployeeRow({ employee, onUpdate, onViewPayslip, onDelete }) {
 
       <WageArea>
         <Input
-          type="number"
-          unit="원"
-          value={wageInput}
-          onChange={(e) => setWageInput(e.target.value)}
-          onBlur={commitWage}
-        />
+  type="text"
+  inputMode="numeric"
+  unit="원"
+  value={wageInput ? Number(wageInput).toLocaleString() : ""}
+  onChange={(e) => {
+    const onlyNumbers = e.target.value.replace(/,/g, "").replace(/\D/g, "");
+    setWageInput(onlyNumbers);
+  }}
+  onBlur={commitWage}
+/>
       </WageArea>
 
       <GrossPayArea>
