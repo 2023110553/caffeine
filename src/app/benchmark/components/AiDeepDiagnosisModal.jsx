@@ -137,25 +137,17 @@ function AiDeepDiagnosisModal({ open, onClose, businessId, year, month }) {
                   </CostItemList>
                 </CostStructureCard>
 
-                {diagnosis.management_insights.map((insight) => (
-                  <InsightCard key={insight.content} $type={insight.type}>
+                {diagnosis.management_insights.map((insight, index) => (
+                   <InsightCard key={insight.content} $type={insight.type}>
                     {insight.title && (
-                      <InsightHeader>
+                      <InsightHeader $color={index === 0 ? "#92400E" : "#14532D"}>
                         {insight.type === "WARNING" ? "⚠️" : "👍"} {insight.title}
                       </InsightHeader>
                     )}
-                    <InsightContent>
+                    <InsightContent $color={index === 0 ? "#78350F" : "#14532D"}>
                       {!insight.title && (insight.type === "WARNING" ? "⚠️ " : "👍 ")}
                       {insight.content}
                     </InsightContent>
-                    {insight.action_tag && (
-                      <InsightActionLink
-                        type="button"
-                        onClick={() => insight.action_link && (window.location.href = insight.action_link)}
-                      >
-                        {insight.action_tag}
-                      </InsightActionLink>
-                    )}
                   </InsightCard>
                 ))}
               </LeftColumn>
@@ -558,17 +550,17 @@ const InsightCard = styled.div`
 const InsightHeader = styled.p`
   margin: 0;
 
-  color: #3D251E; /* TODO: theme.js에 없는 값 */
+  color: ${({ $color }) => $color};
   font-family: "Noto Sans KR", sans-serif;
   font-size: 12.5px;
-  font-weight: 700;
+  font-weight: 800;
 `;
 
 const InsightContent = styled.p`
   margin: 0;
   margin-top: ${({ $withTitle }) => ($withTitle ? "0" : "0")};
 
-  color: rgba(61, 37, 30, 0.75);
+  color: ${({ $color }) => $color};
   font-family: "Noto Sans KR", sans-serif;
   font-size: 11.5px;
   font-weight: 400;
