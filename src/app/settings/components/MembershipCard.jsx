@@ -430,7 +430,7 @@ const BenefitList = styled.div`
   align-self: stretch;
 `;
 
-const BenefitItem = styled.p`
+const BenefitItem = styled.div`
   display: flex;
   align-items: flex-start;
   gap: 9px; /* TODO: design token화 */

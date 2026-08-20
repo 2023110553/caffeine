@@ -13,8 +13,10 @@ import {
 } from "../../api/settings";
 import { syncTaxType } from "../../api/businesses";
 
-// industry_name, benefits(혜택 목록)는 API에 없는 필드 - UI 전용으로 유지
-const INDUSTRY_NAME_PLACEHOLDER = "비알코올 음료점업 · 커피전문점";
+// industry_name은 API가 industry_code만 주던 시절의 UI 전용 하드코딩 값이었는데,
+// 지금 API는 business_type/business_item 원본 값을 내려주고 화면 표시용 조합은
+// BusinessInfoForm이 직접 한다 (settings/services/business_info_service.py 참고).
+// benefits(혜택 목록)만 API에 없는 필드라 UI 전용으로 유지.
 const BENEFITS = [
   "AI 세무 챗봇 무제한 질의응답",
   "지출 자동 분류 및 실시간 부가세 예측",
@@ -45,7 +47,7 @@ function SettingsPage() {
       getBusinessSettings(business.businessId),
       getSubscription(business.businessId),
     ]);
-    setBusinessForm({ ...businessRes.data.data, industry_name: INDUSTRY_NAME_PLACEHOLDER });
+    setBusinessForm(businessRes.data.data);
     setMembership({ ...subscriptionRes.data.data, benefits: BENEFITS });
   }, [business.businessId]);
 
@@ -69,8 +71,8 @@ function SettingsPage() {
   };
 
   const handleSaveBusinessForm = async () => {
-    // tax_type은 이 API로 수정 불가 - syncTaxType으로 별도 처리
-    const { business_name, representative_name, birth_date, phone_number, business_number, industry_code } = businessForm;
+    // tax_type, industry_code는 이 API로 수정 불가 - CODEF가 채워주는 값(tax_type은 syncTaxType으로 별도 처리)
+    const { business_name, representative_name, birth_date, phone_number, business_number } = businessForm;
 
     if (saveStatusTimeoutRef.current) clearTimeout(saveStatusTimeoutRef.current);
     setSaveStatus("saving");
@@ -81,7 +83,6 @@ function SettingsPage() {
         birth_date,
         phone_number,
         business_number,
-        industry_code,
       });
       setSaveStatus("success");
       saveStatusTimeoutRef.current = setTimeout(() => setSaveStatus("idle"), 1600);
