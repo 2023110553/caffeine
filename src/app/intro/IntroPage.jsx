@@ -4,10 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ROUTES } from "../../router/paths";
 
-// 에셋 경로 - public/assets 폴더에 위치
+// public/assets 폴더 참조
 const ASSETS = {
   BG: "/assets/bg-cafe-counter.png",
-  LOGO_MARK: "/assets/logo-mark.png", // 카페비서 컵 아이콘 - 타이틀과 동시에 등장
+  LOGO_MARK: "/assets/logo-mark.png",
 };
 
 // 배경 이미지가 로드된 뒤 잠깐 멈췄다가 로고/타이틀/버튼(아웃로)이 등장하기까지의 지연 시간(초)
@@ -51,7 +51,7 @@ export default function IntroPage() {
   );
 }
 
-// --- Styled Components (디자인) ---
+// --- Styled Components ---
 
 const PageWrapper = styled.div`
   display: flex;
@@ -67,7 +67,6 @@ const PageWrapper = styled.div`
     -apple-system,
     sans-serif;
 
-  /* 실제 이미지 배경 적용 */
   background-image: url(${({ $bg }) => $bg});
   background-size: cover;
   background-position: center;
@@ -78,7 +77,7 @@ const OutroWrapper = styled(motion.div)`
   flex-direction: column;
   align-items: center;
   gap: 28px;
-  z-index: 3; /* 가장 위 */
+  z-index: 3;
 `;
 
 const LogoMark = styled.img`
@@ -89,30 +88,28 @@ const LogoMark = styled.img`
 
 const Title = styled.h1`
   margin: 0;
-  /* 이미지의 브라운 뚜껑 색상을 따온 타이틀 색상 */
+  /* 배경 이미지의 브라운 뚜껑 색상에 맞춤 */
   color: #5d4037;
   font-family: Fraunces, serif, system-ui;
   font-size: 48px;
   font-weight: 800;
   letter-spacing: -1px;
-  /* 텍스트에도 미세한 그림자로 입체감 부여 */
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 `;
 
 const HomeButton = styled.button`
   padding: 16px 40px;
   border: none;
-  border-radius: 100px; /* 완전 둥근 버튼 */
+  border-radius: 100px;
 
-  /* 이미지의 홀더 색상을 따온 버튼 배경 */
+  /* 배경 이미지의 컵홀더 색상에 맞춤 */
   background: #d7ccc8;
-  color: #3e2723; /* 진한 브라운 텍스트 */
+  color: #3e2723;
 
   font-size: 17px;
   font-weight: 700;
   cursor: pointer;
 
-  /* 3D 느낌을 주는 입체적 그림자 */
   box-shadow:
     0 8px 16px rgba(93, 64, 55, 0.15),
     0 2px 2px rgba(93, 64, 55, 0.1) inset;

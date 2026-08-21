@@ -1,7 +1,7 @@
 export const ROUTES = {
   HOME: "/",
-  SETUP_BUSINESS: "/app/setup/business", // TODO: 향후 온보딩(CODEF 인증) 페이지용으로 유지, 아직 미구현
-  SETUP_AUTH: "/app/setup/auth", // TODO: 위와 동일
+  SETUP_BUSINESS: "/app/setup/business", // TODO: 온보딩(CODEF 인증) 페이지용 경로, 아직 미구현
+  SETUP_AUTH: "/app/setup/auth", // TODO: 온보딩(CODEF 인증) 페이지용 경로, 아직 미구현
   SETTINGS: "/app/settings",
   DASHBOARD: "/app/dashboard",
   BENCHMARK: "/app/benchmark",

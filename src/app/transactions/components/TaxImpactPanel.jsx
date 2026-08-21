@@ -38,7 +38,6 @@ const BAR_COLOR = {
 };
 
 function TaxImpactPanel({ summary, estimatedVat, normalInputTax, deemedInputTax }) {
-  // 중복 계산 줄이기
   const isCompleted = summary.unclassified.count === 0;
 
   const totalAmount = summary.business.total + summary.personal.total + summary.unclassified.total;
@@ -51,7 +50,7 @@ function TaxImpactPanel({ summary, estimatedVat, normalInputTax, deemedInputTax 
         <Label>예상 부가세 공제 가능액</Label>
         <VatAmount>{estimatedVat.toLocaleString()}원</VatAmount>
         <SubLabel>일반 매입세액 공제액 + 의제매입세액 공제액</SubLabel>
-        {/*로직 추가 미분류에따른*/}
+        {/* 미분류 지출이 남아있으면 세액 추정이 부정확하므로 전부 분류된 뒤에만 상세 내역 노출 */}
         {isCompleted && (
           <StatGrid>
             <div>
@@ -143,7 +142,6 @@ function TaxImpactPanel({ summary, estimatedVat, normalInputTax, deemedInputTax 
         })}
       </SegmentBar>
 
-      {/*로직 수정*/}
       <Notice $completed={isCompleted}>
         <Icon>{isCompleted ? <img src={CheckIcon} alt="" /> : "💡"}</Icon>
 

@@ -91,7 +91,6 @@ function TrendChartCard({ monthlyTrends = [] }) {
   const startMonth = profitLossTrend.at(0)?.month ?? "";
   const endMonth = profitLossTrend.at(-1)?.month ?? "";
 
-  // 전체 손익 평균
   const avgRevenue =
     profitLossTrend.length === 0
       ? 0
@@ -106,7 +105,6 @@ function TrendChartCard({ monthlyTrends = [] }) {
           profitLossTrend.reduce((sum, item) => sum + item.profit, 0) / profitLossTrend.length
         ).toFixed(1);
 
-  // 식자재 평균
   const avgRawMaterial =
     rawMaterialTrend.length === 0
       ? 0
@@ -114,17 +112,14 @@ function TrendChartCard({ monthlyTrends = [] }) {
           rawMaterialTrend.reduce((sum, item) => sum + item.ratio, 0) / rawMaterialTrend.length
         ).toFixed(1);
 
-  // 인건비 평균
   const avgLabor =
     laborTrend.length === 0
       ? 0
       : (laborTrend.reduce((sum, item) => sum + item.ratio, 0) / laborTrend.length).toFixed(1);
 
-  // 현재 달
   const currentRawMaterial = rawMaterialTrend.at(-1)?.ratio ?? 0;
   const currentLabor = laborTrend.at(-1)?.ratio ?? 0;
 
-  // 최저 / 최고
   const rawMin =
     rawMaterialTrend.length === 0 ? 0 : Math.min(...rawMaterialTrend.map((item) => item.ratio));
 

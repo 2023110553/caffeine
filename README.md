@@ -9,11 +9,10 @@
 ## 기능 개요
 
 - **지출 검토**: 카드 거래 내역을 사업/개인 지출로 분류하고 품목별 카테고리를 지정
-- **대시보드**: 월별 매출·지출 요약, 부가세 예상 적립액, 공제 항목 분석
-- **급여 관리**: 직원 등록, 근무시간·시급 기반 급여 계산, 급여명세서 발급
+- **대시보드**: 월별 매출·지출 요약, 부가세 예상 적립액, 공제 항목 분석, 정산 데이터(Clean Data) CSV 내보내기
+- **급여 관리**: 직원 등록·퇴사 처리, 근무시간·시급 기반 급여 자동 계산(원천세·고용보험·실수령액 포함), 급여명세서 발급
 - **AI 벤치마크 진단**: 동종 업계 대비 경영 지표 심층 진단
 - **AI 챗봇**: 세무·경영 관련 질의응답
-- **정산 데이터 내보내기(Clean Data Export)**: 월별 거래 내역 CSV 다운로드
 - **설정**: 사업자 정보, 과세유형 동기화, 결제 수단·구독 관리
 
 > **화면 지원**: 매장 PC·태블릿에서 쓰는 관리자용 대시보드로, 데스크톱 해상도(1440×900 기준)에 맞춰 제작했습니다. 모바일 반응형은 아직 지원하지 않습니다.
@@ -81,24 +80,21 @@ npm run lint
 ```
 src/
 ├── api/                  # 도메인별 axios 요청 함수 (client.js가 공용 axios 인스턴스)
-├── app/                  # 각 기능 페이지
+├── app/                  # 각 기능 페이지 (도메인 폴더마다 <Feature>Page.jsx + components/ 구성)
 │   ├── benchmark/        # AI 벤치마크 진단
 │   ├── chat/             # AI 챗봇
-│   ├── dashboard/        # 대시보드 (요약, 부가세, 공제 분석, 데이터 내보내기)
+│   ├── dashboard/        # 대시보드 (요약, 부가세, 공제 분석, 정산 데이터 내보내기)
 │   ├── intro/            # 인트로/랜딩
 │   ├── payroll/          # 급여 관리
 │   ├── settings/         # 설정 (사업자 정보, 구독, 결제 수단)
 │   └── transactions/     # 지출 검토
-│       └── <feature>/
-│           ├── <Feature>Page.jsx
-│           └── components/   # 해당 페이지 전용 컴포넌트
 ├── components/           # 여러 페이지가 공유하는 범용 컴포넌트 (Button, Input, Modal, Loading, ErrorState)
-├── contexts/              # 전역 Context (BusinessContext 등)
-├── hooks/                # 공용 커스텀 훅
-├── layouts/              # 레이아웃 컴포넌트 (AppLayout 등)
-├── lib/                  # 순수 유틸 함수
-├── router/                # 라우트 정의 및 경로 상수
-├── styles/                # 전역 테마 (theme.js)
+├── contexts/              # 전역 Context (BusinessContext, ToastContext)
+├── hooks/                # 공용 커스텀 훅 (useAsync 등)
+├── layouts/              # 레이아웃 컴포넌트 (AppLayout, SideBar)
+├── lib/                  # 순수 유틸 함수 (포맷팅 등)
+├── router/                # 라우트 정의(Router.jsx) 및 경로 상수(paths.js)
+├── styles/                # 전역 테마·글로벌 스타일
 └── dev/                  # 컴포넌트 육안 확인용 개발 도구 (프로덕션 라우터에는 연결되어 있지 않음)
 ```
 
