@@ -15,7 +15,7 @@ function AppLayout() {
 
 const Container = styled.div`
   display: flex;
-  height: 100vh; /* min-height → height: 뷰포트에 고정, 내부에서만 스크롤 */
+  height: 100vh; /* 뷰포트 높이로 고정해 페이지 전체가 아닌 내부 영역에서만 스크롤되게 함 */
   overflow: hidden;
   background-color: ${({ theme }) => theme.colors.bg_white};
   color: ${({ theme }) => theme.colors.txt_brown};
@@ -23,7 +23,7 @@ const Container = styled.div`
 
 const Content = styled.main`
   flex: 1;
-  min-height: 0; /* 스크롤 체인 1단계: 이거 없으면 자식 overflow가 안 먹음 */
+  min-height: 0; /* flex item 기본값(auto) 그대로면 자식의 overflow 스크롤이 동작하지 않아 명시적으로 0으로 설정 */
   display: flex;
   flex-direction: column;
   overflow: hidden;

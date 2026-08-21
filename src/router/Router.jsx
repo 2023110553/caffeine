@@ -9,7 +9,7 @@ import SettingsPage from "../app/settings/SettingsPage";
 import BenchmarkPage from "../app/benchmark/BenchmarkPage";
 import { ROUTES } from "./paths";
 
-// ROUTES는 "/app/xxx" 형태의 절대경로라, <Route>가 기대하는 AppLayout 기준 상대경로로 변환해서 사용
+// ROUTES는 절대경로("/app/xxx")로 정의돼 있어, AppLayout 하위 <Route>가 요구하는 상대경로로 맞춰줌
 const relativeToApp = (route) => route.replace(/^\/app\//, "");
 
 function Router() {
@@ -17,9 +17,9 @@ function Router() {
     <Routes>
       <Route path={ROUTES.HOME} element={<IntroPage />} />
 
-      {/* 카페비서 서비스: /app 하위 전부 AppLayout 공유 */}
+      {/* /app 하위 페이지는 사이드바 등 공통 레이아웃(AppLayout)을 함께 사용 */}
       <Route path="/app" element={<AppLayout />}>
-        {/* 아직 페이지 없음 — Phase 2~5에서 하나씩 채워질 자리 */}
+        {/* 아래 라우트들은 Phase 2~5에서 순차적으로 구현될 예정 (TODO) */}
         {/* <Route index element={<DashboardPage />} /> */}
         {/* <Route path={relativeToApp(ROUTES.SETUP_BUSINESS)} element={<SetupBusinessPage />} /> */}
         {/* <Route path={relativeToApp(ROUTES.SETUP_AUTH)} element={<AuthSetupPage />} /> */}

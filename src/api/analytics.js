@@ -29,5 +29,5 @@ export const exportCleanData = (businessId, year, month, fileType) =>
   });
 
 // 월별 장부 마감 승인/조회는 tax.js의 approveClosing() / getClosingSummary()를 사용한다.
-// (백엔드 인수인계 문서 기준 마감 상태의 단일 원본은 Tax의 MonthlyClose이고,
-//  이 analytics 경로는 호환용으로만 남아있는 레거시 경로라 여기서는 제거함 - 2026-08-19)
+// - 백엔드 인수인계 문서 기준 마감 상태의 단일 원본은 Tax의 MonthlyClose
+// - 이 analytics 경로는 호환용으로만 남아있는 레거시 경로라 여기서는 제거함 (2026-08-19)
